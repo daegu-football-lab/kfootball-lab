@@ -276,6 +276,17 @@ function init(){
   }
   document.getElementById("banner").innerHTML = lines.join("<br>");
 
+  // 샘플(가짜) 데이터인 동안에는 선수·On/Off 탭 버튼을 감춥니다.
+  // 배너 경고만으로는 방문자가 가짜 이름을 실제 기록으로 캡처해 갈 위험이 남습니다.
+  // 실제 기록을 넣어 is_sample 이 false 가 되면 자동으로 다시 나타나므로,
+  // "나중에 되돌리기"를 잊어버릴 일이 없습니다.
+  if (D.meta.is_sample) {
+    ["p", "o"].forEach(k => {
+      const btn = document.querySelector(`nav button[data-t="${k}"]`);
+      if (btn) btn.style.display = "none";
+    });
+  }
+
   buildCards(); buildTeamTab(); buildOnOffTab(); buildStandingsTab();
 
   document.querySelectorAll("nav button").forEach(b=>{
