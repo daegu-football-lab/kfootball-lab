@@ -146,6 +146,26 @@
   .stats.four{grid-template-columns:repeat(4,1fr)}
   @media(max-width:700px){.stats.four{grid-template-columns:repeat(2,1fr)}}
   .stats.four .stat span{display:block;margin-top:3px;line-height:1.35}
+  /* ── 용어 탭 ───────────────────────────────────────────────
+     모르는 용어 때문에 페이지를 떠나는 방문자를 붙잡기 위한 탭입니다. */
+  .gsearch{width:100%;padding:12px 16px;border:1px solid var(--line);border-radius:10px;
+           font-family:inherit;font-size:.95rem;background:var(--card);color:var(--text);
+           margin-bottom:6px}
+  .gsearch:focus{outline:2px solid var(--blue);outline-offset:1px}
+  .gcount{font-size:.78rem;color:var(--muted);margin:0 0 16px}
+  .gitem{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:12px;
+         background:var(--card);transition:.18s var(--ease)}
+  .gitem:hover{border-color:var(--blue);box-shadow:var(--shadow)}
+  .gitem h3{margin:0;font-size:1.02rem;font-weight:800;letter-spacing:-.01em}
+  .gitem h3 small{font-weight:600;color:var(--muted);font-size:.76rem;margin-left:6px}
+  .gdef{margin:8px 0 0;font-size:.92rem}
+  .grow{display:flex;gap:8px;margin-top:10px;font-size:.85rem;line-height:1.65}
+  .glab{flex:0 0 68px;color:var(--muted);font-weight:700;font-size:.76rem;padding-top:2px}
+  .gex{background:var(--blue-soft);border-radius:8px;padding:8px 10px;
+       font-size:.85rem;margin-top:10px}
+  .gwhere{margin-top:10px;padding-top:9px;border-top:1px dashed var(--line);
+          font-size:.76rem;color:var(--muted)}
+  .gempty{color:var(--muted);font-size:.9rem;padding:20px 0;text-align:center}
 </style>
 </head>
 <body>
@@ -167,6 +187,7 @@
     <button data-t="t">🆚 팀 비교</button>
     <button data-t="p">👤 선수</button>
     <button data-t="o">🔁 On/Off 분석</button>
+    <button data-t="g">📖 용어</button>
   </nav>
 
   <main>
@@ -230,6 +251,16 @@
         <select id="osel"></select>
       </div>
       <div id="obody"></div>
+    </section>
+
+    <!-- 탭 4: 용어 -->
+    <section class="panel" id="pan-g">
+      <h2>용어 사전</h2>
+      <p class="hint">이 사이트와 연재 글에 나오는 통계 용어를 정리했습니다.
+        모르는 말이 나오면 여기서 찾아보세요. 검색창에 일부만 쳐도 걸러집니다.</p>
+      <input class="gsearch" id="gq" type="search" placeholder="예: 잔차, R2, 시그마, 승점">
+      <p class="gcount" id="gcount"></p>
+      <div id="glist"></div>
     </section>
   </main>
 </div>
@@ -298,6 +329,7 @@ function init(){
   }
 
   buildCards(); buildTeamTab(); buildOnOffTab(); buildStandingsTab();
+  buildGlossary();
 
   document.querySelectorAll("nav button").forEach(b=>{
     b.onclick = () => {
@@ -641,6 +673,132 @@ function drawOnOff(){
 }
 
 init();
+
+// ── 탭 4: 용어 사전 ───────────────────────────────────────────
+// 데이터 파일이 아니라 코드 안에 둔 이유:
+//   글보다 자주 바뀌지 않고, 용어를 고칠 때 이 파일 한 곳만 보면 되기 때문입니다.
+//   항목이 30개를 넘어가면 그때 data/glossary.js 로 분리하세요.
+const GLOSSARY = [
+  {
+    t: "PPG (경기당 승점)", en: "Points Per Game",
+    def: "총 승점을 치른 경기 수로 나눈 값입니다.",
+    why: "팀마다 소화한 경기 수가 다를 때, 총 승점을 그대로 비교하면 경기를 더 치른 팀이 유리해 보입니다. 경기 수를 걷어내고 같은 잣대로 비교하려고 씁니다.",
+    ex: "대구FC 46점 ÷ 26경기 = 1.769 PPG",
+    care: "경기 수가 적을수록 값이 요동칩니다. 5경기만 치른 팀의 PPG는 신뢰하기 어렵습니다.",
+    where: "순위 분석 탭 ①②"
+  },
+  {
+    t: "득실차", en: "Goal Difference (GD)",
+    def: "득점에서 실점을 뺀 값입니다. 경기당 득실차는 이것을 다시 경기 수로 나눈 값입니다.",
+    why: "승점은 이겼는지 졌는지만 알려주지만, 득실차는 얼마나 차이 나게 이기고 졌는지를 담습니다. 팀 전력을 재는 지표로 승점보다 덜 흔들린다고 알려져 있습니다.",
+    ex: "대구FC +13 ÷ 26경기 = 경기당 +0.50",
+    care: "한 경기 대패가 값을 크게 흔듭니다. 안산그리너스가 그 사례입니다.",
+    where: "순위 분석 탭 ①②"
+  },
+  {
+    t: "회귀분석", en: "Regression",
+    def: "두 숫자 사이에 어떤 직선 관계가 있는지 찾아내는 방법입니다.",
+    why: "여기서는 '경기당 득실차가 이만큼이면 승점은 대개 이 정도'라는 기준선을 긋기 위해 썼습니다. 그 선에서 얼마나 벗어났는지를 보면 각 팀이 성적을 더 냈는지 덜 냈는지 알 수 있습니다.",
+    ex: "PPG = 1.3378 + 0.7609 × 경기당 득실차",
+    care: "관계가 있다는 것이지 원인이라는 뜻은 아닙니다. 득실차가 좋아서 승점이 높은 것인지, 강팀이라 둘 다 높은 것인지 이 식만으로는 구분할 수 없습니다.",
+    where: "순위 분석 탭 ①"
+  },
+  {
+    t: "회귀식", en: "Regression Equation",
+    def: "회귀분석으로 얻은 직선의 수식입니다. 기울기와 시작점으로 이루어집니다.",
+    why: "숫자를 넣으면 '기대되는 값'이 바로 나옵니다.",
+    ex: "경기당 득실차가 0인 팀의 기대 PPG = 1.3378. 득실차가 경기당 1점씩 앞서면 PPG가 0.7609 올라갑니다.",
+    care: "데이터 범위 밖에서는 믿을 수 없습니다. 경기당 득실차 +5 같은 값을 넣어도 숫자는 나오지만 의미가 없습니다.",
+    where: "순위 분석 탭 ①"
+  },
+  {
+    t: "R² (결정계수)", en: "R-squared · 설명력",
+    def: "회귀선이 실제 데이터를 얼마나 잘 설명하는지를 0~1로 나타낸 값입니다.",
+    why: "선을 그었는데 데이터가 선 근처에 몰려 있으면 1에 가깝고, 흩어져 있으면 0에 가깝습니다. 이 선을 믿어도 되는지 판단하는 첫 번째 잣대입니다.",
+    ex: "R² = 0.94 → 승점 변동의 94%를 득실차만으로 설명할 수 있다는 뜻입니다.",
+    care: "R²가 높다고 인과관계가 있는 것은 아닙니다. 또 표본이 적으면 우연히 높게 나올 수 있습니다. 여기서는 17개 팀뿐입니다.",
+    where: "순위 분석 탭 ① 요약 카드"
+  },
+  {
+    t: "잔차", en: "Residual",
+    def: "실제 값에서 회귀선이 예측한 값을 뺀 차이입니다.",
+    why: "'득실차만 보면 이 정도 승점이어야 하는데, 실제로는 더 벌었다/덜 벌었다'를 숫자로 만든 것입니다. 회귀분석에서 실제로 읽는 것은 선이 아니라 이 차이입니다.",
+    ex: "수원삼성 잔차 +0.204 PPG → 득실차로 예상되는 것보다 경기당 0.204점을 더 벌었습니다. 25경기면 약 +5.1점입니다.",
+    care: "잔차가 크다고 '승부처에 강하다'고 말할 수 없습니다. 박빙 경기 결과가 우연히 한쪽으로 몰린 것일 수도 있습니다.",
+    where: "순위 분석 탭 ①②"
+  },
+  {
+    t: "σ (시그마, 표준편차)", en: "Standard Deviation",
+    def: "값들이 평균에서 평균적으로 얼마나 떨어져 있는지를 나타내는 숫자입니다.",
+    why: "잔차가 +0.2 라고 해도 그게 큰 값인지 알 수 없습니다. 흩어진 정도(σ)로 나누면 '보통보다 몇 배 벗어났는지'로 바꿔 읽을 수 있습니다.",
+    ex: "잔차 표준편차 σ = 0.1112 PPG. 수원삼성 잔차 +0.204 ÷ 0.1112 = +1.83σ",
+    care: "σ 자체는 좋고 나쁨이 아니라 '흩어진 정도'일 뿐입니다. 표본이 적으면 σ도 부정확합니다.",
+    where: "순위 분석 탭 ① 요약 카드, 회색 띠"
+  },
+  {
+    t: "1.5σ 기준", en: "",
+    def: "이 사이트에서 '유의미하다'고 부르는 선입니다. 잔차가 1.5σ를 넘은 팀만 해석 대상으로 삼습니다.",
+    why: "표본이 17팀뿐이라 작은 차이는 우연과 구분되지 않습니다. 선을 미리 그어 두면 '숫자가 조금 높으니 뭔가 있다'는 식의 과잉 해석을 막을 수 있습니다.",
+    ex: "대구FC +0.46σ → 기준 미달이므로 해석하지 않습니다. 특별할 것이 없다는 뜻입니다.",
+    care: "1.5σ는 절대 기준이 아니라 이 프로젝트가 스스로 정한 선입니다. 통계학 교과서의 관례(보통 2σ)보다 느슨합니다. 표본이 늘면 더 엄격하게 잡아야 합니다.",
+    where: "순위 분석 탭 ① 회색 띠 바깥 팀"
+  },
+  {
+    t: "2로빈", en: "Double Round-robin",
+    def: "모든 팀이 서로 홈과 원정에서 한 번씩, 총 두 번 맞붙는 방식입니다.",
+    why: "일정의 유불리를 줄이는 기본 방식입니다. 총 경기 수를 계산하는 근거가 됩니다.",
+    ex: "K리그2 2026은 17팀 2로빈입니다. 팀이 홀수라 매 라운드 한 팀이 쉬고, 34라운드 동안 팀당 32경기를 치릅니다.",
+    care: "K리그1처럼 시즌 중간에 그룹을 나누는 스플릿 방식은 2로빈이 아닙니다. 리그마다 다릅니다.",
+    where: "연재 1편 1장"
+  }
+];
+
+function esc(s){
+  return String(s).replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+}
+
+function buildGlossary(){
+  const list  = document.getElementById("glist");
+  const count = document.getElementById("gcount");
+  const q     = document.getElementById("gq");
+  if(!list) return;
+
+  function render(keyword){
+    // 검색어를 소문자로 맞춰 비교합니다. 'R2' 로 쳐도 'R²' 항목이 걸리도록
+    // 이름·정의·예시를 한 덩어리로 합쳐서 찾습니다.
+    const k = (keyword || "").trim().toLowerCase();
+    const hit = GLOSSARY.filter(g => {
+      if(!k) return true;
+      const hay = [g.t, g.en, g.def, g.why, g.ex, g.care, g.where]
+                    .join(" ").toLowerCase()
+                    .replace("²", "2").replace("σ", "시그마");
+      return hay.includes(k.replace("²", "2"));
+    });
+
+    count.textContent = k
+      ? `${hit.length}개 / 전체 ${GLOSSARY.length}개`
+      : `전체 ${GLOSSARY.length}개`;
+
+    if(!hit.length){
+      list.innerHTML = `<p class="gempty">'${esc(keyword)}' 에 해당하는 용어가 없습니다.</p>`;
+      return;
+    }
+
+    list.innerHTML = hit.map(g => `
+      <div class="gitem">
+        <h3>${esc(g.t)}${g.en ? `<small>${esc(g.en)}</small>` : ""}</h3>
+        <p class="gdef">${esc(g.def)}</p>
+        <div class="grow"><span class="glab">왜 쓰나</span><span>${esc(g.why)}</span></div>
+        <div class="gex">예) ${esc(g.ex)}</div>
+        <div class="grow"><span class="glab">주의</span><span>${esc(g.care)}</span></div>
+        <div class="gwhere">쓰인 곳: ${esc(g.where)}</div>
+      </div>`).join("");
+  }
+
+  q.addEventListener("input", () => render(q.value));
+  render("");
+}
+
 </script>
 </body>
 </html>
