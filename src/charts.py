@@ -107,7 +107,8 @@ def chart_player_trend(data: dict, player: str, metric: str = "pass_pct") -> str
     return _save(fig, f"trend_{player}.png")
 
 
-def chart_standings_regression(reg: dict, my_team: str = None) -> str:
+def chart_standings_regression(reg: dict, my_team: str = None,
+                                highlight: list = None) -> str:
     """
     경기당 득실차 -> 경기당 승점 회귀 산점도 (연재 1편용)
 
@@ -117,8 +118,11 @@ def chart_standings_regression(reg: dict, my_team: str = None) -> str:
       - ±1σ 점선 밴드를 함께 그립니다.
         "이 밴드 안이면 추세선 위/아래를 논할 수 없다"는 것을
         독자가 눈으로 바로 알 수 있게 하기 위함입니다.
+      - highlight: 글에서 직접 언급하는 팀(예: 대패 왜곡 사례)은
+        1.5σ 미만이라도 라벨을 달아야 글 내용과 그림이 어긋나지 않습니다.
     """
     my_team = my_team or config.MY_TEAM
+    highlight = set(highlight or [])
     df = reg["table"]
     sd = reg["resid_sd"]
 
@@ -144,8 +148,8 @@ def chart_standings_regression(reg: dict, my_team: str = None) -> str:
         ax.scatter(r["경기당득실차"], r["경기당승점"],
                    s=size, color=color, edgecolor="white", lw=1, zorder=z)
 
-        # 라벨은 우리 팀과 유의미한 팀에만
-        if r["team"] == my_team or r["유의"]:
+        # 라벨은 우리 팀, 유의미한 팀, 글에서 직접 언급하는 팀에만
+        if r["team"] == my_team or r["유의"] or r["team"] in highlight:
             ax.annotate(f"{r['team']} ({r['시그마']:+.1f}σ)",
                         (r["경기당득실차"], r["경기당승점"]),
                         textcoords="offset points", xytext=(8, 4),
