@@ -230,6 +230,14 @@
   body.easy .adv{display:none !important}
   body.easy .stats.four{grid-template-columns:repeat(2,1fr)}
 
+  /* ── 구단 소개(연표) ───────────────────────────────────────*/
+  .story{list-style:none;margin:10px 0 0;padding:0}
+  .story li{display:flex;gap:14px;padding:9px 0;border-bottom:1px dashed var(--line);
+            font-size:.9rem;line-height:1.65}
+  .story li:last-child{border-bottom:none}
+  .story .yr{flex:0 0 68px;font-weight:800;color:var(--blue)}
+  .srcline{font-size:.74rem;color:var(--muted);margin-top:10px}
+
   /* ── 승격 확률 ─────────────────────────────────────────────*/
   .odds{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0 4px}
   @media(max-width:700px){.odds{grid-template-columns:1fr}}
@@ -318,6 +326,22 @@
         <b>3~6위는 승격 플레이오프</b>를 치릅니다.</p>
       <div class="tbl"><table id="h-table"></table></div>
       <p class="tblhint">옆으로 밀면 더 보입니다 <span class="arrow">→</span></p>
+
+      <h3 class="sec">대구FC는 어떤 팀인가요</h3>
+      <p class="hint">숫자 이야기 전에, 이 팀이 어디서 왔는지부터.</p>
+      <ul class="story">
+        <li><span class="yr">2002</span><span>시민이 주주로 참여하는 <b>시민구단</b>으로 창단.
+          이듬해 2003년부터 K리그에 참가했습니다.</span></li>
+        <li><span class="yr">2013</span><span>첫 강등. 2부 리그(당시 K리그 챌린지)로 내려갔습니다.</span></li>
+        <li><span class="yr">2018</span><span><b>FA컵 우승</b> — 구단 역사상 첫 우승 트로피입니다.</span></li>
+        <li><span class="yr">2019</span><span>FA컵 우승 자격으로 <b>AFC 챔피언스리그</b>에 나갔고,
+          같은 해 전용구장 <b>DGB대구은행파크</b>가 문을 열었습니다.</span></li>
+        <li><span class="yr">2025</span><span>두 번째 강등. 그래서 지금 K리그2에 있습니다.</span></li>
+        <li><span class="yr">2026</span><span>1년 만의 복귀가 목표인 시즌.
+          이 사이트가 들여다보는 시즌이 바로 이 시즌입니다.</span></li>
+      </ul>
+      <p class="srcline">연고지 대구광역시 · 마스코트 빅토·리카 ·
+        출처: 위키백과 「대구 FC」, 대구MBC 보도 (2025.12)</p>
 
       <h3 class="sec">이 사이트는 무엇을 하나요</h3>
       <ul class="hlist">
@@ -1134,7 +1158,31 @@ function esc(s){
   return String(s).replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
 }
 
-let GCAT = "all";   // 백과 카테고리: all | 축구 | 데이터
+let GCAT = "all";      // 백과 카테고리: all | 축구 | 데이터
+let GRENDER = null;    // 바깥(툴팁·주소창 해시)에서 목록을 다시 그리기 위한 통로
+
+// 항목을 가리키는 짧은 이름. 블로그에서 #g=오프사이드 처럼 링크할 때 씁니다.
+// 괄호 앞부분만 쓰고 공백을 없앱니다. "σ (시그마, 표준편차)" → "σ"
+function termKey(g){ return g.t.split(" (")[0].replace(/\s+/g, ""); }
+
+// 특정 용어를 펼친 채로 백과 탭을 엽니다.
+function openTerm(key){
+  switchTab("g");
+  GCAT = "all";
+  const cats = document.getElementById("gcats");
+  if(cats) cats.querySelectorAll(".gcat").forEach(x => x.classList.toggle("on", x.dataset.c === "all"));
+  const q = document.getElementById("gq");
+  if(q) q.value = "";
+  if(GRENDER) GRENDER("");
+  const el = document.getElementById("g-" + encodeURIComponent(key));
+  if(!el) return;
+  el.classList.add("open");
+  const head = el.querySelector(".ghead");
+  if(head) head.setAttribute("aria-expanded", "true");
+  el.scrollIntoView({behavior:"smooth", block:"center"});
+  // 주소창에도 남겨서 링크를 그대로 복사할 수 있게 합니다.
+  history.replaceState(null, "", "#g=" + encodeURIComponent(key));
+}
 
 function buildGlossary(){
   const list  = document.getElementById("glist");
@@ -1167,7 +1215,7 @@ function buildGlossary(){
     // 카드 전체가 아니라 제목 버튼만 클릭 가능하게 하고, 펼친 상태는
     // 검색어를 바꿀 때마다 다시 그려지므로 매번 접힌 채로 시작합니다.
     list.innerHTML = hit.map(g => `
-      <div class="gitem">
+      <div class="gitem" id="g-${encodeURIComponent(termKey(g))}" data-key="${esc(termKey(g))}">
         <button type="button" class="ghead" aria-expanded="false">
           <span class="gtitle">${esc(g.t)}${g.en ? `<small>${esc(g.en)}</small>` : ""}<span class="gtag">${g.cat === "축구" ? "⚽ 축구 기본" : "📊 데이터"}</span></span>
           <span class="gchev">▸</span>
@@ -1191,8 +1239,12 @@ function buildGlossary(){
     const item = head.closest(".gitem");
     const open = item.classList.toggle("open");
     head.setAttribute("aria-expanded", open ? "true" : "false");
+    if(open && item.dataset.key){
+      history.replaceState(null, "", "#g=" + encodeURIComponent(item.dataset.key));
+    }
   });
 
+  GRENDER = render;
   q.addEventListener("input", () => render(q.value));
 
   // 카테고리 칩. 고른 칩만 .on 을 갖고, 검색어는 유지한 채 다시 그립니다.
@@ -1207,6 +1259,11 @@ function buildGlossary(){
     });
   }
   render("");
+
+  // 주소에 #g=오프사이드 가 붙어 있으면 그 항목을 펼친 채로 시작합니다.
+  // (블로그 글에서 특정 용어로 바로 보내기 위한 통로)
+  const h = decodeURIComponent((location.hash || "").replace(/^#g=/, ""));
+  if(h && location.hash.startsWith("#g=")) setTimeout(() => openTerm(h), 0);
 }
 
 
@@ -1514,12 +1571,20 @@ function initTips(){
     if(!g) return;
     cur = t;
     tip.innerHTML = `<b>${esc(g.t)}</b>${esc(g.easy)}
-      <div class="tipgo">더 자세히 → 위쪽 <b>📖 축구 백과</b> 탭</div>`;
+      <div class="tipgo"><button type="button" class="golink" style="padding:6px 13px;font-size:.78rem"
+        data-open="${esc(termKey(g))}">📖 축구 백과에서 자세히 보기</button></div>`;
     tip.classList.add("show");
     const r = t.getBoundingClientRect();
     const maxL = window.scrollX + document.documentElement.clientWidth - tip.offsetWidth - 12;
     tip.style.top  = (r.bottom + window.scrollY + 6) + "px";
     tip.style.left = Math.max(12, Math.min(r.left + window.scrollX, maxL)) + "px";
+  });
+  // 말풍선 안의 버튼 → 백과 탭의 해당 항목으로 이동
+  tip.addEventListener("click", e => {
+    const b = e.target.closest("[data-open]");
+    if(!b) return;
+    hide();
+    openTerm(b.dataset.open);
   });
   window.addEventListener("resize", hide);
   window.addEventListener("scroll", hide, {passive:true});
