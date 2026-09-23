@@ -166,6 +166,12 @@
   .gwhere{margin-top:10px;padding-top:9px;border-top:1px dashed var(--line);
           font-size:.76rem;color:var(--muted)}
   .gempty{color:var(--muted);font-size:.9rem;padding:20px 0;text-align:center}
+
+  /* 팀 배지 — 엠블럼 대신 팀 컬러 원형 배지 (저작권 문제 없음, 순수 CSS) */
+  .tbadge{display:inline-flex;align-items:center;justify-content:center;
+          width:20px;height:20px;border-radius:50%;margin-right:6px;
+          font-size:.62rem;font-weight:800;color:#fff;flex:none;
+          vertical-align:-4px;line-height:1}
 </style>
 </head>
 <body>
@@ -277,6 +283,35 @@ const sel = [];   // 선수 탭에서 선택된 선수 (최대 2명)
 
 const fmt = n => (n === null || n === undefined || Number.isNaN(n)) ? "-" :
   (typeof n === "number" ? (Number.isInteger(n) ? n : n.toFixed(2)) : n);
+
+// 팀 이름 앞 원형 배지. 구단 엠블럼은 상표권 문제가 있어 쓰지 않고
+// 팀 컬러 + 이니셜로 대체합니다(README 저작권 주의 참고).
+// 수원FC·서울이랜드·화성FC·김포FC·경남FC·파주프런티어·용인FC·김해FC 는
+// 구단 발표 자료로 확인한 색이고, 나머지는 알려진 이미지 기준 추정치라
+// 실제 브랜드 컬러와 다를 수 있습니다 — 틀렸으면 이 표만 고치면 됩니다.
+const TEAM_META = {
+  "수원삼성":     {c:"#003876", i:"수삼"},
+  "수원FC":       {c:"#D0273C", i:"수원"},
+  "서울이랜드":   {c:"#0047AB", i:"서울"},
+  "대구FC":       {c:"#2ea3e8", i:"대구"},
+  "화성FC":       {c:"#F5821F", i:"화성"},
+  "부산아이파크": {c:"#0F6FB0", i:"부산"},
+  "김포FC":       {c:"#39B54A", i:"김포"},
+  "충남아산":     {c:"#1D4E9B", i:"아산"},
+  "경남FC":       {c:"#E2231A", i:"경남"},
+  "성남FC":       {c:"#D4A017", i:"성남"},
+  "충북청주":     {c:"#2E8B57", i:"청주"},
+  "파주프런티어": {c:"#274690", i:"파주"},
+  "용인FC":       {c:"#C8102E", i:"용인"},
+  "천안시티":     {c:"#1B4F72", i:"천안"},
+  "안산그리너스": {c:"#4CAF50", i:"안산"},
+  "전남드래곤즈": {c:"#002D5C", i:"전남"},
+  "김해FC":       {c:"#B22222", i:"김해"},
+};
+const teamBadge = name => {
+  const m = TEAM_META[name];
+  return (m ? `<span class="tbadge" style="background:${m.c}">${m.i}</span>` : "") + name;
+};
 
 // ── 초기화 ────────────────────────────────────────────────────
 function init(){
@@ -441,7 +476,7 @@ function buildTeamTab(){
     `<thead><tr>${head.map(h=>`<th>${["순위","팀","경기수"].includes(h)
         ? h : colLabel(h)}</th>`).join("")}</tr></thead>
      <tbody>${D.teams.map((t,i) => `<tr class="${t.team===D.meta.team?'mine':''}">
-       <td>${i+1}</td><td>${t.team}</td><td>${t.경기수}</td>
+       <td>${i+1}</td><td>${teamBadge(t.team)}</td><td>${t.경기수}</td>
        ${TEAM_COLS.map(c=>`<td>${fmt(t[c])}</td>`).join("")}</tr>`).join("")}</tbody>`;
 }
 
@@ -506,7 +541,7 @@ function buildStandingsTab(){
       const mv = t.순위변동;
       const mvs = mv === 0 ? "-" : (mv > 0 ? `▲${mv}` : `▼${-mv}`);
       return `<tr class="${t.team===S.meta.team?'mine':''}">
-        <td>${t.PPG순위}</td><td>${t.team}</td><td>${t.경기수}</td><td>${t.승점}</td>
+        <td>${t.PPG순위}</td><td>${teamBadge(t.team)}</td><td>${t.경기수}</td><td>${t.승점}</td>
         <td>${t.PPG.toFixed(3)}</td><td>${t.득실차>0?'+':''}${t.득실차}</td>
         <td>${t.총점순위}</td><td>${mvs}</td>
         <td style="${t.유의 ? 'font-weight:700;color:'+(t.시그마>0?'#1a7f37':'#c1121f') : ''}"
@@ -672,8 +707,6 @@ function drawOnOff(){
   });
 }
 
-init();
-
 // ── 탭 4: 용어 사전 ───────────────────────────────────────────
 // 데이터 파일이 아니라 코드 안에 둔 이유:
 //   글보다 자주 바뀌지 않고, 용어를 고칠 때 이 파일 한 곳만 보면 되기 때문입니다.
@@ -799,6 +832,11 @@ function buildGlossary(){
   render("");
 }
 
+// init()은 buildGlossary()에서 GLOSSARY를 바로 참조하므로,
+// GLOSSARY(const)가 선언된 다음, 파일 맨 끝에서 호출해야 합니다.
+// (앞에서 호출하면 "Cannot access 'GLOSSARY' before initialization"로 죽고,
+//  그 뒤에 있던 nav 버튼 클릭 바인딩까지 통째로 실행되지 않아 탭이 전부 안 눌립니다.)
+init();
 </script>
 </body>
 </html>
