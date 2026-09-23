@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>대구FC 데이터 랩</title>
+<!-- 차트 라이브러리를 프로젝트 안에 같이 넣어뒀습니다(vendoring).
+     인터넷이 없어도 열리고, 나중에 CDN 주소가 바뀌어도 사이트가 깨지지 않습니다. -->
+<script src="vendor/chart.umd.js"></script>
+<style>
+  :root{
+    /* 대구FC 공식 HEX가 공개돼 있지 않아, 구단이 스스로 말하는 "하늘색(스카이블루)" 톤으로 골랐습니다 */
+    --blue:#2ea3e8; --blue-dark:#0a4d7a; --blue-soft:#e8f0f9; --sub:#c9d6e4; --accent:#e4572e;
+    --bg:#f5f7fa; --card:#fff; --text:#1c2733; --muted:#6b7a89; --line:#e2e8ef; --good:#1a7f4b;
+    --shadow:0 1px 2px rgba(16,24,40,.04), 0 8px 24px -12px rgba(16,24,40,.12);
+    --shadow-lift:0 16px 32px -16px rgba(46,163,232,.35);
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+  /* 인터넷 없이도 열려야 해서(README 참고) 외부 폰트/CDN 없이 시스템 폰트로만 톤을 다듬었습니다 */
+  @media (prefers-color-scheme: dark){
+    :root{
+      --blue:#6cc4f0; --blue-dark:#2ea3e8; --blue-soft:#16283d; --sub:#33475c; --accent:#ff8360;
+      --bg:#0d1620; --card:#16212e; --text:#e7edf5; --muted:#93a3b8; --line:#26374a; --good:#3ecf83;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.5);
+      --shadow-lift:0 16px 32px -16px rgba(108,196,240,.45);
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:"Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;
+       line-height:1.6}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+  header{position:relative;overflow:hidden;color:#fff;
+         padding:clamp(28px,6vw,44px) 0 clamp(30px,5vw,40px);
+         background:radial-gradient(120% 160% at 100% 0%,rgba(255,255,255,.14),transparent 55%),
+                    linear-gradient(155deg,var(--blue) 0%,var(--blue-dark) 100%)}
+  header::after{content:"⚽";position:absolute;right:-20px;top:-36px;font-size:190px;
+                opacity:.08;transform:rotate(12deg);pointer-events:none}
+  header .wrap{position:relative}
+  .eyebrow{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+           opacity:.75;font-weight:700;margin-bottom:6px}
+  header h1{margin:0;font-size:clamp(1.4rem,4vw,1.9rem);font-weight:800;letter-spacing:-.01em}
+  header p{margin:8px 0 0;opacity:.88;font-size:.86rem}
+  .banner{position:relative;background:var(--card);border:1px solid var(--line);
+          border-left:4px solid var(--accent);box-shadow:var(--shadow);
+          padding:12px 16px;margin:-18px 0 18px;border-radius:10px;
+          font-size:.85rem;line-height:1.7}
+  nav{display:flex;gap:4px;padding:4px;margin:0 0 16px;flex-wrap:wrap;
+      width:fit-content;background:var(--card);border:1px solid var(--line);
+      border-radius:100px;box-shadow:var(--shadow)}
+  nav button{border:none;background:transparent;color:var(--muted);
+             padding:10px 20px;border-radius:100px;cursor:pointer;
+             font-size:.9rem;font-weight:700;font-family:inherit;
+             transition:.18s var(--ease)}
+  nav button:hover:not(.on){color:var(--blue);background:var(--blue-soft)}
+  nav button.on{color:#fff;background:linear-gradient(135deg,var(--blue),var(--blue-dark));
+                box-shadow:0 4px 14px -4px rgba(11,92,171,.5)}
+  main{padding:0 0 48px}
+  .panel{display:none;background:var(--card);border-radius:16px;
+         padding:24px;border:1px solid var(--line);box-shadow:var(--shadow)}
+  .panel.on{display:block;animation:fadeIn .25s var(--ease)}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  h2{font-size:1.15rem;margin:0 0 4px;font-weight:800;letter-spacing:-.01em}
+  .hint{color:var(--muted);font-size:.85rem;margin:0 0 18px;line-height:1.6}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+  .card{position:relative;border:1px solid var(--line);border-radius:12px;padding:14px;
+        cursor:pointer;background:var(--card);transition:.18s var(--ease)}
+  .card:hover{border-color:var(--blue);transform:translateY(-3px);box-shadow:var(--shadow)}
+  .card.sel{border-color:var(--blue);background:var(--blue-soft);box-shadow:var(--shadow-lift)}
+  .card.sel::after{content:"✓";position:absolute;top:8px;right:10px;
+                   color:var(--blue);font-weight:900;font-size:.85rem}
+  .card .nm{font-weight:800;font-size:1rem}
+  .card .po{color:var(--muted);font-size:.78rem;margin-top:2px}
+  .card .mt{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);
+            font-size:.78rem;color:var(--muted)}
+  .detail{margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:12px 0}
+  .stat{background:linear-gradient(155deg,var(--blue-soft),transparent);
+        border:1px solid var(--line);border-radius:12px;padding:14px 10px;text-align:center}
+  .stat b{display:block;font-size:1.4rem;color:var(--blue);font-weight:800}
+  .stat span{font-size:.72rem;color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:.86rem;margin-top:10px}
+  th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:right}
+  th:first-child,td:first-child{text-align:left}
+  thead th{color:var(--muted);font-weight:700;font-size:.74rem;
+           text-transform:uppercase;letter-spacing:.04em}
+  tbody tr{transition:background .15s}
+  tbody tr:hover{background:var(--blue-soft)}
+  tr.mine{background:var(--blue-soft);font-weight:800}
+  tr.mine td:first-child{color:var(--blue)}
+  .up{color:var(--good);font-weight:700}.up::before{content:"▲ ";font-size:.7em}
+  .down{color:var(--accent);font-weight:700}.down::before{content:"▼ ";font-size:.7em}
+  select{padding:10px 14px;border:1px solid var(--line);border-radius:10px;
+         font-family:inherit;font-size:.9rem;background:var(--card);color:var(--text);
+         cursor:pointer}
+  select:focus{outline:2px solid var(--blue);outline-offset:1px}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+  .row label{font-weight:700;font-size:.85rem;color:var(--muted)}
+  .chartbox{position:relative;height:320px;margin-top:16px;background:#fff;
+            border-radius:12px;padding:12px;box-shadow:inset 0 0 0 1px var(--line)}
+  .warn{background:linear-gradient(155deg,#fff4e5,#fff9f0);border:1px solid #ffdca8;
+        border-radius:10px;padding:12px 14px;font-size:.83rem;margin-top:12px;color:#7a4b12}
+  .empty{color:var(--muted);font-size:.9rem;padding:32px 0;text-align:center}
+
+  /* ── 순위 분석 탭 전용 레이아웃 ─────────────────────────────
+     섹션이 3개(차트/순위표/시나리오)라 h3 기본 스타일만으로는
+     어디서 끊기는지 눈에 안 들어옵니다. 왼쪽 세로선으로 구분합니다. */
+  h3.sec{font-size:1rem;font-weight:800;letter-spacing:-.01em;
+         margin:34px 0 4px;padding-left:10px;border-left:3px solid var(--blue)}
+  h3.sec:first-of-type{margin-top:24px}
+  .sec + .hint{padding-left:13px}
+
+  /* 표를 카드 안에 넣어 둥근 테두리를 줍니다. 가로 스크롤도 여기서 처리합니다. */
+  .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;margin-top:10px}
+  .tbl table{margin:0}
+  .tbl th,.tbl td{padding:9px 12px;white-space:nowrap}
+  .tbl thead th{background:var(--blue-soft);color:var(--text);
+                text-transform:none;letter-spacing:0;font-size:.76rem;
+                border-bottom:1px solid var(--line)}
+  .tbl thead th small{display:block;font-weight:600;font-size:.92em;
+                      color:var(--muted);margin-top:1px}
+  .tbl tbody tr:last-child td{border-bottom:none}
+
+  /* 시나리오 표: 산술적으로 불가능한 줄은 회색으로 눌러 둡니다.
+     O와 X가 같은 색이면 어디까지가 현실적인 범위인지 한눈에 안 보입니다. */
+  tr.dead td{color:var(--muted);background:var(--bg)}
+  tr.dead:hover td{background:var(--bg)}
+  tr.edge td{border-bottom:2px solid var(--accent)}
+  .ox{display:inline-block;min-width:62px;padding:2px 8px;border-radius:999px;
+      font-size:.74rem;font-weight:800;text-align:center}
+  .ox.yes{background:rgba(26,127,75,.14);color:var(--good)}
+  .ox.no{background:var(--line);color:var(--muted)}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;
+          margin-top:10px;font-size:.78rem;color:var(--muted)}
+  .legend i{display:inline-block;width:20px;height:3px;border-radius:2px;
+            background:var(--accent);vertical-align:middle;margin-right:5px}
+
+  /* 팀 이름 열은 왼쪽 정렬. 기본 규칙(첫 칸만 왼쪽) 때문에
+     순위 번호 다음의 팀 이름이 오른쪽에 붙어 읽기 나빴습니다. */
+  #stable td:nth-child(2),#stable th:nth-child(2),
+  #ttable td:nth-child(2),#ttable th:nth-child(2){text-align:left}
+  /* 시나리오 표는 5열 전부 짧은 숫자라 가운데 정렬이 가장 정돈돼 보입니다. */
+  #srace th,#srace td{text-align:center}
+
+  /* 요약 카드는 4개 고정. auto-fit 이면 폭에 따라 3+1 로 깨집니다. */
+  .stats.four{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:700px){.stats.four{grid-template-columns:repeat(2,1fr)}}
+  .stats.four .stat span{display:block;margin-top:3px;line-height:1.35}
+</style>
+</head>
+<body>
+
+<header><div class="wrap">
+  <div class="eyebrow">K LEAGUE DATA LAB</div>
+  <h1>⚽ 대구FC 데이터 랩</h1>
+  <p id="sub">불러오는 중…</p>
+</div></header>
+
+<div class="wrap">
+  <div class="banner" id="banner"></div>
+
+  <nav>
+    <!-- 기본 탭을 '팀 비교'로 둡니다.
+         선수/OnOff 탭은 아직 샘플 데이터라, 처음 들어온 사람이
+         가짜 이름부터 보게 되는 것을 피하기 위함입니다. -->
+    <button class="on" data-t="s">📈 순위 분석</button>
+    <button data-t="t">🆚 팀 비교</button>
+    <button data-t="p">👤 선수</button>
+    <button data-t="o">🔁 On/Off 분석</button>
+  </nav>
+
+  <main>
+    <!-- 탭 1: 선수 -->
+    <section class="panel" id="pan-p">
+      <h2>선수 기록</h2>
+      <p class="hint">카드를 누르면 상세 기록이 보입니다. 두 명을 고르면 자동으로 비교됩니다.
+        (다시 누르면 선택 해제)</p>
+      <div class="cards" id="cards"></div>
+      <div class="detail" id="pdetail"></div>
+    </section>
+
+    <!-- 탭 0: 순위 분석 (연재 1편 내용) -->
+    <section class="panel on" id="pan-s">
+      <h2>순위 분석 — 순위와 내용은 얼마나 일치하는가</h2>
+      <p class="hint">팀마다 소화 경기 수가 달라, 모든 지표를 <b>경기당</b>으로 맞춘 뒤
+        '득실차로 예상되는 승점'과 '실제 승점'을 비교합니다.</p>
+      <div id="s-summary" class="stats four"></div>
+
+      <h3 class="sec">① 득실차 대비 승점</h3>
+      <p class="hint">회색 띠(±1σ) 안이면 평균에서 벗어났다고 말할 수 없는 범위입니다.
+        띠 밖으로 나간 팀만 이름을 답니다.</p>
+      <div class="chartbox" style="height:440px"><canvas id="schart"></canvas></div>
+
+      <h3 class="sec">② 경기당 승점 보정 순위표</h3>
+      <p class="hint">경기 수를 맞춘 순위입니다. ★ 는 1.5σ 이상 벗어난 팀입니다.</p>
+      <div class="tbl"><table id="stable"></table></div>
+
+      <h3 class="sec">③ 자동 승격(2위) 추격 시나리오</h3>
+      <p class="hint">확률이 아니라 산술입니다. 경쟁팀이 남은 경기에서 몇 점을 따느냐를
+        직접 골라서 읽는 표입니다.</p>
+      <div class="tbl"><table id="srace"></table></div>
+      <div class="legend">
+        <span><span class="ox yes">○ 가능</span> 남은 경기를 다 이기면 도달 가능</span>
+        <span><span class="ox no">✕ 불가</span> 전승해도 산술적으로 불가능</span>
+        <span><i></i>빨간 선 = 추격이 성립하는 한계선</span>
+      </div>
+      <p class="hint" id="s-note" style="margin-top:12px"></p>
+    </section>
+
+    <!-- 탭 2: 팀 비교 -->
+    <section class="panel" id="pan-t">
+      <h2>팀 비교</h2>
+      <p class="hint">팀마다 소화 경기 수가 달라, '경기당' 지표를 먼저 보는 것을 권합니다. (누적) 표시가 붙은 지표는 총합이라 경기 수 차이만큼 유리·불리가 생깁니다.</p>
+      <div class="row">
+        <label>지표</label>
+        <select id="tmetric"></select>
+      </div>
+      <div class="chartbox"><canvas id="tchart"></canvas></div>
+      <!-- 컬럼이 많아지면 가로 스크롤로 넘기도록 감쌉니다 -->
+      <div class="tbl"><table id="ttable"></table></div>
+    </section>
+
+    <!-- 탭 3: On/Off -->
+    <section class="panel" id="pan-o">
+      <h2>On/Off 분석</h2>
+      <p class="hint">한 선수가 <b>출전한 경기</b>와 <b>결장한 경기</b>로 나눠 팀 기록을 비교합니다.
+        데이터포털에는 없는, 직접 계산해야 나오는 지표입니다.</p>
+      <div class="row">
+        <label>선수</label>
+        <select id="osel"></select>
+      </div>
+      <div id="obody"></div>
+    </section>
+  </main>
+</div>
+
+<!-- 데이터 파일을 먼저 불러옵니다. 이 파일이 window.KFL_DATA 를 만들어 줍니다.
+     (json을 fetch하지 않는 이유는 src/export.py 주석 참고) -->
+<script src="data/players.js"></script>
+<script src="data/standings.js"></script>
+
+<script>
+const D = window.KFL_DATA;
+let chartT = null, chartO = null;
+const sel = [];   // 선수 탭에서 선택된 선수 (최대 2명)
+
+const fmt = n => (n === null || n === undefined || Number.isNaN(n)) ? "-" :
+  (typeof n === "number" ? (Number.isInteger(n) ? n : n.toFixed(2)) : n);
+
+// ── 초기화 ────────────────────────────────────────────────────
+function init(){
+  if(!D){ document.getElementById("sub").textContent =
+    "데이터가 없습니다. 먼저 python run.py 를 실행하세요."; return; }
+
+  // 헤더의 경기 수.
+  //   D.matches 는 '대구 경기 기록 CSV'의 줄 수인데, 지금은 샘플이라 16입니다.
+  //   팀 시즌 누적(team_season_stats.csv)이 있으면 그쪽 경기 수가 진짜입니다.
+  //   샘플 숫자를 헤더에 띄우면 방문자가 실제 기록으로 착각합니다.
+  const myRow = (D.teams || []).find(t => t.team === D.meta.team);
+  const games = (D.meta.team_is_real && myRow) ? myRow.경기수 : D.matches.length;
+  document.getElementById("sub").textContent =
+    `${D.meta.season}시즌 · ${D.meta.team} ${games}경기 · 생성일 ${D.meta.generated_at}`;
+  // 어느 데이터가 진짜이고 어느 것이 아직 샘플인지 정확히 알려줍니다.
+  // (샘플 숫자를 실제로 착각해서 글에 쓰는 사고를 막기 위한 장치)
+  const lines = [];
+  if (D.meta.is_sample) {
+    lines.push("⚠️ <b>선수 탭과 On/Off 탭의 숫자는 아직 샘플(가짜)입니다.</b> " +
+               "data/raw/ 에 실제 경기 기록을 넣고 다시 실행하세요.");
+  }
+  if (D.meta.team_is_real) {
+    lines.push("✅ <b>팀 비교 탭은 실제 데이터입니다.</b> " +
+               "출처: 한국프로축구연맹(K LEAGUE) 공식 기록. 데이터 기준일을 함께 표기하세요.");
+  } else {
+    lines.push("ℹ️ 팀 비교는 <b>대구전 표본</b> 기준이라 왜곡될 수 있습니다. " +
+               "data/raw/team_season_stats.csv 를 채우면 리그 전체 순위표가 됩니다.");
+  }
+  document.getElementById("banner").innerHTML = lines.join("<br>");
+
+  buildCards(); buildTeamTab(); buildOnOffTab(); buildStandingsTab();
+
+  document.querySelectorAll("nav button").forEach(b=>{
+    b.onclick = () => {
+      document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));
+      document.querySelectorAll(".panel").forEach(x=>x.classList.remove("on"));
+      b.classList.add("on");
+      document.getElementById("pan-"+b.dataset.t).classList.add("on");
+    };
+  });
+}
+
+// ── 탭 1: 선수 ────────────────────────────────────────────────
+function buildCards(){
+  const box = document.getElementById("cards");
+  box.innerHTML = D.players.map(p => `
+    <div class="card" data-n="${p.player}">
+      <div class="nm">${p.player}</div>
+      <div class="po">${p.포지션 ?? ""}</div>
+      <div class="mt">${p.출전경기}경기 · ${p.출전시간}분</div>
+    </div>`).join("");
+
+  box.querySelectorAll(".card").forEach(c => {
+    c.onclick = () => {
+      const n = c.dataset.n, i = sel.indexOf(n);
+      if(i >= 0) sel.splice(i,1);
+      else { sel.push(n); if(sel.length > 2) sel.shift(); }
+      box.querySelectorAll(".card").forEach(x =>
+        x.classList.toggle("sel", sel.includes(x.dataset.n)));
+      renderPlayers();
+    };
+  });
+}
+
+const P90 = [
+  ["패스시도_per90","패스 시도"], ["키패스_per90","키패스"],
+  ["슈팅_per90","슈팅"], ["태클_per90","태클"],
+  ["인터셉트_per90","인터셉트"], ["경합승리_per90","경합 승리"],
+];
+
+function renderPlayers(){
+  const el = document.getElementById("pdetail");
+  if(sel.length === 0){ el.innerHTML = '<p class="empty">선수를 선택하세요.</p>'; return; }
+  const picks = sel.map(n => D.players.find(p => p.player === n));
+
+  if(picks.length === 1){
+    const p = picks[0];
+    el.innerHTML = `<h2>${p.player} <span style="color:var(--muted);font-weight:400">
+      ${p.포지션 ?? ""}</span></h2>
+      <div class="stats">
+        <div class="stat"><b>${p.출전경기}</b><span>출전</span></div>
+        <div class="stat"><b>${p.선발}</b><span>선발</span></div>
+        <div class="stat"><b>${p.출전시간}</b><span>출전 분</span></div>
+        <div class="stat"><b>${p.패스성공률}%</b><span>패스 성공률</span></div>
+      </div>
+      <p class="hint">아래는 <b>90분당</b> 기록입니다. 출전 시간이 다른 선수끼리
+        공정하게 비교하기 위한 보정입니다.</p>
+      <table><thead><tr><th>지표</th><th>90분당</th><th>시즌 합계</th></tr></thead><tbody>
+      ${P90.map(([k,label]) => `<tr><td>${label}</td><td>${fmt(p[k])}</td>
+        <td>${fmt(p[k.replace("_per90","")])}</td></tr>`).join("")}
+      </tbody></table>
+      <p class="hint" style="margin-top:12px">비교하려면 다른 선수를 하나 더 누르세요.</p>`;
+    return;
+  }
+
+  const [a,b] = picks;
+  el.innerHTML = `<h2>${a.player} vs ${b.player}</h2>
+    <p class="hint">둘 다 90분당 기록입니다. 초록색이 더 높은 쪽입니다.</p>
+    <table><thead><tr><th>지표</th><th>${a.player}</th><th>${b.player}</th>
+      <th>차이</th></tr></thead><tbody>
+    ${P90.map(([k,label]) => {
+      const x = a[k] ?? 0, y = b[k] ?? 0, d = (x-y).toFixed(2);
+      return `<tr><td>${label}</td>
+        <td class="${x>y?'up':''}">${fmt(x)}</td>
+        <td class="${y>x?'up':''}">${fmt(y)}</td>
+        <td>${d>0?'+':''}${d}</td></tr>`;
+    }).join("")}
+    <tr><td>패스 성공률(%)</td>
+      <td class="${a.패스성공률>b.패스성공률?'up':''}">${fmt(a.패스성공률)}</td>
+      <td class="${b.패스성공률>a.패스성공률?'up':''}">${fmt(b.패스성공률)}</td>
+      <td>${(a.패스성공률-b.패스성공률).toFixed(1)}</td></tr>
+    </tbody></table>`;
+}
+
+// ── 탭 2: 팀 비교 ─────────────────────────────────────────────
+// 표에 보여줄 팀 지표 컬럼을 데이터에서 자동으로 뽑습니다.
+// 시즌 누적 파일(team_season_stats.csv)을 넣으면 승점·득실차 컬럼이 생기는데,
+// 이렇게 해두면 사이트 코드를 고치지 않아도 새 컬럼이 자동으로 표에 나타납니다.
+const SKIP_COLS = ["team","경기수","출처"];
+const RAW_COLS = D && D.teams && D.teams.length
+  ? Object.keys(D.teams[0]).filter(k => !SKIP_COLS.includes(k))
+  : [];
+
+// '경기당' 지표를 앞으로 보냅니다.
+//   승/무/패/승점/득실차는 '누적'이라, 경기 수가 다른 팀끼리 비교하면 착시가 생깁니다.
+//   기본값이 누적 지표면 방문자가 가장 먼저 보는 그래프가 불공정해집니다.
+const isPerGame = c => c.startsWith("경기당");
+const TEAM_COLS = [...RAW_COLS.filter(isPerGame), ...RAW_COLS.filter(c => !isPerGame(c))];
+const colLabel = c => isPerGame(c) ? c.replace(/_/g," ") : c.replace(/_/g," ") + " (누적)";
+
+function buildTeamTab(){
+  const s = document.getElementById("tmetric");
+  s.innerHTML = TEAM_COLS.map(c =>
+    `<option value="${c}">${colLabel(c)}</option>`).join("");
+  s.onchange = drawTeam;
+  drawTeam();
+
+  const head = ["순위","팀","경기수",...TEAM_COLS];
+  document.getElementById("ttable").innerHTML =
+    `<thead><tr>${head.map(h=>`<th>${["순위","팀","경기수"].includes(h)
+        ? h : colLabel(h)}</th>`).join("")}</tr></thead>
+     <tbody>${D.teams.map((t,i) => `<tr class="${t.team===D.meta.team?'mine':''}">
+       <td>${i+1}</td><td>${t.team}</td><td>${t.경기수}</td>
+       ${TEAM_COLS.map(c=>`<td>${fmt(t[c])}</td>`).join("")}</tr>`).join("")}</tbody>`;
+}
+
+function drawTeam(){
+  const m = document.getElementById("tmetric").value;
+
+  // '실점'이 들어간 지표는 낮을수록 좋으므로 오름차순으로 정렬합니다.
+  // 그래야 막대 맨 위(1위)가 항상 '가장 좋은 팀'이 됩니다.
+  const lowerIsBetter = m.includes("실점");
+  const rows = [...D.teams].sort((a,b)=> lowerIsBetter ? a[m]-b[m] : b[m]-a[m]);
+
+  // 가로 막대는 팀 수만큼 세로 공간이 필요합니다.
+  // 높이를 고정해두면 Chart.js가 축 라벨을 몇 개 건너뛰어 팀 이름이 사라집니다.
+  document.getElementById("tchart").parentElement.style.height =
+    (rows.length * 26 + 70) + "px";
+
+  if(chartT) chartT.destroy();
+  chartT = new Chart(document.getElementById("tchart"), {
+    type:"bar",
+    // 막대가 17개라 이름만으로는 몇 번째인지 세기 어렵습니다. 순위를 앞에 붙입니다.
+    data:{ labels: rows.map((r,i)=>`${i+1}위 ${r.team}`),
+      datasets:[{ data: rows.map(r=>r[m]),
+        backgroundColor: rows.map(r => r.team===D.meta.team ? "#2ea3e8" : "#c9d6e4"),
+        borderRadius:4 }]},
+    options:{ maintainAspectRatio:false, indexAxis:"y",
+      plugins:{legend:{display:false},
+        title:{display:true,text:colLabel(m)}},
+      scales:{x:{grid:{color:"#eef2f6"}},y:{grid:{display:false}}}}
+  });
+}
+
+// ── 탭 0: 순위 분석 ───────────────────────────────────────────
+let chartS = null;
+
+function buildStandingsTab(){
+  const S = window.KFL_STANDINGS;
+
+  // 데이터가 없으면 탭 자체를 숨깁니다.
+  // (있는 척하고 빈 화면을 보여주는 것보다, 없는 게 낫습니다)
+  if(!S){
+    document.querySelector('nav button[data-t="s"]').style.display = "none";
+    document.getElementById("pan-s").classList.remove("on");
+    document.querySelector('nav button[data-t="t"]').classList.add("on");
+    document.getElementById("pan-t").classList.add("on");
+    return;
+  }
+
+  const sig = S.teams.filter(t => t.유의);
+  document.getElementById("s-summary").innerHTML = `
+    <div class="stat"><b>${S.reg.r2}</b><span>R² (설명력)</span></div>
+    <div class="stat"><b>${S.reg.resid_sd}</b><span>잔차 표준편차 σ</span></div>
+    <div class="stat"><b>${sig.length}</b><span>1.5σ 이상 벗어난 팀</span></div>
+    <div class="stat"><b>${S.race.잔여경기}</b><span>${S.meta.team} 잔여 경기</span></div>`;
+
+  drawScatter(S);
+
+  // 순위표
+  document.getElementById("stable").innerHTML = `
+    <thead><tr><th>PPG순위</th><th>팀</th><th>경기</th><th>승점</th><th>경기당 승점</th>
+      <th>득실차</th><th>공식순위</th><th>변동</th><th>잔차(σ)</th></tr></thead>
+    <tbody>${[...S.teams].sort((a,b)=>a.PPG순위-b.PPG순위).map(t => {
+      const mv = t.순위변동;
+      const mvs = mv === 0 ? "-" : (mv > 0 ? `▲${mv}` : `▼${-mv}`);
+      return `<tr class="${t.team===S.meta.team?'mine':''}">
+        <td>${t.PPG순위}</td><td>${t.team}</td><td>${t.경기수}</td><td>${t.승점}</td>
+        <td>${t.PPG.toFixed(3)}</td><td>${t.득실차>0?'+':''}${t.득실차}</td>
+        <td>${t.총점순위}</td><td>${mvs}</td>
+        <td style="${t.유의 ? 'font-weight:700;color:'+(t.시그마>0?'#1a7f37':'#c1121f') : ''}"
+          >${t.시그마>0?'+':''}${t.시그마}σ${t.유의?' ★':''}</td></tr>`;
+    }).join("")}</tbody>`;
+
+  // 시나리오 표
+  //   JSON 키를 그대로 헤더에 쓰면 "필요 최소 승수(무승부 0 가정)" 처럼 길어
+  //   칸이 제멋대로 늘어납니다. 짧은 제목 + 작은 설명으로 두 줄로 나눕니다.
+  const rows = S.race.시나리오;
+  if(rows.length){
+    const cols = Object.keys(rows[0]);
+    const OX   = cols[cols.length - 1];            // "산술적 가능"
+    const head = cols.map(c => {
+      if(c === OX) return "가능 여부";
+      if(c.startsWith("필요 최소")) return "필요 승수<small>무승부 0 가정</small>";
+      const m = c.match(/^(.+?)\s(잔여승점|최종|필요승점)$/);
+      return m ? `${m[2]}<small>${m[1]}</small>` : c;
+    });
+    // 마지막으로 'O'인 줄 = 추격이 성립하는 한계선. 여기에 굵은 선을 긋습니다.
+    const lastOk = rows.map(r => r[OX]).lastIndexOf("O");
+    document.getElementById("srace").innerHTML =
+      `<thead><tr>${head.map(h=>`<th>${h}</th>`).join("")}</tr></thead>
+       <tbody>${rows.map((r,i) => {
+         const dead = r[OX] === "X";
+         const cls  = [dead ? "dead" : "", i === lastOk ? "edge" : ""]
+                        .filter(Boolean).join(" ");
+         return `<tr class="${cls}">${cols.map(c => c === OX
+           ? `<td><span class="ox ${dead?"no":"yes"}">${dead?"✕ 불가":"○ 가능"}</span></td>`
+           : `<td>${r[c]}</td>`).join("")}</tr>`;
+       }).join("")}</tbody>`;
+  }
+
+  document.getElementById("s-note").innerHTML =
+    `${S.meta.team}는 현재 <b>${S.race.현재승점}점</b>, 잔여 ${S.race.잔여경기}경기로
+     산술적 최대 <b>${S.race.최대가능승점}점</b>입니다.
+     이 표는 2위 팀(${S.race.핵심경쟁팀})만 상대로 계산한 것이라,
+     통과해도 2위가 보장되지는 않습니다. ·
+     일정 난이도(상대 전력)는 보정하지 않았습니다. ·
+     출처: ${S.meta.출처}, 기준일은 글에 표기.`;
+}
+
+function drawScatter(S){
+  const xs = S.teams.map(t=>t.경기당득실차);
+  const lo = Math.min(...xs) - 0.1, hi = Math.max(...xs) + 0.1;
+  const line = x => S.reg.intercept + S.reg.slope * x;
+  const sd = S.reg.resid_sd;
+
+  const pts = S.teams.map(t => ({x:t.경기당득실차, y:t.PPG, t}));
+  const color = t => t.team === S.meta.team ? "#2ea3e8"
+                   : t.유의 ? "#e4572e" : "#c9d6e4";
+
+  // Chart.js 에는 점 옆에 글자를 쓰는 기능이 없습니다.
+  // 라이브러리를 하나 더 받는 대신, 그리기가 끝난 뒤 직접 글자를 얹는
+  // 작은 플러그인을 만들어 씁니다. (의존성을 늘리지 않는 쪽을 택했습니다)
+  const labelPlugin = {
+    id: "ptLabels",
+    afterDatasetsDraw(c){
+      const i = c.data.datasets.length - 1;      // 마지막 = 팀 점들
+      const ds = c.data.datasets[i], meta = c.getDatasetMeta(i);
+      const ctx = c.ctx;
+      ctx.save();
+      ctx.font = "600 11px system-ui, sans-serif";
+      ctx.fillStyle = "#33415c";
+      meta.data.forEach((pt, k) => {
+        const t = ds.data[k].t;
+        if(!t || !(t.유의 || t.team === S.meta.team)) return;   // 겹침 방지
+        const txt = `${t.team} (${t.시그마>0?"+":""}${t.시그마}σ)`;
+        // 오른쪽에 공간이 없으면 왼쪽에 씁니다
+        const w = ctx.measureText(txt).width;
+        const right = pt.x + 12 + w < c.chartArea.right;
+        ctx.textAlign = right ? "left" : "right";
+        ctx.fillText(txt, pt.x + (right ? 12 : -12), pt.y + 4);
+      });
+      ctx.restore();
+    }
+  };
+
+  if(chartS) chartS.destroy();
+  chartS = new Chart(document.getElementById("schart"), {
+    type:"scatter",
+    plugins:[labelPlugin],
+    data:{ datasets:[
+      // 띠는 먼저 그려야 점 아래에 깔립니다.
+      { label:`+1σ`, type:"line", data:[{x:lo,y:line(lo)+sd},{x:hi,y:line(hi)+sd}],
+        borderColor:"rgba(0,0,0,0)", pointRadius:0, fill:"+1",
+        backgroundColor:"rgba(136,136,136,.12)" },
+      { label:`−1σ`, type:"line", data:[{x:lo,y:line(lo)-sd},{x:hi,y:line(hi)-sd}],
+        borderColor:"rgba(0,0,0,0)", pointRadius:0 },
+      { label:`추세선 (R²=${S.reg.r2})`, type:"line",
+        data:[{x:lo,y:line(lo)},{x:hi,y:line(hi)}],
+        borderColor:"#888", borderWidth:1.5, pointRadius:0 },
+      { label:"팀", data:pts,
+        pointBackgroundColor: pts.map(p=>color(p.t)),
+        pointBorderColor:"#fff", pointBorderWidth:1.5,
+        pointRadius: pts.map(p=> p.t.team===S.meta.team ? 9 : (p.t.유의 ? 7 : 5)) },
+    ]},
+    options:{ maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{ callbacks:{ label: c => {
+          const t = c.raw.t; if(!t) return "";
+          return `${t.team} · PPG ${t.PPG.toFixed(3)} · ${t.시그마>0?"+":""}${t.시그마}σ`;
+        }}},
+      },
+      scales:{
+        x:{ title:{display:true,text:"경기당 득실차"}, grid:{color:"#eef2f6"} },
+        y:{ title:{display:true,text:"경기당 승점 (PPG)"}, grid:{color:"#eef2f6"} }
+      }}
+  });
+}
+
+// ── 탭 3: On/Off ──────────────────────────────────────────────
+function buildOnOffTab(){
+  const names = Object.keys(D.onoff || {});
+  const s = document.getElementById("osel");
+  if(names.length === 0){
+    document.getElementById("obody").innerHTML =
+      '<p class="empty">출전·결장이 모두 있는 선수가 없어 비교할 수 없습니다.</p>';
+    return;
+  }
+  s.innerHTML = names.map(n=>`<option>${n}</option>`).join("");
+  s.onchange = drawOnOff;
+  drawOnOff();
+}
+
+function drawOnOff(){
+  const r = D.onoff[document.getElementById("osel").value];
+  const keys = Object.keys(r.on).filter(k => k !== "경기수");
+
+  document.getElementById("obody").innerHTML = `
+    <div class="stats">
+      <div class="stat"><b>${r.on.경기수}</b><span>출전 경기</span></div>
+      <div class="stat"><b>${r.off.경기수}</b><span>결장 경기</span></div>
+    </div>
+    <div class="chartbox"><canvas id="ochart"></canvas></div>
+    <table><thead><tr><th>지표</th><th>출전</th><th>결장</th><th>차이</th></tr></thead>
+    <tbody>${keys.map(k=>{
+      const d = r.diff[k];
+      // 실점과 상대 패스 성공률은 '낮을수록 좋은' 지표라 색을 뒤집습니다
+      const lowerBetter = k.includes("실점") || k.includes("상대");
+      const good = lowerBetter ? d < 0 : d > 0;
+      return `<tr><td>${k}</td><td>${fmt(r.on[k])}</td><td>${fmt(r.off[k])}</td>
+        <td class="${d===0?'':(good?'up':'down')}">${d>0?'+':''}${d}</td></tr>`;
+    }).join("")}</tbody></table>
+    ${r.warning ? `<div class="warn">⚠️ ${r.warning}</div>` : ""}
+    <div class="warn">해석 주의: 상대 팀 전력과 홈/원정이 섞여 있습니다.
+      이 차이를 선수 한 명의 영향으로 단정할 수 없습니다.
+      '상대 패스 성공률'은 압박의 간접 지표이며, 정식 지표(PPDA)는 좌표 데이터가 필요합니다.</div>`;
+
+  // 차트에는 눈금 범위가 비슷한 지표만 담습니다.
+  // (수비액션처럼 값이 30~40인 지표를 섞으면 나머지 막대가 납작해져서 안 보입니다)
+  const keysChart = ["경기당 승점","경기당 득점","경기당 실점"];
+  if(chartO) chartO.destroy();
+  chartO = new Chart(document.getElementById("ochart"), {
+    type:"bar",
+    data:{ labels:keysChart, datasets:[
+      {label:"출전", data:keysChart.map(k=>r.on[k]), backgroundColor:"#2ea3e8", borderRadius:4},
+      {label:"결장", data:keysChart.map(k=>r.off[k]), backgroundColor:"#c9d6e4", borderRadius:4}]},
+    options:{ maintainAspectRatio:false,
+      plugins:{legend:{position:"bottom"}},
+      scales:{y:{beginAtZero:true,grid:{color:"#eef2f6"}},x:{grid:{display:false}}}}
+  });
+}
+
+init();
+</script>
+</body>
+</html>
