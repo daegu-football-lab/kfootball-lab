@@ -262,19 +262,29 @@ function init(){
     `${D.meta.season}시즌 · ${D.meta.team} ${games}경기 · 생성일 ${D.meta.generated_at}`;
   // 어느 데이터가 진짜이고 어느 것이 아직 샘플인지 정확히 알려줍니다.
   // (샘플 숫자를 실제로 착각해서 글에 쓰는 사고를 막기 위한 장치)
+  // 배너는 '방문자가 읽어야 할 것'만 담습니다.
+  // 개발자용 할 일 안내(어느 CSV를 채워라 등)는 화면이 아니라 콘솔로 보냅니다.
+  // 화면에 남겨 두면 방문자에게는 미완성 페이지로 보입니다.
   const lines = [];
   if (D.meta.is_sample) {
-    lines.push("⚠️ <b>선수 탭과 On/Off 탭의 숫자는 아직 샘플(가짜)입니다.</b> " +
-               "data/raw/ 에 실제 경기 기록을 넣고 다시 실행하세요.");
+    console.warn(
+      "[KFL] 선수/On-Off 데이터가 아직 샘플입니다. " +
+      "data/raw/ 에 실제 경기 기록을 넣고 다시 실행하면 해당 탭이 다시 나타납니다."
+    );
   }
   if (D.meta.team_is_real) {
-    lines.push("✅ <b>팀 비교 탭은 실제 데이터입니다.</b> " +
-               "출처: 한국프로축구연맹(K LEAGUE) 공식 기록. 데이터 기준일을 함께 표기하세요.");
+    lines.push("본 분석에 사용된 데이터의 저작권 및 소유권은 " +
+               "<b>한국프로축구연맹(K LEAGUE)</b>에 있습니다.");
   } else {
-    lines.push("ℹ️ 팀 비교는 <b>대구전 표본</b> 기준이라 왜곡될 수 있습니다. " +
-               "data/raw/team_season_stats.csv 를 채우면 리그 전체 순위표가 됩니다.");
+    lines.push("ℹ️ 팀 비교는 <b>대구전 표본</b> 기준이라 왜곡될 수 있습니다.");
+    console.warn(
+      "[KFL] data/raw/team_season_stats.csv 를 채우면 리그 전체 순위표가 됩니다."
+    );
   }
-  document.getElementById("banner").innerHTML = lines.join("<br>");
+  const bannerEl = document.getElementById("banner");
+  bannerEl.innerHTML = lines.join("<br>");
+  // 띄울 내용이 없으면 빈 상자가 남지 않도록 배너 자체를 감춥니다.
+  bannerEl.style.display = lines.length ? "" : "none";
 
   // 샘플(가짜) 데이터인 동안에는 선수·On/Off 탭 버튼을 감춥니다.
   // 배너 경고만으로는 방문자가 가짜 이름을 실제 기록으로 캡처해 갈 위험이 남습니다.
