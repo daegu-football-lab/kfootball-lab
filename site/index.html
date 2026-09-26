@@ -9,63 +9,86 @@
 <script src="vendor/chart.umd.js"></script>
 <style>
   :root{
-    /* 대구FC 공식 HEX가 공개돼 있지 않아, 구단이 스스로 말하는 "하늘색(스카이블루)" 톤으로 골랐습니다 */
-    --blue:#2ea3e8; --blue-dark:#0a4d7a; --blue-soft:#e8f0f9; --sub:#c9d6e4; --accent:#e4572e;
-    --bg:#f5f7fa; --card:#fff; --text:#1c2733; --muted:#6b7a89; --line:#e2e8ef; --good:#1a7f4b;
+    /* 대구FC 공식 HEX가 공개돼 있지 않아, 구단이 스스로 말하는 "하늘색(스카이블루)" 톤으로 골랐습니다.
+       (--teal 계열 이름은 남아 있지만 값은 전부 스카이블루입니다: 내비 밑줄·버튼·상단선 등 '포인트' 자리) */
+    --bar:#0a4d7a; --head:#0a4d7a; --blue:#2ea3e8; --blue-dark:#0a4d7a;
+    --teal:#2ea3e8; --teal-ink:#0a6aa8; --blue-soft:#e8f0f9; --tint:#e8f0f9;
+    --team:#2ea3e8; --sub:#c9d6e4; --accent:#e4572e;
+    --bg:#ffffff; --band:#f2f6fb; --card:#fff; --text:#1c2733; --muted:#6b7a89; --line:#e2e8ef; --rule:#0a4d7a;
+    --good:#1a7f4b; --btn:#1d84c6; --thead:#0a4d7a; --thead-ink:#fff; --zebra:#f6f9fc;
     --shadow:0 1px 2px rgba(16,24,40,.04), 0 8px 24px -12px rgba(16,24,40,.12);
-    --shadow-lift:0 16px 32px -16px rgba(46,163,232,.35);
+    --shadow-lift:0 12px 28px -16px rgba(46,163,232,.4);
     --ease:cubic-bezier(.22,1,.36,1);
   }
   /* 인터넷 없이도 열려야 해서(README 참고) 외부 폰트/CDN 없이 시스템 폰트로만 톤을 다듬었습니다 */
   @media (prefers-color-scheme: dark){
     :root{
-      --blue:#6cc4f0; --blue-dark:#2ea3e8; --blue-soft:#16283d; --sub:#33475c; --accent:#ff8360;
-      --bg:#0d1620; --card:#16212e; --text:#e7edf5; --muted:#93a3b8; --line:#26374a; --good:#3ecf83;
+      --bar:#0f2a44; --head:#a9dcf7; --blue:#6cc4f0; --blue-dark:#2ea3e8;
+      --teal:#6cc4f0; --teal-ink:#6cc4f0; --blue-soft:#16283d; --tint:#16283d;
+      --team:#6cc4f0; --sub:#33475c; --accent:#ff8360;
+      --bg:#0b131c; --band:#12253a; --card:#1a2a3c; --text:#e7edf5; --muted:#9db0c5; --line:#2f4661; --rule:#3d6d94;
+      --good:#3ecf83; --btn:#1f7fb8; --thead:#1f4c73; --thead-ink:#eaf4fb; --zebra:#1a2939;
       --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.5);
-      --shadow-lift:0 16px 32px -16px rgba(108,196,240,.45);
+      --shadow-lift:0 12px 28px -16px rgba(108,196,240,.45);
     }
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--text);
        font-family:"Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;
        line-height:1.6}
-  .wrap{max-width:1040px;margin:0 auto;padding:0 16px}
-  header{position:relative;overflow:hidden;color:#fff;
-         padding:clamp(28px,6vw,44px) 0 clamp(30px,5vw,40px);
-         background:radial-gradient(120% 160% at 100% 0%,rgba(255,255,255,.14),transparent 55%),
-                    linear-gradient(155deg,var(--blue) 0%,var(--blue-dark) 100%)}
-  header::after{content:"⚽";position:absolute;right:-20px;top:-36px;font-size:190px;
-                opacity:.08;transform:rotate(12deg);pointer-events:none}
-  header .wrap{position:relative}
-  .eyebrow{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
-           opacity:.75;font-weight:700;margin-bottom:6px}
-  header h1{margin:0;font-size:clamp(1.4rem,4vw,1.9rem);font-weight:800;letter-spacing:-.01em}
-  header p{margin:8px 0 0;opacity:.88;font-size:.86rem}
-  .banner{position:relative;background:var(--card);border:1px solid var(--line);
-          border-left:4px solid var(--accent);box-shadow:var(--shadow);
-          padding:12px 16px;margin:-18px 0 18px;border-radius:10px;
-          font-size:.85rem;line-height:1.7}
-  nav{display:flex;gap:4px;padding:4px;margin:0 0 16px;flex-wrap:wrap;
-      width:fit-content;background:var(--card);border:1px solid var(--line);
-      border-radius:100px;box-shadow:var(--shadow)}
-  nav button{border:none;background:transparent;color:var(--muted);
-             padding:10px 20px;border-radius:100px;cursor:pointer;
-             font-size:.9rem;font-weight:700;font-family:inherit;
-             transition:.18s var(--ease)}
-  nav button:hover:not(.on){color:var(--blue);background:var(--blue-soft)}
-  nav button.on{color:#fff;background:linear-gradient(135deg,var(--blue),var(--blue-dark));
-                box-shadow:0 4px 14px -4px rgba(11,92,171,.5)}
-  main{padding:0 0 48px}
-  .panel{display:none;background:var(--card);border-radius:16px;
-         padding:24px;border:1px solid var(--line);box-shadow:var(--shadow)}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+  /* ── 상단 유틸리티 바 (딥 퍼플) ────────────────────────────── */
+  .topbar{background:var(--bar);color:rgba(255,255,255,.88);font-size:.74rem;font-weight:700;
+          letter-spacing:.02em}
+  .topbar .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;
+                min-height:36px}
+  .topbar span+span{opacity:.7;font-weight:600}
+  .topbar #sub{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  /* ── 메인 헤더: 흰 바탕 + 로고 + 텍스트 내비 ─────────────────── */
+  header.site{background:var(--bg);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+  header.site .wrap{display:flex;align-items:center;justify-content:space-between;gap:24px;
+                    min-height:80px}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--head);flex:none}
+  .brand svg{width:42px;height:46px;flex:none}
+  .brand .wm{display:flex;flex-direction:column;line-height:1.05}
+  .brand .wm b{font-size:1.32rem;font-weight:900;letter-spacing:-.02em}
+  .brand .wm small{font-size:.62rem;font-weight:800;letter-spacing:.1em;color:var(--teal-ink);
+                   margin-top:4px}
+  nav{display:flex;gap:0;margin:0;flex-wrap:nowrap;justify-content:flex-end}
+  nav button{position:relative;border:none;background:transparent;color:var(--text);
+             padding:30px 13px;cursor:pointer;white-space:nowrap;
+             font-size:.83rem;font-weight:700;letter-spacing:.06em;font-family:inherit;
+             transition:color .18s var(--ease)}
+  nav button::after{content:"";position:absolute;left:13px;right:13px;bottom:-1px;height:3px;
+                    background:var(--teal);transform:scaleX(0);transition:transform .22s var(--ease)}
+  nav button:hover:not(.on){color:var(--head)}
+  nav button:hover::after{transform:scaleX(.5)}
+  nav button.on{color:var(--head)}
+  nav button.on::after{transform:scaleX(1)}
+
+  /* ── 페이지 타이틀 밴드 (연한 회색 + 틸 서브타이틀 + 토글) ───── */
+  .pageband{background:var(--band);border-bottom:1px solid var(--line)}
+  .pageband .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px;
+                  padding-top:30px;padding-bottom:30px}
+  .pageband h1{margin:0;font-size:clamp(1.35rem,3.4vw,1.9rem);font-weight:800;letter-spacing:-.02em;
+               color:var(--head);line-height:1.25}
+  .pageband p{margin:6px 0 0;color:var(--teal-ink);font-weight:700;font-style:italic;font-size:.92rem}
+  .banner{border-left:3px solid var(--accent);background:var(--band);
+          padding:10px 14px;margin:24px 0 0;
+          font-size:.8rem;line-height:1.7;color:var(--muted)}
+  .banner b{color:var(--text)}
+  main{padding:8px 0 64px}
+  .panel{display:none;background:transparent;padding:24px 0 0}
   .panel.on{display:block;animation:fadeIn .25s var(--ease)}
   @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-  h2{font-size:1.15rem;margin:0 0 4px;font-weight:800;letter-spacing:-.01em}
+  h2{font-size:1.5rem;margin:0 0 6px;font-weight:700;letter-spacing:-.02em;color:var(--head)}
   .hint{color:var(--muted);font-size:.85rem;margin:0 0 18px;line-height:1.6}
   .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
-  .card{position:relative;border:1px solid var(--line);border-radius:12px;padding:14px;
+  .card{position:relative;border:1px solid var(--line);border-radius:6px;padding:14px;
         cursor:pointer;background:var(--card);transition:.18s var(--ease)}
-  .card:hover{border-color:var(--blue);transform:translateY(-3px);box-shadow:var(--shadow)}
+  .card:hover{border-color:var(--teal);box-shadow:var(--shadow)}
   .card.sel{border-color:var(--blue);background:var(--blue-soft);box-shadow:var(--shadow-lift)}
   .card.sel::after{content:"✓";position:absolute;top:8px;right:10px;
                    color:var(--blue);font-weight:900;font-size:.85rem}
@@ -75,9 +98,9 @@
             font-size:.78rem;color:var(--muted)}
   .detail{margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:12px 0}
-  .stat{background:linear-gradient(155deg,var(--blue-soft),transparent);
-        border:1px solid var(--line);border-radius:12px;padding:14px 10px;text-align:center}
-  .stat b{display:block;font-size:1.4rem;color:var(--blue);font-weight:800}
+  .stat{background:var(--card);border-top:3px solid var(--teal);box-shadow:var(--shadow);
+        border:1px solid var(--line);border-radius:6px;padding:14px 10px;text-align:center}
+  .stat b{display:block;font-size:1.4rem;color:var(--head);font-weight:800}
   .stat span{font-size:.72rem;color:var(--muted)}
   table{width:100%;border-collapse:collapse;font-size:.86rem;margin-top:10px}
   th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:right}
@@ -86,39 +109,39 @@
            text-transform:uppercase;letter-spacing:.04em}
   tbody tr{transition:background .15s}
   tbody tr:hover{background:var(--blue-soft)}
-  tr.mine{background:var(--blue-soft);font-weight:800}
-  tr.mine td:first-child{color:var(--blue)}
+  tr.mine,.tbl tbody tr.mine{background:var(--blue-soft);font-weight:800}
+  tr.mine td:first-child{color:var(--head);box-shadow:inset 3px 0 0 var(--team)}
   .up{color:var(--good);font-weight:700}.up::before{content:"▲ ";font-size:.7em}
   .down{color:var(--accent);font-weight:700}.down::before{content:"▼ ";font-size:.7em}
-  select{padding:10px 14px;border:1px solid var(--line);border-radius:10px;
+  select{padding:10px 14px;border:1px solid var(--line);border-radius:6px;
          font-family:inherit;font-size:.9rem;background:var(--card);color:var(--text);
          cursor:pointer}
-  select:focus{outline:2px solid var(--blue);outline-offset:1px}
+  select:focus{outline:2px solid var(--teal);outline-offset:1px}
   .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
   .row label{font-weight:700;font-size:.85rem;color:var(--muted)}
   .chartbox{position:relative;height:320px;margin-top:16px;background:#fff;
-            border-radius:12px;padding:12px;box-shadow:inset 0 0 0 1px var(--line)}
+            border-radius:6px;padding:12px;box-shadow:inset 0 0 0 1px var(--line)}
   .warn{background:linear-gradient(155deg,#fff4e5,#fff9f0);border:1px solid #ffdca8;
-        border-radius:10px;padding:12px 14px;font-size:.83rem;margin-top:12px;color:#7a4b12}
+        border-radius:6px;padding:12px 14px;font-size:.83rem;margin-top:12px;color:#7a4b12}
   .empty{color:var(--muted);font-size:.9rem;padding:32px 0;text-align:center}
 
   /* ── 순위 분석 탭 전용 레이아웃 ─────────────────────────────
      섹션이 3개(차트/순위표/시나리오)라 h3 기본 스타일만으로는
      어디서 끊기는지 눈에 안 들어옵니다. 왼쪽 세로선으로 구분합니다. */
-  h3.sec{font-size:1rem;font-weight:800;letter-spacing:-.01em;
-         margin:34px 0 4px;padding-left:10px;border-left:3px solid var(--blue)}
-  h3.sec:first-of-type{margin-top:24px}
-  .sec + .hint{padding-left:13px}
+  h3.sec{font-size:1.2rem;font-weight:700;letter-spacing:-.01em;color:var(--head);
+         margin:44px 0 6px;padding-top:22px;border-top:1px solid var(--rule)}
+  h3.sec:first-of-type{margin-top:28px}
 
   /* 표를 카드 안에 넣어 둥근 테두리를 줍니다. 가로 스크롤도 여기서 처리합니다. */
-  .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;margin-top:10px}
+  .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:6px;margin-top:10px}
   .tbl table{margin:0}
   .tbl th,.tbl td{padding:9px 12px;white-space:nowrap}
-  .tbl thead th{background:var(--blue-soft);color:var(--text);
+  .tbl thead th{background:var(--thead);color:var(--thead-ink);
                 text-transform:none;letter-spacing:0;font-size:.76rem;
                 border-bottom:1px solid var(--line)}
   .tbl thead th small{display:block;font-weight:600;font-size:.92em;
-                      color:var(--muted);margin-top:1px}
+                      color:var(--thead-ink);opacity:.75;margin-top:1px}
+  .tbl tbody tr:nth-child(even):not(.mine):not(.dead){background:var(--zebra)}
   .tbl tbody tr:last-child td{border-bottom:none}
 
   /* 가로 스크롤 힌트: 표가 실제로 화면보다 넓을 때만(JS가 판단) 나타납니다.
@@ -158,12 +181,12 @@
   .stats.four .stat span{display:block;margin-top:3px;line-height:1.35}
   /* ── 용어 탭 ───────────────────────────────────────────────
      모르는 용어 때문에 페이지를 떠나는 방문자를 붙잡기 위한 탭입니다. */
-  .gsearch{width:100%;padding:12px 16px;border:1px solid var(--line);border-radius:10px;
+  .gsearch{width:100%;padding:12px 16px;border:1px solid var(--line);border-radius:6px;
            font-family:inherit;font-size:.95rem;background:var(--card);color:var(--text);
            margin-bottom:6px}
-  .gsearch:focus{outline:2px solid var(--blue);outline-offset:1px}
+  .gsearch:focus{outline:2px solid var(--teal);outline-offset:1px}
   .gcount{font-size:.78rem;color:var(--muted);margin:0 0 16px}
-  .gitem{border:1px solid var(--line);border-radius:12px;margin-bottom:12px;
+  .gitem{border:1px solid var(--line);border-radius:6px;margin-bottom:12px;
          background:var(--card);transition:.18s var(--ease);overflow:hidden}
   .gitem:hover{border-color:var(--blue);box-shadow:var(--shadow)}
   .ghead{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
@@ -188,30 +211,41 @@
 
   /* 팀 배지 — 엠블럼 대신 팀 컬러 원형 배지 (저작권 문제 없음, 순수 CSS) */
   .tbadge{display:inline-flex;align-items:center;justify-content:center;
-          width:20px;height:20px;border-radius:50%;margin-right:6px;
-          font-size:.62rem;font-weight:800;color:#fff;flex:none;
-          vertical-align:-4px;line-height:1}
+          width:28px;height:28px;border-radius:50%;flex:none;
+          font-size:.7rem;font-weight:800;letter-spacing:-.06em;color:#fff;line-height:1;
+          box-shadow:0 0 0 2px var(--card),0 0 0 3px var(--line)}
+  .tname{display:inline-flex;align-items:center;gap:10px;font-weight:700;white-space:nowrap}
+  td,th{vertical-align:middle}
 
   /* ── 한눈에(홈) 탭 ─────────────────────────────────────────
      처음 들어온 방문자가 3초 안에 "지금 대구FC가 어디쯤인지"만
      알고 갈 수 있도록, 그래프 없이 큰 숫자만 놓는 화면입니다. */
   .hero{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:6px 0 8px}
   @media(max-width:700px){.hero{grid-template-columns:repeat(2,1fr)}}
-  .hbox{border:1px solid var(--line);border-radius:14px;padding:18px 12px;text-align:center;
-        background:linear-gradient(155deg,var(--blue-soft),transparent)}
-  .hbox b{display:block;font-size:2rem;font-weight:800;color:var(--blue);line-height:1.15}
-  .hbox span{display:block;font-size:.78rem;color:var(--muted);margin-top:5px;line-height:1.45}
+  .hbox{border:1px solid var(--line);border-radius:6px;padding:18px 12px;text-align:center;
+        background:var(--card);border-top:3px solid var(--teal);box-shadow:var(--shadow)}
+  .hbox{text-align:left;padding:16px 16px 18px}
+  .headline,.hbox,.hint,.pageband{word-break:keep-all;overflow-wrap:break-word}
+  .hbox em{display:block;font-style:normal;font-size:.8rem;font-weight:800;color:var(--teal-ink);
+           letter-spacing:.02em}
+  .hbox b{display:block;font-size:2.3rem;font-weight:800;color:var(--head);line-height:1.15;margin-top:4px}
+  .hbox span{display:block;font-size:.8rem;color:var(--muted);margin-top:8px;line-height:1.55}
+  .headline{margin:8px 0 16px;padding:18px 20px;border-left:4px solid var(--teal);
+            background:var(--band);border-radius:0 6px 6px 0}
+  .headline b{display:block;font-size:1.3rem;font-weight:800;color:var(--head);line-height:1.45}
+  .headline span{display:block;margin-top:6px;font-size:.92rem;color:var(--text);line-height:1.7}
+  @media(max-width:700px){.headline b{font-size:1.12rem}.hbox b{font-size:1.9rem}}
   ul.hlist{margin:10px 0 0;padding-left:20px;font-size:.9rem;line-height:1.85}
   .golinks{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
   .golink{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);
           background:var(--card);border-radius:100px;padding:10px 18px;font:inherit;
-          font-size:.86rem;font-weight:700;color:var(--blue);cursor:pointer;
+          font-size:.86rem;font-weight:700;color:var(--head);cursor:pointer;
           transition:.18s var(--ease)}
-  .golink:hover{background:var(--blue-soft);border-color:var(--blue)}
+  .golink:hover{background:var(--tint);border-color:var(--teal)}
 
   /* ── 그래프 읽는 법 ────────────────────────────────────────
      차트 위에 접어둡니다. 아는 사람은 펼치지 않고 지나갑니다. */
-  .howto{border:1px solid var(--line);border-radius:12px;background:var(--bg);margin-top:12px}
+  .howto{border:1px solid var(--line);border-radius:6px;background:var(--bg);margin-top:12px}
   .howto summary{cursor:pointer;padding:11px 14px;font-weight:700;font-size:.86rem;
                  list-style:none;color:var(--blue)}
   .howto summary::-webkit-details-marker{display:none}
@@ -220,13 +254,13 @@
 
   /* ── 쉽게 / 자세히 토글 ────────────────────────────────────
      '쉽게'에서는 통계 용어가 들어간 블록(.adv)을 통째로 숨깁니다. */
-  .modebar{display:flex;justify-content:flex-end;margin:0 0 10px}
+  .modebar{display:flex;justify-content:flex-end;flex:none}
   .modeswitch{display:inline-flex;background:var(--card);border:1px solid var(--line);
               border-radius:100px;padding:3px;box-shadow:var(--shadow)}
   .modeswitch button{border:none;background:transparent;color:var(--muted);font:inherit;
                      font-size:.78rem;font-weight:700;padding:7px 15px;border-radius:100px;
                      cursor:pointer;transition:.18s var(--ease)}
-  .modeswitch button.on{background:linear-gradient(135deg,var(--blue),var(--blue-dark));color:#fff}
+  .modeswitch button.on{background:var(--btn);color:#fff}
   body.easy .adv{display:none !important}
   body.easy .stats.four{grid-template-columns:repeat(2,1fr)}
 
@@ -241,14 +275,14 @@
   /* ── 승격 확률 ─────────────────────────────────────────────*/
   .odds{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0 4px}
   @media(max-width:700px){.odds{grid-template-columns:1fr}}
-  .obox{border:1px solid var(--line);border-radius:14px;padding:18px 14px;text-align:center;
-        background:linear-gradient(155deg,var(--blue-soft),transparent)}
-  .obox b{display:block;font-size:2.1rem;font-weight:800;color:var(--blue);line-height:1.15}
+  .obox{border:1px solid var(--line);border-radius:6px;padding:18px 14px;text-align:center;
+        background:var(--card);border-top:3px solid var(--teal);box-shadow:var(--shadow)}
+  .obox b{display:block;font-size:2.1rem;font-weight:800;color:var(--head);line-height:1.15}
   .obox span{display:block;font-size:.8rem;color:var(--muted);margin-top:5px}
   .obar{height:7px;border-radius:4px;background:var(--line);margin-top:10px;overflow:hidden}
-  .obar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--blue-dark))}
+  .obar i{display:block;height:100%;background:var(--teal)}
   .caveat{background:linear-gradient(155deg,#fff4e5,#fff9f0);border:1px solid #ffdca8;
-          border-radius:12px;padding:14px 16px;font-size:.83rem;line-height:1.75;
+          border-radius:6px;padding:14px 16px;font-size:.83rem;line-height:1.75;
           margin-top:18px;color:#7a4b12}
   .caveat b{display:block;margin-bottom:6px}
   .caveat ul{margin:0;padding-left:18px}
@@ -261,7 +295,7 @@
      본문의 어려운 단어에 점선을 긋고, 누르면 '쉽게 말하면'만 띄웁니다. */
   .term{border-bottom:1px dashed var(--blue);cursor:help}
   .tip{position:absolute;z-index:60;max-width:330px;background:var(--card);color:var(--text);
-       border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);
+       border:1px solid var(--line);border-radius:6px;box-shadow:var(--shadow);
        padding:13px 15px;font-size:.83rem;line-height:1.65;display:none}
   .tip.show{display:block}
   .tip b{display:block;margin-bottom:5px;color:var(--blue);font-size:.9rem}
@@ -273,43 +307,93 @@
   .gcat{border:1px solid var(--line);background:var(--card);color:var(--muted);
         border-radius:100px;padding:8px 15px;font:inherit;font-size:.8rem;font-weight:700;
         cursor:pointer;transition:.18s var(--ease)}
-  .gcat:hover:not(.on){color:var(--blue);background:var(--blue-soft)}
-  .gcat.on{background:linear-gradient(135deg,var(--blue),var(--blue-dark));
+  .gcat:hover:not(.on){color:var(--head);background:var(--tint)}
+  .gcat.on{background:var(--btn);
            border-color:transparent;color:#fff}
   .gtag{display:inline-block;font-size:.66rem;font-weight:800;padding:2px 8px;border-radius:999px;
         background:var(--blue-soft);color:var(--blue);margin-left:6px;vertical-align:2px}
+
+  /* ── 푸터 ─────────────────────────────────────────────────*/
+  footer.site{background:var(--bar);color:rgba(255,255,255,.78);font-size:.8rem;line-height:1.8}
+  footer.site .wrap{display:flex;justify-content:space-between;align-items:center;gap:24px;
+                    padding-top:32px;padding-bottom:32px}
+  footer.site .brand{color:#fff}
+  footer.site .brand .wm small{color:#8fd0f5}
+  footer.site p{margin:0;max-width:520px}
+  footer.site b{color:#fff}
+
+  /* ── 모바일 (≤760px): 밀도 우선. 로고 행 + 가로 스크롤 탭 한 줄 ── */
+  @media(max-width:760px){
+    .wrap{padding:0 14px}
+    .topbar .wrap{min-height:32px}
+    .topbar span:first-child{display:none}
+    header.site{position:static}
+    header.site .wrap{flex-direction:column;align-items:stretch;gap:0;min-height:0;padding:0}
+    .brand{padding:12px 14px 8px}
+    .brand svg{width:34px;height:37px}
+    .brand .wm b{font-size:1.15rem}
+    nav{justify-content:flex-start;overflow-x:auto;scrollbar-width:none;
+        padding:0 6px;border-top:1px solid var(--line);
+        -webkit-overflow-scrolling:touch}
+    nav::-webkit-scrollbar{display:none}
+    nav button{padding:13px 11px;font-size:.82rem;letter-spacing:.02em}
+    nav button::after{left:11px;right:11px}
+    .pageband .wrap{flex-direction:column;align-items:flex-start;gap:14px;padding-top:20px;padding-bottom:20px}
+    .pageband p{font-size:.84rem}
+    h2{font-size:1.3rem}
+    h3.sec{font-size:1.08rem;margin-top:34px;padding-top:18px}
+    footer.site .wrap{flex-direction:column;align-items:flex-start;gap:14px}
+  }
 </style>
 </head>
 <body>
 
-<header><div class="wrap">
-  <div class="eyebrow">K LEAGUE DATA LAB</div>
-  <h1>⚽ 대구FC 데이터 랩</h1>
-  <p id="sub">불러오는 중…</p>
-</div></header>
+<div class="topbar"><div class="wrap">
+  <span>K리그2 · 비공식 팬 분석 사이트</span>
+  <span id="sub">불러오는 중…</span>
+</div></div>
 
-<div class="wrap">
-  <div class="banner" id="banner"></div>
-
-  <div class="modebar">
-    <div class="modeswitch" id="modesw">
-      <button type="button" data-m="easy" class="on">🙂 쉽게 보기</button>
-      <button type="button" data-m="pro">🔬 자세히 보기</button>
-    </div>
-  </div>
-
+<header class="site"><div class="wrap">
+  <a class="brand" href="./" aria-label="대구FC 데이터 랩 처음으로">
+    <!-- 구단 엠블럼은 상표권 때문에 쓰지 않고, 육각 패치(축구공 무늬) 안에 상승 막대를 넣은 자체 마크입니다 -->
+    <svg viewBox="0 0 42 46" aria-hidden="true">
+      <path d="M21 1.5 39 11.7v22.6L21 44.5 3 34.3V11.7z" fill="var(--head)"/>
+      <path d="M21 1.5 39 11.7v22.6L21 44.5 3 34.3V11.7z" fill="none" stroke="var(--teal)" stroke-width="2"/>
+      <rect x="11.5" y="24" width="4.6" height="9" rx="1" fill="#fff"/>
+      <rect x="18.7" y="17.5" width="4.6" height="15.5" rx="1" fill="#fff"/>
+      <rect x="25.9" y="11" width="4.6" height="22" rx="1" fill="#8fd0f5"/>
+    </svg>
+    <span class="wm"><b>대구FC 데이터 랩</b><small>비공식 팬 사이트</small></span>
+  </a>
   <nav>
     <!-- 기본 탭을 '팀 비교'로 둡니다.
          선수/OnOff 탭은 아직 샘플 데이터라, 처음 들어온 사람이
          가짜 이름부터 보게 되는 것을 피하기 위함입니다. -->
-    <button class="on" data-t="h">🏠 한눈에</button>
-    <button data-t="s">📈 순위 분석</button>
-    <button data-t="w">🎲 승격 확률</button>
-    <button data-t="t">🆚 팀 비교</button>
-    <button data-t="p">👤 선수</button>
-    <button data-t="o">🔁 On/Off 분석</button>
-    <button data-t="g">📖 축구 백과</button>
+    <button class="on" data-t="h">한눈에</button>
+    <button data-t="s">순위 분석</button>
+    <button data-t="w">승격 확률</button>
+    <button data-t="t">팀 비교</button>
+    <button data-t="p">선수</button>
+    <button data-t="o">On/Off 분석</button>
+    <button data-t="g">축구 백과</button>
   </nav>
+</div></header>
+
+<section class="pageband"><div class="wrap">
+  <div>
+    <h1>K리그2 데이터로 읽는 대구FC</h1>
+    <p>순위표 너머의 내용을 쉬운 말로 풀어 봅니다</p>
+  </div>
+  <div class="modebar">
+    <div class="modeswitch" id="modesw">
+      <button type="button" data-m="easy" class="on">쉽게 보기</button>
+      <button type="button" data-m="pro">자세히 보기</button>
+    </div>
+  </div>
+</div></section>
+
+<div class="wrap">
+  <div class="banner" id="banner"></div>
 
   <main>
     <!-- 탭 홈: 한눈에 (축구 통계가 처음인 방문자용 착지 화면) -->
@@ -317,6 +401,7 @@
       <h2>한눈에 보기</h2>
       <p class="hint">축구를 숫자로 보는 게 처음이어도 괜찮습니다.
         이 화면은 <b>지금 대구FC가 어디쯤 있는지</b>만 보여줍니다. 그래프는 없습니다.</p>
+      <div class="headline" id="h-headline"></div>
       <div class="hero" id="h-hero"></div>
       <p class="gcount" id="h-asof"></p>
 
@@ -378,7 +463,7 @@
       <p class="hint">회색 띠(±1σ) 안이면 평균에서 벗어났다고 말할 수 없는 범위입니다.
         띠 밖으로 나간 팀만 이름을 답니다.</p>
       <details class="howto">
-        <summary>❓ 이 그래프 읽는 법 (처음이면 펼쳐보세요)</summary>
+        <summary>이 그래프 읽는 법 (처음이면 펼쳐보세요)</summary>
         <ol>
           <li><b>가로축</b>은 경기당 득실차입니다. 오른쪽에 있을수록 매 경기 상대보다 골을 많이 넣은 팀입니다.</li>
           <li><b>세로축</b>은 경기당 승점입니다. 위에 있을수록 실제로 이긴 경기가 많은 팀입니다.</li>
@@ -419,7 +504,7 @@
       <div class="row">
         <label>팀</label>
         <select id="wsel"></select>
-        <button type="button" class="golink" id="wrun">🔄 다시 돌리기</button>
+        <button type="button" class="golink" id="wrun">다시 돌리기</button>
       </div>
 
       <div class="odds" id="wodds"></div>
@@ -431,7 +516,7 @@
       <p class="tblhint">옆으로 밀면 더 보입니다 <span class="arrow">→</span></p>
 
       <div class="caveat">
-        <b>⚠️ 이 숫자를 믿기 전에 (한계)</b>
+        <b>이 숫자를 믿기 전에 (한계)</b>
         <ul>
           <li><b>잔여 일정을 아직 넣지 않았습니다.</b> 누가 누구와 붙는지 모른 채,
             남은 경기를 무작위로 짝지어 돌립니다. 실제 대진과 다릅니다.</li>
@@ -482,8 +567,8 @@
         한곳에 모았습니다. 검색창에 일부만 쳐도 걸러집니다.</p>
       <div class="gcats" id="gcats">
         <button type="button" class="gcat on" data-c="all">전체</button>
-        <button type="button" class="gcat" data-c="축구">⚽ 축구 기본</button>
-        <button type="button" class="gcat" data-c="데이터">📊 데이터·통계</button>
+        <button type="button" class="gcat" data-c="축구">축구 기본</button>
+        <button type="button" class="gcat" data-c="데이터">데이터·통계</button>
       </div>
       <input class="gsearch" id="gq" type="search" placeholder="예: 오프사이드, 승격, 잔차, R2">
       <p class="gcount" id="gcount"></p>
@@ -491,6 +576,20 @@
     </section>
   </main>
 </div>
+
+<footer class="site"><div class="wrap">
+  <a class="brand" href="./">
+    <svg viewBox="0 0 42 46" aria-hidden="true" style="width:34px;height:37px">
+      <path d="M21 1.5 39 11.7v22.6L21 44.5 3 34.3V11.7z" fill="rgba(255,255,255,.14)" stroke="#8fd0f5" stroke-width="2"/>
+      <rect x="11.5" y="24" width="4.6" height="9" rx="1" fill="#fff"/>
+      <rect x="18.7" y="17.5" width="4.6" height="15.5" rx="1" fill="#fff"/>
+      <rect x="25.9" y="11" width="4.6" height="22" rx="1" fill="#8fd0f5"/>
+    </svg>
+    <span class="wm"><b>대구FC 데이터 랩</b><small>비공식 팬 사이트</small></span>
+  </a>
+  <p>구단과 관련 없는 <b>비공식 팬 분석 사이트</b>입니다.
+     분석에 쓴 데이터의 저작권은 한국프로축구연맹(K리그)에 있습니다.</p>
+</div></footer>
 
 <!-- 데이터 파일을 먼저 불러옵니다. 이 파일이 window.KFL_DATA 를 만들어 줍니다.
      (json을 fetch하지 않는 이유는 src/export.py 주석 참고) -->
@@ -511,7 +610,7 @@ const fmt = n => (n === null || n === undefined || Number.isNaN(n)) ? "-" :
 // 구단 발표 자료로 확인한 색이고, 나머지는 알려진 이미지 기준 추정치라
 // 실제 브랜드 컬러와 다를 수 있습니다 — 틀렸으면 이 표만 고치면 됩니다.
 const TEAM_META = {
-  "수원삼성":     {c:"#003876", i:"수삼"},
+  "수원삼성":     {c:"#003876", i:"삼성"},
   "수원FC":       {c:"#D0273C", i:"수원"},
   "서울이랜드":   {c:"#0047AB", i:"서울"},
   "대구FC":       {c:"#2ea3e8", i:"대구"},
@@ -531,7 +630,7 @@ const TEAM_META = {
 };
 const teamBadge = name => {
   const m = TEAM_META[name];
-  return (m ? `<span class="tbadge" style="background:${m.c}">${m.i}</span>` : "") + name;
+  return `<span class="tname">${m ? `<span class="tbadge" style="background:${m.c}">${m.i}</span>` : ""}<span>${name}</span></span>`;
 };
 
 // ── 초기화 ────────────────────────────────────────────────────
@@ -561,7 +660,7 @@ function init(){
   }
   if (D.meta.team_is_real) {
     lines.push("본 분석에 사용된 데이터의 저작권 및 소유권은 " +
-               "<b>한국프로축구연맹(K LEAGUE)</b>에 있습니다.");
+               "<b>한국프로축구연맹(K리그)</b>에 있습니다.");
   } else {
     lines.push("ℹ️ 팀 비교는 <b>대구전 표본</b> 기준이라 왜곡될 수 있습니다.");
     console.warn(
@@ -947,7 +1046,7 @@ function drawOnOff(){
       return `<tr><td>${k}</td><td>${fmt(r.on[k])}</td><td>${fmt(r.off[k])}</td>
         <td class="${d===0?'':(good?'up':'down')}">${d>0?'+':''}${d}</td></tr>`;
     }).join("")}</tbody></table>
-    ${r.warning ? `<div class="warn">⚠️ ${r.warning}</div>` : ""}
+    ${r.warning ? `<div class="warn">${r.warning}</div>` : ""}
     <div class="warn">해석 주의: 상대 팀 전력과 홈/원정이 섞여 있습니다.
       이 차이를 선수 한 명의 영향으로 단정할 수 없습니다.
       '상대 패스 성공률'은 압박의 간접 지표이며, 정식 지표(PPDA)는 좌표 데이터가 필요합니다.</div>`;
@@ -1217,7 +1316,7 @@ function buildGlossary(){
     list.innerHTML = hit.map(g => `
       <div class="gitem" id="g-${encodeURIComponent(termKey(g))}" data-key="${esc(termKey(g))}">
         <button type="button" class="ghead" aria-expanded="false">
-          <span class="gtitle">${esc(g.t)}${g.en ? `<small>${esc(g.en)}</small>` : ""}<span class="gtag">${g.cat === "축구" ? "⚽ 축구 기본" : "📊 데이터"}</span></span>
+          <span class="gtitle">${esc(g.t)}${g.en ? `<small>${esc(g.en)}</small>` : ""}<span class="gtag">${g.cat === "축구" ? "축구 기본" : "데이터"}</span></span>
           <span class="gchev">▸</span>
         </button>
         <div class="gbody">
@@ -1424,25 +1523,32 @@ function buildHome(){
   // 비교 대상: 자동 승격 경계(2위)입니다. 이미 2위 안이면 바로 아래 순위와 비교합니다.
   const target = me.총점순위 > 2 ? teams.find(t => t.총점순위 === 2)
                                  : teams.find(t => t.총점순위 === me.총점순위 + 1);
-  let gapNum = "-", gapTxt = "비교 대상 없음";
+  const gapLabel = me.총점순위 > 2 ? "2위와의 승점 차" : `${me.총점순위 + 1}위와의 승점 차`;
+  let gapNum = "-", gapTxt = "비교할 팀이 없습니다";
   if(target){
-    const d = target.승점 - me.승점;
-    gapNum = Math.abs(d) + "점";
+    const d = target.승점 - me.승점, a = Math.abs(d);
+    gapNum = a + "점";
     gapTxt = me.총점순위 > 2
-      ? `2위 ${target.team}에 ${d > 0 ? "뒤짐" : (d === 0 ? "동률" : "앞섬")}`
-      : `바로 아래 ${target.team}에 ${d < 0 ? "앞섬" : "동률"}`;
+      ? `${target.team}(${target.승점}점)보다 ${d > 0 ? a + "점 적습니다" : (d === 0 ? "같습니다" : a + "점 많습니다")}. 2위 안에 들면 자동 승격입니다.`
+      : `${target.team}(${target.승점}점)보다 ${d < 0 ? a + "점 많습니다" : "같은 점수입니다"}.`;
   }
-  const left = (S.race && S.race.잔여경기 != null) ? S.race.잔여경기 : "-";
-  const zone = me.총점순위 <= 2 ? "자동 승격권" : (me.총점순위 <= 6 ? "승격 PO권" : "PO권 밖");
+  const left = (S.race && S.race.잔여경기 != null) ? S.race.잔여경기 : null;
+  const zone = me.총점순위 <= 2 ? "자동 승격권(1~2위)" : (me.총점순위 <= 6 ? "승격 플레이오프권(3~6위)" : "승격 플레이오프권 밖");
+
+  document.getElementById("h-headline").innerHTML =
+    `<b>${S.meta.team}는 지금 ${teams.length}팀 중 ${me.총점순위}위, ${zone}입니다.</b>` +
+    `<span>${me.경기수}경기를 치러 승점 ${me.승점}점을 쌓았습니다.` +
+    (target ? ` ${me.총점순위 > 2 ? "자동 승격 경계인 2위" : "바로 아래 " + target.총점순위 + "위"} ${target.team}와 승점 ${Math.abs(target.승점 - me.승점)}점 차이입니다.` : "") +
+    (left != null ? ` 시즌은 ${left}경기 남았습니다.` : "") + `</span>`;
 
   hero.innerHTML = `
-    <div class="hbox"><b>${me.총점순위}위</b><span>${teams.length}팀 중 현재 순위<br>(${zone})</span></div>
-    <div class="hbox"><b>${me.승점}</b><span>승점 · ${me.경기수}경기</span></div>
-    <div class="hbox"><b>${gapNum}</b><span>${gapTxt}</span></div>
-    <div class="hbox"><b>${left}</b><span>남은 경기</span></div>`;
+    <div class="hbox"><em>현재 순위</em><b>${me.총점순위}위</b><span>${teams.length}팀 중 · ${zone}</span></div>
+    <div class="hbox"><em>승점</em><b>${me.승점}점</b><span>${me.경기수}경기 동안 쌓은 점수입니다. 이기면 3점, 비기면 1점.</span></div>
+    <div class="hbox"><em>${gapLabel}</em><b>${gapNum}</b><span>${gapTxt}</span></div>
+    <div class="hbox"><em>남은 경기</em><b>${left != null ? left + "경기" : "-"}</b><span>시즌이 끝날 때까지 치를 경기 수입니다.</span></div>`;
 
   document.getElementById("h-asof").textContent =
-    `${S.meta.season}시즌 · ${S.meta.generated_at} 기준 · 출처: 한국프로축구연맹(K LEAGUE)`;
+    `${S.meta.season}시즌 · ${S.meta.generated_at} 기준 · 출처: 한국프로축구연맹(K리그)`;
 
   // 위 6팀(승격 PO권까지) + 대구가 그 밖이면 대구 줄을 덧붙입니다.
   const rows = teams.filter(t => t.총점순위 <= 6);
@@ -1459,9 +1565,9 @@ function buildHome(){
         <td>${zoneOf(t.총점순위)}</td></tr>`).join("")}</tbody>`;
 
   document.getElementById("h-go").innerHTML = `
-    <button type="button" class="golink" data-go="s">📈 순위 분석 보기</button>
-    <button type="button" class="golink" data-go="t">🆚 팀 비교 보기</button>
-    <button type="button" class="golink" data-go="g">📖 축구 백과 열기</button>`;
+    <button type="button" class="golink" data-go="s">순위 분석 보기</button>
+    <button type="button" class="golink" data-go="t">팀 비교 보기</button>
+    <button type="button" class="golink" data-go="g">축구 백과 열기</button>`;
   document.getElementById("h-go").addEventListener("click", e => {
     const b = e.target.closest(".golink");
     if(b) switchTab(b.dataset.go);
@@ -1572,7 +1678,7 @@ function initTips(){
     cur = t;
     tip.innerHTML = `<b>${esc(g.t)}</b>${esc(g.easy)}
       <div class="tipgo"><button type="button" class="golink" style="padding:6px 13px;font-size:.78rem"
-        data-open="${esc(termKey(g))}">📖 축구 백과에서 자세히 보기</button></div>`;
+        data-open="${esc(termKey(g))}">축구 백과에서 자세히 보기</button></div>`;
     tip.classList.add("show");
     const r = t.getBoundingClientRect();
     const maxL = window.scrollX + document.documentElement.clientWidth - tip.offsetWidth - 12;
