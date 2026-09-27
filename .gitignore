@@ -5,7 +5,11 @@ __pycache__/
 venv/
 
 # 생성물 (코드로 다시 만들 수 있으므로 git에 올리지 않습니다)
-output/charts/*.png
+# output/ 전체를 제외합니다.
+# 이전에는 output/charts/*.png 만 제외했으나, output/daegu2026/ 에
+# metrics_*.csv 가 생기면서 'git add .' 한 번에 집계 CSV가 공개될 위험이 생겼습니다.
+# 모두 코드로 다시 만들 수 있으므로 전부 제외합니다.
+output/
 
 # 에디터
 .vscode/
