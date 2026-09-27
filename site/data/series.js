@@ -39,15 +39,6 @@ window.KFL_SERIES = [
     tab: ""
   },
   {
-    no: "예고",
-    title: "10월 31일 대구FC vs 수원삼성",
-    question: "남은 경기 중 유일한 상위권 맞대결, 경기 전에 무엇을 보면 좋을까?",
-    date: "2026-10-30",
-    status: "planned",
-    url: "",
-    tab: ""
-  },
-  {
     no: "준비 중",
     title: "교체 타이밍",
     question: "대구는 보통 언제, 누구를 바꾸는가? 교체 전후 경기 흐름은 달라지는가?",
