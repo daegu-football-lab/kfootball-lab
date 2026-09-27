@@ -84,6 +84,17 @@
   .panel.on{display:block;animation:fadeIn .25s var(--ease)}
   @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
   h2{font-size:1.5rem;margin:0 0 6px;font-weight:700;letter-spacing:-.02em;color:var(--head)}
+  /* 탭 제목: 위에 짧은 막대 + 아래 부제. "제목 — 설명"을 두 줄로 나눠 제목처럼 보이게 합니다. */
+  .panel>h2{font-size:1.7rem;font-weight:800;margin-bottom:10px;line-height:1.25}
+  .panel>h2::before{content:"";display:block;width:36px;height:4px;border-radius:2px;
+                    background:var(--teal);margin-bottom:12px}
+  .h2sub{display:block;margin-top:6px;font-size:.98rem;font-weight:600;letter-spacing:0;
+         color:var(--teal-ink)}
+  /* "굵은 제목 + 설명" 목록: 제목을 한 줄로 올리고 설명을 아래에 둡니다. */
+  ul.defs{list-style:none;padding-left:0;margin:12px 0 0;display:grid;gap:10px}
+  ul.defs li{border-left:3px solid var(--teal);background:var(--band);border-radius:0 6px 6px 0;
+             padding:10px 14px;font-size:.88rem;line-height:1.7;word-break:keep-all}
+  ul.defs li>b:first-child{display:block;font-size:.98rem;color:var(--head);margin-bottom:2px}
   .hint{color:var(--muted);font-size:.85rem;margin:0 0 18px;line-height:1.6}
   .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
   .card{position:relative;border:1px solid var(--line);border-radius:6px;padding:14px;
@@ -174,6 +185,18 @@
   #h-table td:nth-child(2),#h-table th:nth-child(2){text-align:left}
   /* 시나리오 표는 5열 전부 짧은 숫자라 가운데 정렬이 가장 정돈돼 보입니다. */
   #srace th,#srace td{text-align:center}
+  /* 모든 표: 숫자는 가운데. 팀 이름(배지) 칸만 왼쪽이라 눈이 한 줄로 따라갑니다. */
+  .tbl th,.tbl td{text-align:center}
+  .tbl td:has(> .tname){text-align:left}
+  #stable th:nth-child(2),#ttable th:nth-child(2),#h-table th:nth-child(2),#wtable th:first-child{text-align:left}
+  #srace td:has(> .tname){text-align:center}
+  #srace th .tname{justify-content:center}
+  #srace td small{display:block;color:var(--muted);font-size:.78em}
+  /* 휴대폰: 4열이 한 화면에 들어오도록 머리글은 배지만, 여백은 좁게 */
+  @media(max-width:700px){
+    #srace th,#srace td{padding:8px 5px;white-space:normal}
+    #srace th .tname>span:last-child{display:none}
+  }
 
   /* 요약 카드는 4개 고정. auto-fit 이면 폭에 따라 3+1 로 깨집니다. */
   .stats.four{grid-template-columns:repeat(4,1fr)}
@@ -276,7 +299,6 @@
   .pill{font-size:.72rem;padding:2px 9px;border-radius:999px;background:var(--band);
         color:var(--muted);border:1px solid var(--line)}
   .golink.sm{padding:3px 10px;font-size:.78rem}
-  .clog .yr{flex-basis:92px;font-weight:600;color:var(--muted);font-size:.82rem}
   .kind{font-weight:700;margin-right:6px;color:var(--teal)}
   .kind.fix{color:var(--accent)}
   footer.site p a{color:#8fd0f5}
@@ -292,6 +314,12 @@
   .obox span{display:block;font-size:.8rem;color:var(--muted);margin-top:5px}
   .obar{height:7px;border-radius:4px;background:var(--line);margin-top:10px;overflow:hidden}
   .obar i{display:block;height:100%;background:var(--teal)}
+  /* 100칸 점 그림: '8%'보다 '100번 중 8번'이 더 잘 읽힌다는 이유로 둡니다 */
+  .dots{display:grid;grid-template-columns:repeat(20,1fr);gap:4px;max-width:420px;margin:18px auto 6px}
+  .dots i{aspect-ratio:1;border-radius:50%;background:var(--line)}
+  .dots i.on{background:var(--teal)}
+  .dotcap{text-align:center;font-size:.9rem;color:var(--muted);margin-bottom:8px}
+  .dotcap b{color:var(--head)}
   .caveat{background:linear-gradient(155deg,#fff4e5,#fff9f0);border:1px solid #ffdca8;
           border-radius:6px;padding:14px 16px;font-size:.83rem;line-height:1.75;
           margin-top:18px;color:#7a4b12}
@@ -352,6 +380,8 @@
     .pageband .wrap{flex-direction:column;align-items:flex-start;gap:14px;padding-top:20px;padding-bottom:20px}
     .pageband p{font-size:.84rem}
     h2{font-size:1.3rem}
+    .panel>h2{font-size:1.4rem}
+    .h2sub{font-size:.9rem}
     h3.sec{font-size:1.08rem;margin-top:34px;padding-top:18px}
     footer.site .wrap{flex-direction:column;align-items:flex-start;gap:14px}
   }
@@ -381,12 +411,14 @@
          선수/OnOff 탭은 아직 샘플 데이터라, 처음 들어온 사람이
          가짜 이름부터 보게 되는 것을 피하기 위함입니다. -->
     <button class="on" data-t="h">한눈에</button>
+    <button data-t="b">연재 글</button>
     <button data-t="s">순위 분석</button>
     <button data-t="w">승격 확률</button>
     <button data-t="t">팀 비교</button>
     <button data-t="p">선수</button>
     <button data-t="o">On/Off 분석</button>
     <button data-t="g">축구 백과</button>
+    <button data-t="i">소개</button>
   </nav>
 </div></header>
 
@@ -394,12 +426,6 @@
   <div>
     <h1>K리그2 데이터로 읽는 대구FC</h1>
     <p>순위표 너머의 내용을 쉬운 말로 풀어 봅니다</p>
-  </div>
-  <div class="modebar">
-    <div class="modeswitch" id="modesw">
-      <button type="button" data-m="easy" class="on">쉽게 보기</button>
-      <button type="button" data-m="pro">자세히 보기</button>
-    </div>
   </div>
 </div></section>
 
@@ -409,9 +435,7 @@
   <main>
     <!-- 탭 홈: 한눈에 (축구 통계가 처음인 방문자용 착지 화면) -->
     <section class="panel on" id="pan-h">
-      <h2>한눈에 보기</h2>
-      <p class="hint">축구를 숫자로 보는 게 처음이어도 괜찮습니다.
-        이 화면은 <b>지금 대구FC가 어디쯤 있는지</b>만 보여줍니다. 그래프는 없습니다.</p>
+      <h2>한눈에 보기<span class="h2sub">지금 대구FC는 어디쯤 있나</span></h2>
       <div class="headline" id="h-headline"></div>
       <div class="hero" id="h-hero"></div>
       <p class="gcount" id="h-asof"></p>
@@ -423,6 +447,25 @@
       <div class="tbl"><table id="h-table"></table></div>
       <p class="tblhint">옆으로 밀면 더 보입니다 <span class="arrow">→</span></p>
 
+      <h3 class="sec">관중석에서 시작한 질문</h3>
+      <p class="hint">후반 20분쯤 되면 관중석에서 이런 말이 나옵니다.
+        <b>"이제 데커스 들어오겠네. 김주공이랑 바뀌겠지."</b> 그리고 대부분 그대로 됩니다.
+        이 감이 기록으로 봐도 맞는지 확인하려고, 올 시즌 대구의 경기를 하나씩 기록하고 있습니다.</p>
+
+      <div class="golinks" id="h-go"></div>
+    </section>
+
+    <!-- 탭: 연재 글 (목록 내용은 data/series.js 에서 고칩니다) -->
+    <section class="panel" id="pan-b">
+      <h2>연재 글<span class="h2sub">블로그 연재 목록과 발행 상태</span></h2>
+      <p class="hint">블로그 글과 이 사이트는 짝입니다. 글에서는 질문과 해석을,
+        사이트에서는 표와 그래프를 봅니다.</p>
+      <ul class="story series" id="h-series"></ul>
+    </section>
+
+    <!-- 탭: 소개 (팀 연표 · 사이트 설명 · 기록 원칙 · 고친 기록) -->
+    <section class="panel" id="pan-i">
+      <h2>소개<span class="h2sub">대구FC와 이 사이트 이야기</span></h2>
       <h3 class="sec">대구FC는 어떤 팀인가요</h3>
       <p class="hint">숫자 이야기 전에, 이 팀이 어디서 왔는지부터.</p>
       <ul class="story">
@@ -440,51 +483,32 @@
         출처: 위키백과 「대구 FC」, 대구MBC 보도 (2025.12)</p>
 
       <h3 class="sec">이 사이트는 무엇을 하나요</h3>
-      <ul class="hlist">
-        <li><b>순위 분석</b> — 순위표에 안 나오는 '내용'을 봅니다.
+      <ul class="hlist defs">
+        <li><b>연재 글</b>블로그 연재 목록입니다. 글에서는 질문과 해석을, 사이트에서는 표와 그래프를 봅니다.</li>
+        <li><b>순위 분석</b>순위표에 안 나오는 '내용'을 봅니다.
           득점과 실점의 차이에 비해 승점을 더 벌었는지, 덜 벌었는지 비교합니다.</li>
-        <li><b>승격 확률</b> — 남은 경기를 컴퓨터로 여러 번 치러 보고,
+        <li><b>승격 확률</b>남은 경기를 컴퓨터로 여러 번 치러 보고,
           지금 기록이 이어진다면 몇 번이나 승격권에 드는지 셉니다. 예언이 아니라 가정 위의 계산입니다.</li>
-        <li><b>팀 비교</b> — 슈팅·패스 같은 기록을 경기당 평균으로 바꿔 팀끼리 나란히 놓습니다.</li>
-        <li><b>축구 백과</b> — 오프사이드 같은 기본 규칙부터 통계 용어까지 찾아보는 곳입니다.
+        <li><b>팀 비교</b>슈팅·패스 같은 기록을 경기당 평균으로 바꿔 팀끼리 나란히 놓습니다.</li>
+        <li><b>축구 백과</b>오프사이드 같은 기본 규칙부터 통계 용어까지 찾아보는 곳입니다.
           본문에 <span class="term" data-g="잔차">점선이 그어진 단어</span>는 눌러보세요.</li>
       </ul>
-      <div class="golinks" id="h-go"></div>
-      <p class="hint" style="margin-top:20px">
-        어려운 내용은 기본으로 숨겨져 있습니다. 위의 <b>자세히 보기</b>를 누르면
-        통계 그래프까지 전부 나옵니다.</p>
-
-      <h3 class="sec">관중석에서 시작한 질문</h3>
-      <p class="hint">후반 20분쯤 되면 관중석에서 이런 말이 나옵니다.
-        <b>"이제 데커스 들어오겠네. 김주공이랑 바뀌겠지."</b> 그리고 대부분 그대로 됩니다.
-        이 감이 기록으로 봐도 맞는지 확인하려고, 올 시즌 대구의 경기를 하나씩 기록하고 있습니다.</p>
-
-      <!-- 목록 내용은 data/series.js 에서 고칩니다 -->
-      <h3 class="sec">연재 글</h3>
-      <p class="hint">블로그 글과 이 사이트는 짝입니다. 글에서는 질문과 해석을,
-        사이트에서는 표와 그래프를 봅니다.</p>
-      <ul class="story series" id="h-series"></ul>
-
-      <h3 class="sec">기록 원칙</h3>
-      <ul class="hlist">
-        <li><b>공식 기록만 씁니다.</b> K리그 공식 경기 기록을 한 경기씩 옮겨 적고(AI 도움),
-          공식 순위표와 맞춰 봅니다. 자동 수집 프로그램(크롤링)은 쓰지 않습니다.</li>
-        <li><b>원본은 공개하지 않습니다.</b> 경기별 원본 기록은 올리지 않고,
-          가공한 표와 그래프만 보여줍니다.</li>
-        <li><b>숫자는 코드가, 해석은 사람이.</b> 계산과 그래프는 공개된 코드로 만들고,
-          해석은 글쓴이가 직접 씁니다.</li>
-        <li><b>한계를 같이 적습니다.</b> 표본이 작거나 다른 요인이 섞여 있으면 밝힙니다.
-          "○○ 선수 덕분" 같은 원인 단정은 하지 않습니다.</li>
-        <li><b>틀린 것도 지우지 않습니다.</b> 틀린 예측과 고친 내용은 아래 '고친 기록'에 남깁니다.</li>
-      </ul>
-
-      <h3 class="sec">고친 기록</h3>
-      <ul class="story clog" id="h-clog"></ul>
+      <!-- 기록 원칙: 처음 온 사람에겐 길어서 접어 둡니다. -->
+      <details class="howto" style="margin-top:36px">
+        <summary>이 사이트의 기록 원칙 (펼쳐보기)</summary>
+        <ul class="hlist defs" style="padding:4px 14px 12px">
+          <li><b>공식 기록만 씁니다.</b>K리그 공식 경기 기록을 한 경기씩 옮겨 적고(AI 도움), 공식 순위표와 맞춰 봅니다. 크롤링은 하지 않습니다.</li>
+          <li><b>원본은 올리지 않습니다.</b>가공한 표와 그래프만 보여줍니다.</li>
+          <li><b>숫자는 코드가, 해석은 사람이.</b>계산은 공개된 코드로, 해석은 글쓴이가 직접 씁니다.</li>
+          <li><b>한계를 같이 적습니다.</b>표본이 작거나 다른 요인이 섞여 있으면 밝히고, "○○ 선수 덕분" 같은 단정은 하지 않습니다.</li>
+          <li><b>틀린 예측도 지우지 않습니다.</b>틀린 게 확인되면 고치고, 글에서 고쳤다고 밝힙니다.</li>
+        </ul>
+      </details>
     </section>
 
     <!-- 탭 1: 선수 -->
     <section class="panel" id="pan-p">
-      <h2>선수 기록</h2>
+      <h2>선수 기록<span class="h2sub">선수별 기록과 두 선수 비교</span></h2>
       <p class="hint">카드를 누르면 상세 기록이 보입니다. 두 명을 고르면 자동으로 비교됩니다.
         (다시 누르면 선택 해제)</p>
       <div class="cards" id="cards"></div>
@@ -493,15 +517,21 @@
 
     <!-- 탭 0: 순위 분석 (연재 1편 내용) -->
     <section class="panel" id="pan-s">
-      <h2>순위 분석 — 순위와 내용은 얼마나 일치하는가</h2>
+      <h2>순위 분석<span class="h2sub">순위와 내용은 얼마나 일치하는가</span></h2>
       <p class="hint">팀마다 소화 경기 수가 달라, 모든 지표를 <b>경기당</b>으로 맞춘 뒤
         '득실차로 예상되는 승점'과 '실제 승점'을 비교합니다.</p>
       <div id="s-summary" class="stats four"></div>
 
-      <div class="adv">
-      <h3 class="sec">① 득실차 대비 승점</h3>
-      <p class="hint">회색 띠(±1σ) 안이면 평균에서 벗어났다고 말할 수 없는 범위입니다.
-        띠 밖으로 나간 팀만 이름을 답니다.</p>
+      <h3 class="sec">① 경기 수를 맞춘 순위표</h3>
+      <p class="hint">경기 수를 맞춘 순위입니다. ★ 는 아래 ② 그래프에서 평균선과 <b>크게</b> 떨어진 팀입니다.</p>
+      <div class="tbl"><table id="stable"></table></div>
+      <p class="tblhint">옆으로 밀면 더 보입니다 <span class="arrow">→</span></p>
+
+
+      <div>
+      <h3 class="sec">② 득실차 대비 승점</h3>
+      <p class="hint">점이 대각선보다 <b>위</b>면 골 득실에 비해 승점을 더 많이, <b>아래</b>면 더 적게 딴 팀입니다.
+        회색 띠 안은 흔히 있는 차이입니다. 크게 벗어난 팀(★)과 대구FC만 이름을 답니다.</p>
       <details class="howto">
         <summary>이 그래프 읽는 법 (처음이면 펼쳐보세요)</summary>
         <ol>
@@ -510,26 +540,22 @@
           <li><b>대각선</b>은 "이 정도 득실차면 승점은 보통 이쯤"이라는 평균선입니다.
             점이 선보다 <b>위</b>에 있으면 내용보다 결과가 좋았고, <b>아래</b>면 그 반대입니다.</li>
           <li><b>회색 띠</b> 안은 흔히 있는 차이라 "특별하다"고 말할 수 없는 구간입니다.
-            그래서 띠를 벗어난 팀에만 이름을 답니다.</li>
+            그래서 띠보다 훨씬 멀리 벗어난 팀(★)에만 이름을 답니다.</li>
+          <li><b>통계 용어로는</b> 회색 띠의 폭이 ±1σ(표준편차)이고, ★ 기준은 1.5σ입니다.
+            표본이 17팀뿐이라 이 선보다 작은 차이는 우연과 구분하기 어렵다고 보고 해석하지 않습니다.</li>
         </ol>
       </details>
       <div class="chartbox" style="height:440px"><canvas id="schart"></canvas></div>
       </div>
 
-      <h3 class="sec">② 경기당 승점 보정 순위표</h3>
-      <p class="hint">경기 수를 맞춘 순위입니다. ★ 는 1.5σ 이상 벗어난 팀입니다.</p>
-      <div class="tbl"><table id="stable"></table></div>
-      <p class="tblhint">옆으로 밀면 더 보입니다 <span class="arrow">→</span></p>
-
-      <h3 class="sec">③ 자동 승격(2위) 추격 시나리오</h3>
-      <p class="hint">확률이 아니라 산술입니다. 경쟁팀이 남은 경기에서 몇 점을 따느냐를
-        직접 골라서 읽는 표입니다.</p>
+      <h3 class="sec">③ 대구FC가 2위를 따라잡으려면</h3>
+      <p class="hint" id="s-race-lead">확률이 아니라 단순 계산입니다.</p>
       <div class="tbl"><table id="srace"></table></div>
       <p class="tblhint">옆으로 밀면 더 보입니다 <span class="arrow">→</span></p>
       <div class="legend">
-        <span><span class="ox yes">○ 가능</span> 남은 경기를 다 이기면 도달 가능</span>
-        <span><span class="ox no">✕ 불가</span> 전승해도 산술적으로 불가능</span>
-        <span><i></i>빨간 선 = 추격이 성립하는 한계선</span>
+        <span><span class="ox yes">○ 가능</span> 대구가 남은 경기에서 해낼 수 있는 성적</span>
+        <span><span class="ox no">✕ 불가</span> 남은 경기를 다 이겨도 못 따라잡음</span>
+        <span><i></i>빨간 선 = 여기까지가 추격 가능</span>
       </div>
       <p class="hint" id="s-note" style="margin-top:12px"></p>
 
@@ -552,20 +578,20 @@
 
       <div class="caveat">
         <b>이 숫자로 말할 수 없는 것 (한계)</b>
-        <ul>
-          <li><b>일정 난이도 미보정</b> — 경쟁팀들이 남은 경기에서 누구를 만나는지는 아직 반영하지 않았습니다.</li>
-          <li><b>표본 17개</b> — 팀이 17개뿐이라 회귀선의 오차가 큽니다. 1.5σ 미만으로 벗어난 팀은 해석하지 않습니다.</li>
-          <li><b>대패 왜곡</b> — 한 경기 대패가 득실차를 크게 흔듭니다.</li>
-          <li><b>인과 아님</b> — 평균선보다 위에 있다고 '승부처에 강하다'고 말할 수 없습니다.</li>
-          <li><b>홈/원정 미분리</b>, 그리고 표시된 날짜 기준의 <b>스냅샷</b>입니다.</li>
+        <ul class="defs">
+          <li><b>일정 난이도 미보정</b>경쟁팀들이 남은 경기에서 누구를 만나는지는 아직 반영하지 않았습니다.</li>
+          <li><b>표본 17개</b>팀이 17개뿐이라 회귀선의 오차가 큽니다. 크게(★) 벗어나지 않은 팀은 해석하지 않습니다.</li>
+          <li><b>대패 왜곡</b>한 경기 대패가 득실차를 크게 흔듭니다.</li>
+          <li><b>인과 아님</b>평균선보다 위에 있다고 '승부처에 강하다'고 말할 수 없습니다.</li>
+          <li><b>홈/원정 미분리 · 스냅샷</b>홈과 원정을 나누지 않았고, 표시된 날짜 기준의 기록입니다.</li>
         </ul>
       </div>
     </section>
 
     <!-- 탭: 승격 확률 시뮬레이션 -->
     <section class="panel" id="pan-w">
-      <h2>승격 확률 — 지금 기록이 이어진다면</h2>
-      <p class="hint">남은 경기를 컴퓨터로 <b>3,000번 치러보고</b>, 각 팀이 몇 번이나
+      <h2>승격 확률<span class="h2sub">지금 기록이 이어진다면</span></h2>
+      <p class="hint">남은 경기를 컴퓨터로 <b>10,000번 치러보고</b>, 각 팀이 몇 번이나
         1위 / 2위 이내 / 6위 이내로 끝났는지 센 것입니다.
         예언이 아니라 <b>가정 위의 계산</b>입니다. 아래 주의사항을 꼭 같이 읽어주세요.</p>
 
@@ -576,6 +602,8 @@
       </div>
 
       <div class="odds" id="wodds"></div>
+      <div class="dots" id="wdots" aria-hidden="true"></div>
+      <p class="dotcap" id="wdotcap"></p>
       <p class="gcount" id="wnote"></p>
 
       <h3 class="sec">전체 팀 확률</h3>
@@ -583,18 +611,26 @@
       <div class="tbl"><table id="wtable"></table></div>
       <p class="tblhint">옆으로 밀면 더 보입니다 <span class="arrow">→</span></p>
 
+      <div id="wlogbox" hidden>
+        <h3 class="sec">예측 기록장 — 나중에 실제 결과와 맞춰 봅니다</h3>
+        <p class="hint" id="wloglead"></p>
+        <div class="tbl"><table id="wlog"></table></div>
+        <p class="tblhint">옆으로 밀면 더 보입니다 <span class="arrow">→</span></p>
+      </div>
+
       <div class="caveat">
         <b>이 숫자를 믿기 전에 (한계)</b>
         <ul>
-          <li><b>잔여 일정을 아직 넣지 않았습니다.</b> 누가 누구와 붙는지 모른 채,
-            남은 경기를 무작위로 짝지어 돌립니다. 실제 대진과 다릅니다.</li>
+          <li id="wmode"><b>남은 경기는 실제 일정표대로</b> 치릅니다(K리그 공식 일정, 9월 27일 확인).
+            일정이 바뀌면 결과도 달라집니다.</li>
           <li>팀 전력을 <b>지금까지의 경기당 득실차 하나</b>로만 잡았습니다.
-            부상·이적·홈/원정·최근 상승세는 전혀 반영되지 않습니다.</li>
+            부상·이적·최근 상승세는 전혀 반영되지 않습니다.
+            <b>홈/원정 차이도 넣지 않았습니다</b>(홈 경기라고 더 유리하게 계산하지 않음).</li>
           <li>득점은 평균 1.25골을 기준으로 한 <b>포아송 분포</b>로 뽑습니다.
             실제 축구 득점 분포와 완전히 같지는 않습니다.</li>
           <li>승점이 같을 때 K리그2는 <b>다득점 → 득실차</b> 순으로 가리지만,
             이 계산은 득실차만 씁니다.</li>
-          <li>돌릴 때마다 숫자가 1~2%p 흔들립니다. 무작위 시뮬레이션이라 정상입니다.
+          <li>돌릴 때마다 숫자가 1%p 안팎으로 흔들립니다. 무작위 시뮬레이션이라 정상입니다.
             소수점을 진지하게 읽지 마세요.</li>
         </ul>
       </div>
@@ -602,7 +638,7 @@
 
     <!-- 탭 2: 팀 비교 -->
     <section class="panel" id="pan-t">
-      <h2>팀 비교</h2>
+      <h2>팀 비교<span class="h2sub">같은 기록을 경기당으로 맞춰 나란히</span></h2>
       <p class="hint">팀마다 소화 경기 수가 달라, '경기당' 지표를 먼저 보는 것을 권합니다. (누적) 표시가 붙은 지표는 총합이라 경기 수 차이만큼 유리·불리가 생깁니다.</p>
       <div class="row">
         <label>지표</label>
@@ -618,7 +654,7 @@
 
     <!-- 탭 3: On/Off -->
     <section class="panel" id="pan-o">
-      <h2>On/Off 분석</h2>
+      <h2>On/Off 분석<span class="h2sub">출전한 경기와 결장한 경기의 차이</span></h2>
       <p class="hint">한 선수가 <b>출전한 경기</b>와 <b>결장한 경기</b>로 나눠 팀 기록을 비교합니다.
         데이터포털에는 없는, 직접 계산해야 나오는 지표입니다.</p>
       <div class="row">
@@ -630,7 +666,7 @@
 
     <!-- 탭 4: 용어 -->
     <section class="panel" id="pan-g">
-      <h2>축구 백과</h2>
+      <h2>축구 백과<span class="h2sub">기본 규칙부터 통계 용어까지</span></h2>
       <p class="hint">오프사이드 같은 <b>축구 기본 규칙</b>부터 이 사이트에 나오는 <b>통계 용어</b>까지
         한곳에 모았습니다. 검색창에 일부만 쳐도 걸러집니다.</p>
       <div class="gcats" id="gcats">
@@ -665,6 +701,8 @@
 <script src="data/players.js"></script>
 <script src="data/standings.js"></script>
 <script src="data/series.js"></script>
+<script src="data/fixtures.js"></script>
+<script src="data/forecast_log.js"></script>
 
 <script>
 const D = window.KFL_DATA;
@@ -734,10 +772,8 @@ function init(){
       "data/raw/ 에 실제 경기 기록을 넣고 다시 실행하면 해당 탭이 다시 나타납니다."
     );
   }
-  if (D.meta.team_is_real) {
-    lines.push("본 분석에 사용된 데이터의 저작권 및 소유권은 " +
-               "<b>한국프로축구연맹(K리그)</b>에 있습니다.");
-  } else {
+  // 출처 문구는 화면 맨 아래(푸터)와 순위 기준일 줄에 있으므로 첫 화면 상자에서는 뺍니다.
+  if (!D.meta.team_is_real) {
     lines.push("ℹ️ 팀 비교는 <b>대구전 표본</b> 기준이라 왜곡될 수 있습니다.");
     console.warn(
       "[KFL] data/raw/team_season_stats.csv 를 채우면 리그 전체 순위표가 됩니다."
@@ -763,7 +799,7 @@ function init(){
   buildGlossary();
   buildHome();
   buildOddsTab();
-  initMode();      // 쉽게/자세히
+  // initMode();  // 쉽게/자세히 토글은 없앴습니다 (2026-09-28). 함수는 되돌릴 때를 위해 남겨 둠
   linkTerms();     // 본문 용어에 점선 긋기
   initTips();      // 점선 단어 눌렀을 때 뜨는 말풍선
   syncTableHints();
@@ -782,6 +818,10 @@ function init(){
   });
 
   window.addEventListener("resize", syncTableHints);
+
+  // 주소 끝에 #tab=b 처럼 붙이면 그 탭으로 바로 엽니다 (블로그 글에서 링크할 때 사용).
+  const m = (location.hash || "").match(/^#tab=([a-z])$/);
+  if (m) switchTab(m[1]);
 }
 
 // 가로 스크롤이 실제로 되는 표에만 "옆으로 밀면 더 보입니다" 힌트를 켭니다.
@@ -960,18 +1000,25 @@ function buildStandingsTab(){
   }
 
   const sig = S.teams.filter(t => t.유의);
+  // 요약 카드: R²·σ 같은 통계 기호는 쓰지 않고 뜻으로 풀어 씁니다.
+  // '크게 벗어남' 기준은 연재 1편과 같은 1.5σ (표본 17팀이라 그보다 작으면 해석하지 않음)
+  // (원래 숫자는 아래 그래프 '읽는 법'과 순위표의 잔차 칸에 그대로 있습니다)
+  const me  = S.teams.find(t => t.team === S.meta.team);
+  const sigTxt = sig.map(t => `${t.team}(${t.시그마 > 0 ? "더 많이" : "더 적게"})`).join(", ");
+  const meTxt = !me ? "-" : (Math.abs(me.시그마) < 1.5 ? "예상과 비슷"
+                   : (me.시그마 > 0 ? "예상보다 많이" : "예상보다 적게"));
   document.getElementById("s-summary").innerHTML = `
-    <div class="stat adv"><b>${S.reg.r2}</b><span>R² (설명력)</span></div>
-    <div class="stat adv"><b>${S.reg.resid_sd}</b><span>잔차 표준편차 σ</span></div>
-    <div class="stat"><b>${sig.length}</b><span>1.5σ 이상 벗어난 팀</span></div>
-    <div class="stat"><b>${S.race.잔여경기}</b><span>${S.meta.team} 잔여 경기</span></div>`;
+    <div class="stat"><b>${Math.round(S.reg.r2 * 100)}%</b><span>득실차로 설명되는 승점<br>100%에 가까울수록 골 득실만큼 승점을 땄다는 뜻</span></div>
+    <div class="stat"><b>${meTxt}</b><span>${S.meta.team}가 딴 승점<br>득실차로 예상한 승점과 비교</span></div>
+    <div class="stat"><b>${sig.length}팀</b><span>예상에서 크게 벗어난 팀<br>${sigTxt || "없음"}</span></div>
+    <div class="stat"><b>${S.race.잔여경기}경기</b><span>${S.meta.team} 남은 경기</span></div>`;
 
   drawScatter(S);
 
   // 순위표
   document.getElementById("stable").innerHTML = `
     <thead><tr><th>PPG순위</th><th>팀</th><th>경기</th><th>승점</th><th>경기당 승점</th>
-      <th>득실차</th><th>공식순위</th><th>변동</th><th>잔차(σ)</th></tr></thead>
+      <th>득실차</th><th>공식순위</th><th>변동</th><th>평균선과<br><small>1.5↑ = ★</small></th></tr></thead>
     <tbody>${[...S.teams].sort((a,b)=>a.PPG순위-b.PPG순위).map(t => {
       const mv = t.순위변동;
       const mvs = mv === 0 ? "-" : (mv > 0 ? `▲${mv}` : `▼${-mv}`);
@@ -979,8 +1026,8 @@ function buildStandingsTab(){
         <td>${t.PPG순위}</td><td>${teamBadge(t.team)}</td><td>${t.경기수}</td><td>${t.승점}</td>
         <td>${t.PPG.toFixed(3)}</td><td>${t.득실차>0?'+':''}${t.득실차}</td>
         <td>${t.총점순위}</td><td>${mvs}</td>
-        <td style="${t.유의 ? 'font-weight:700;color:'+(t.시그마>0?'#1a7f37':'#c1121f') : ''}"
-          >${t.시그마>0?'+':''}${t.시그마}σ${t.유의?' ★':''}</td></tr>`;
+        <td style="${t.유의 ? 'font-weight:700' : ''}"
+          >${t.유의 ? (t.시그마>0 ? '▲ ' : '▼ ') : ''}${t.시그마>0?'+':''}${t.시그마}${t.유의?' ★':''}</td></tr>`;
     }).join("")}</tbody>`;
 
   // 시나리오 표
@@ -988,25 +1035,39 @@ function buildStandingsTab(){
   //   칸이 제멋대로 늘어납니다. 짧은 제목 + 작은 설명으로 두 줄로 나눕니다.
   const rows = S.race.시나리오;
   if(rows.length){
-    const cols = Object.keys(rows[0]);
-    const OX   = cols[cols.length - 1];            // "산술적 가능"
-    const head = cols.map(c => {
-      if(c === OX) return "가능 여부";
-      if(c.startsWith("필요 최소")) return "필요 승수<small>무승부 0 가정</small>";
-      const m = c.match(/^(.+?)\s(잔여승점|최종|필요승점)$/);
-      return m ? `${m[2]}<small>${m[1]}</small>` : c;
-    });
-    // 마지막으로 'O'인 줄 = 추격이 성립하는 한계선. 여기에 굵은 선을 긋습니다.
+    // 열 이름은 export.py 가 만든 한글 키입니다. 끝말로 찾아 두면 팀이 바뀌어도 그대로 동작합니다.
+    const cols  = Object.keys(rows[0]);
+    const kLeft = cols.find(c => c.endsWith("잔여승점"));
+    const kFin  = cols.find(c => c.endsWith("최종"));
+    const kNeed = cols.find(c => c.endsWith("필요승점"));
+    const kWin  = cols.find(c => c.startsWith("필요 최소"));
+    const OX    = cols[cols.length - 1];
+    const rival = S.race.핵심경쟁팀, me2 = S.meta.team, myLeft = S.race.잔여경기;
+    // 승점을 '몇 승'으로 바꿔 읽습니다. 3의 배수가 아니면(무승부 섞임) 승점만 씁니다.
+    const asWins = p => p % 3 === 0 ? `${p / 3}승` : `${p}점`;
+    const rivalLeft = Math.max(...rows.map(r => r[kLeft])) / 3;
+
+    document.getElementById("s-race-lead").innerHTML =
+      `확률이 아니라 단순 계산입니다. 지금 2위 <b>${rival}</b>가 남은 ${rivalLeft}경기에서 몇 번 이기느냐에 따라,
+       <b>${me2}</b>가 남은 ${myLeft}경기에서 몇 번 이겨야 ${rival}보다 위에 서는지가 달라집니다.
+       (무승부 없이 승리만 센 경우)` +
+      (rows[2] ? `<br>예) ${rival}가 <b>${asWins(rows[2][kLeft])}</b> 하면 → ${me2}는 <b>${rows[2][kWin]}승 이상</b> 필요` : "");
+
     const lastOk = rows.map(r => r[OX]).lastIndexOf("O");
     document.getElementById("srace").innerHTML =
-      `<thead><tr>${head.map(h=>`<th>${h}</th>`).join("")}</tr></thead>
-       <tbody>${rows.map((r,i) => {
+      `<thead><tr>
+         <th>${teamBadge(rival)}<small>남은 경기 성적</small></th>
+         <th>${teamBadge(rival)}<small>최종 승점</small></th>
+         <th>${teamBadge(me2)}<small>필요한 성적 (남은 ${myLeft}경기)</small></th>
+         <th>가능?</th></tr></thead>
+       <tbody>${rows.map((r, i) => {
          const dead = r[OX] === "X";
-         const cls  = [dead ? "dead" : "", i === lastOk ? "edge" : ""]
-                        .filter(Boolean).join(" ");
-         return `<tr class="${cls}">${cols.map(c => c === OX
-           ? `<td><span class="ox ${dead?"no":"yes"}">${dead?"✕ 불가":"○ 가능"}</span></td>`
-           : `<td>${r[c]}</td>`).join("")}</tr>`;
+         const cls  = [dead ? "dead" : "", i === lastOk ? "edge" : ""].filter(Boolean).join(" ");
+         return `<tr class="${cls}">
+           <td><b>${asWins(r[kLeft])}</b><small>+${r[kLeft]}점</small></td>
+           <td>${r[kFin]}점</td>
+           <td><b>${r[kWin]}승 이상</b><small>+${r[kNeed]}점</small></td>
+           <td><span class="ox ${dead ? "no" : "yes"}">${dead ? "✕ 불가" : "○ 가능"}</span></td></tr>`;
        }).join("")}</tbody>`;
   }
 
@@ -1044,13 +1105,21 @@ function drawScatter(S){
       meta.data.forEach((pt, k) => {
         const t = ds.data[k].t;
         if(!t || !(t.유의 || t.team === S.meta.team)) return;   // 겹침 방지
-        const txt = `${t.team} (${t.시그마>0?"+":""}${t.시그마}σ)`;
+        const txt = t.team + (t.유의 ? " ★" : "");
         // 오른쪽에 공간이 없으면 왼쪽에 씁니다
         const w = ctx.measureText(txt).width;
         const right = pt.x + 12 + w < c.chartArea.right;
         ctx.textAlign = right ? "left" : "right";
         ctx.fillText(txt, pt.x + (right ? 12 : -12), pt.y + 4);
       });
+      // 구역 이름표. '운이 좋다/나쁘다' 같은 원인 단정은 쓰지 않습니다.
+      const A = c.chartArea;
+      ctx.font = "600 12px system-ui, sans-serif";
+      ctx.fillStyle = "#8a97a8";
+      ctx.textAlign = "left";
+      ctx.fillText("↖ 득실차에 비해 승점이 많음", A.left + 8, A.top + 16);
+      ctx.textAlign = "right";
+      ctx.fillText("득실차에 비해 승점이 적음 ↘", A.right - 8, A.bottom - 10);
       ctx.restore();
     }
   };
@@ -1079,7 +1148,8 @@ function drawScatter(S){
         legend:{display:false},
         tooltip:{ callbacks:{ label: c => {
           const t = c.raw.t; if(!t) return "";
-          return `${t.team} · PPG ${t.PPG.toFixed(3)} · ${t.시그마>0?"+":""}${t.시그마}σ`;
+          return `${t.team} · 경기당 승점 ${t.PPG.toFixed(2)} · ` +
+            (Math.abs(t.시그마) < 1.5 ? "흔한 차이" : (t.시그마 > 0 ? "득실차보다 승점 많음" : "득실차보다 승점 적음"));
         }}},
       },
       scales:{
@@ -1447,10 +1517,11 @@ function buildGlossary(){
 // 왜 시뮬레이션인가:
 //   "몇 점이면 2위" 같은 산술 계산(순위 분석 탭 ③)은 '가능/불가능'만 알려줍니다.
 //   실제로 얼마나 그럴듯한지는 남은 경기를 여러 번 치러봐야 감이 옵니다.
-// 설계상의 타협:
-//   잔여 대진표가 데이터에 없어서, 각 팀의 남은 경기 수만 알고 무작위로 짝을 짓습니다.
-//   대진표(2편 손입력의 race_h2h_remaining.csv)가 들어오면 이 부분만 바꾸면 됩니다.
-const SIM_N = 3000;          // 반복 횟수. 늘리면 정확해지지만 느려집니다.
+// 대진:
+//   data/fixtures.js (K리그 공식 일정표를 옮긴 것)가 있으면 실제 대진대로 치릅니다.
+//   없으면 예전 방식(남은 경기 수만 알고 무작위로 짝짓기)으로 돌아갑니다.
+//   → 일정 파일이 빠져도 화면이 깨지지 않게 하려는 안전장치입니다.
+const SIM_N = 10000;         // 반복 횟수. 3,000회는 ±1~2%p 흔들려서 늘렸습니다(실제 일정이라 계산이 가벼움).
 const LEAGUE_GPG = 1.25;     // 팀당 경기당 평균 득점(가정값)
 const TOTAL_GAMES = 32;      // 17팀 2로빈 → 팀당 32경기
 
@@ -1460,6 +1531,54 @@ function rpois(l){
   let k = 0, p = 1;
   do { k++; p *= Math.random(); } while(p > L);
   return k - 1;
+}
+
+// 실제 일정표를 [홈 번호, 원정 번호] 목록으로 바꿉니다. 한 번만 만들면 됩니다.
+// 팀 이름이 순위표와 하나라도 안 맞으면 null → 무작위 방식으로 돌아갑니다.
+function fixturePairs(base){
+  const F = window.KFL_FIXTURES;
+  if(!F || !F.fixtures || !F.fixtures.length) return null;
+  const idx = new Map(base.map((b, i) => [b.team, i]));
+  const pairs = [];
+  for(const f of F.fixtures){
+    if(!idx.has(f.home) || !idx.has(f.away)){
+      console.warn("[KFL] 일정의 팀 이름이 순위표와 다릅니다:", f.home, f.away);
+      return null;
+    }
+    pairs.push([idx.get(f.home), idx.get(f.away)]);
+  }
+  // 남은 경기 수가 순위표와 다르면(일정이 오래된 경우) 쓰지 않습니다.
+  const cnt = base.map(() => 0);
+  pairs.forEach(([i, j]) => { cnt[i]++; cnt[j]++; });
+  if(cnt.some((c, i) => c !== base[i].left)){
+    console.warn("[KFL] 일정표의 남은 경기 수가 순위표와 달라 무작위 대진을 씁니다.");
+    return null;
+  }
+  return pairs;
+}
+
+let FIXED_PAIRS = undefined;   // undefined = 아직 안 만듦, null = 일정 없음
+let SIM_MODE = "random";       // 화면 안내 문구에 씁니다
+
+// 이번 반복에서 치를 경기 목록을 돌려줍니다.
+function pairsFor(base){
+  if(FIXED_PAIRS === undefined){
+    FIXED_PAIRS = fixturePairs(base);
+    SIM_MODE = FIXED_PAIRS ? "fixtures" : "random";
+  }
+  if(FIXED_PAIRS) return FIXED_PAIRS;
+  // 예전 방식: 남은 경기 수만큼 '출전권'을 만들어 섞은 뒤 둘씩 짝짓습니다.
+  const slots = [];
+  base.forEach((b, i) => { for(let k = 0; k < b.left; k++) slots.push(i); });
+  for(let i = slots.length - 1; i > 0; i--){
+    const j = (Math.random() * (i + 1)) | 0;
+    [slots[i], slots[j]] = [slots[j], slots[i]];
+  }
+  const out = [];
+  for(let a = 0; a + 1 < slots.length; a += 2){
+    if(slots[a] !== slots[a + 1]) out.push([slots[a], slots[a + 1]]);  // 자기 자신과 짝이면 버림
+  }
+  return out;
 }
 
 function simulate(S){
@@ -1477,16 +1596,7 @@ function simulate(S){
     const pts = base.map(b => b.pts0);
     const gd  = base.map(b => b.gd0);
 
-    // 남은 경기 수만큼 '출전권'을 만들어 섞은 뒤 둘씩 짝짓습니다.
-    const slots = [];
-    base.forEach((b, i) => { for(let k = 0; k < b.left; k++) slots.push(i); });
-    for(let i = slots.length - 1; i > 0; i--){
-      const j = (Math.random() * (i + 1)) | 0;
-      [slots[i], slots[j]] = [slots[j], slots[i]];
-    }
-    for(let a = 0; a + 1 < slots.length; a += 2){
-      const i = slots[a], j = slots[a + 1];
-      if(i === j) continue;              // 자기 자신과 짝이 되면 그 경기는 버립니다
+    for(const [i, j] of pairsFor(base)){
       const d = base[i].r - base[j].r;
       const li = Math.min(5, Math.max(0.15, LEAGUE_GPG + d / 2));
       const lj = Math.min(5, Math.max(0.15, LEAGUE_GPG - d / 2));
@@ -1542,6 +1652,19 @@ function buildOddsTab(){
       <div class="obox"><b>${pct(v)}</b><span>${lab}</span>
         <div class="obar"><i style="width:${Math.max(1, Math.min(100, v))}%"></i></div></div>`).join("");
 
+    // 100칸 점 그림. 반올림한 값이라 0.4% 같은 작은 확률은 0칸이 됩니다(글로 따로 표시).
+    const n2 = Math.round(me.p2);
+    document.getElementById("wdots").innerHTML =
+      Array.from({length:100}, (_, k) => `<i class="${k < n2 ? "on" : ""}"></i>`).join("");
+    document.getElementById("wdotcap").innerHTML =
+      `지금 기록이 이어진다면, 남은 시즌을 100번 치를 때 ${me.team}가 ` +
+      `<b>2위 안(자동 승격)에 드는 건 약 ${n2 === 0 && me.p2 > 0 ? "1번 미만" : n2 + "번"}</b>입니다.`;
+
+    if(SIM_MODE !== "fixtures"){
+      document.getElementById("wmode").innerHTML =
+        "<b>잔여 일정을 넣지 못했습니다.</b> 남은 경기를 무작위로 짝지어 돌립니다. 실제 대진과 다릅니다.";
+    }
+
     document.getElementById("wnote").textContent =
       `${me.team} · 현재 승점 ${me.pts0} · 남은 경기 ${me.left}경기 · ` +
       `시뮬레이션 ${SIM_N.toLocaleString()}회 평균 최종 승점 ${me.avg.toFixed(1)}점`;
@@ -1567,11 +1690,36 @@ function buildOddsTab(){
 
   ODDS = simulate(S);
   draw();
+  drawForecastLog();
   selEl.addEventListener("change", draw);
   document.getElementById("wrun").addEventListener("click", () => {
     ODDS = simulate(S);
     draw();
   });
+}
+
+// 예측 기록장: 위의 '다시 돌리기' 결과와 달리, 특정 날짜에 적어 두고 고치지 않는 예측입니다.
+// 시즌이 끝나면 forecast_log.js 의 actual 에 실제 순위·승점을 채우면 표가 자동으로 비교해 줍니다.
+function drawForecastLog(){
+  const L = window.KFL_FORECAST_LOG;
+  if(!L || !L.entries || !L.entries.length) return;
+  const e = L.entries[L.entries.length - 1];          // 가장 최근 기록
+  const A = e.actual;                                  // 시즌 전에는 null
+  document.getElementById("wlogbox").hidden = false;
+  document.getElementById("wloglead").innerHTML =
+    `${e.as_of} 기록으로 ${e.made_at}에 적어 둔 예측입니다(${e.sims.toLocaleString()}회). ` +
+    `이 숫자는 고치지 않습니다. ${A ? "오른쪽이 실제 결과입니다." : "시즌이 끝나면(11월 29일) 오른쪽 칸에 실제 결과를 채웁니다."}`;
+  const rows = [...e.teams].sort((a, b) => b.avg_pts - a.avg_pts);
+  const myTeam = window.KFL_STANDINGS ? window.KFL_STANDINGS.meta.team : "";
+  document.getElementById("wlog").innerHTML = `
+    <thead><tr><th>팀</th><th>자동 승격<br><small>2위 이내</small></th><th>PO 진출<br><small>6위 이내</small></th>
+      <th>예상 최종<br>승점</th><th>실제<br>순위</th><th>실제<br>승점</th></tr></thead>
+    <tbody>${rows.map(t => {
+      const a = A && A[t.team];
+      return `<tr class="${t.team === myTeam ? "mine" : ""}"><td>${teamBadge(t.team)}</td>
+        <td>${t.p2}%</td><td>${t.p6}%</td><td>${t.avg_pts}</td>
+        <td>${a ? a.rank + "위" : "-"}</td><td>${a ? a.pts : "-"}</td></tr>`;
+    }).join("")}</tbody>`;
 }
 
 // ── 탭 홈: 한눈에 ─────────────────────────────────────────────
@@ -1641,6 +1789,7 @@ function buildHome(){
         <td>${zoneOf(t.총점순위)}</td></tr>`).join("")}</tbody>`;
 
   document.getElementById("h-go").innerHTML = `
+    <button type="button" class="golink" data-go="b">연재 글 보기</button>
     <button type="button" class="golink" data-go="s">순위 분석 보기</button>
     <button type="button" class="golink" data-go="t">팀 비교 보기</button>
     <button type="button" class="golink" data-go="g">축구 백과 열기</button>`;
@@ -1702,7 +1851,7 @@ function linkTerms(){
 
   // 백과 탭(#pan-g) 자체는 건드리지 않습니다. 설명 안에 또 점선이 생기면 지저분합니다.
   document.querySelectorAll(
-    "#pan-h .hint, #pan-s .hint, #pan-s h3.sec, #pan-t .hint, #pan-o .hint, #pan-s .legend span"
+    "#pan-h .hint, #pan-b .hint, #pan-i .hint, #pan-s .hint, #pan-s h3.sec, #pan-t .hint, #pan-o .hint, #pan-s .legend span"
   ).forEach(el => {
     const used = new Set();          // 한 문단에서 같은 단어는 한 번만 표시
     const nodes = [];
@@ -1786,9 +1935,7 @@ function renderSeries(){
   const esc = t => String(t == null ? "" : t)
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   const list = window.KFL_SERIES || [];
-  const log  = window.KFL_CHANGELOG || [];
   const sEl = document.getElementById("h-series");
-  const cEl = document.getElementById("h-clog");
 
   if(sEl){
     sEl.innerHTML = list.map(x => {
@@ -1806,11 +1953,7 @@ function renderSeries(){
       if(b) switchTab(b.dataset.go);
     });
   }
-  if(cEl){
-    cEl.innerHTML = log.map(x =>
-      `<li><span class="yr">${esc(x.date)}</span><span>
-        <span class="kind${x.kind === "정정" ? " fix" : ""}">${esc(x.kind)}</span>${esc(x.text)}</span></li>`).join("");
-  }
+
 }
 </script>
 </body>
