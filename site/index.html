@@ -270,6 +270,17 @@
             font-size:.9rem;line-height:1.65}
   .story li:last-child{border-bottom:none}
   .story .yr{flex:0 0 68px;font-weight:800;color:var(--blue)}
+  /* 연재 글 · 고친 기록 (홈) */
+  .series .q{color:var(--muted);font-size:.86rem}
+  .series .meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px}
+  .pill{font-size:.72rem;padding:2px 9px;border-radius:999px;background:var(--band);
+        color:var(--muted);border:1px solid var(--line)}
+  .golink.sm{padding:3px 10px;font-size:.78rem}
+  .clog .yr{flex-basis:92px;font-weight:600;color:var(--muted);font-size:.82rem}
+  .kind{font-weight:700;margin-right:6px;color:var(--teal)}
+  .kind.fix{color:var(--accent)}
+  footer.site p a{color:#8fd0f5}
+  .caveat li b{display:inline;margin:0}  /* 목록 안 굵은 글씨는 줄바꿈하지 않음 */
   .srcline{font-size:.74rem;color:var(--muted);margin-top:10px}
 
   /* ── 승격 확률 ─────────────────────────────────────────────*/
@@ -432,6 +443,8 @@
       <ul class="hlist">
         <li><b>순위 분석</b> — 순위표에 안 나오는 '내용'을 봅니다.
           득점과 실점의 차이에 비해 승점을 더 벌었는지, 덜 벌었는지 비교합니다.</li>
+        <li><b>승격 확률</b> — 남은 경기를 컴퓨터로 여러 번 치러 보고,
+          지금 기록이 이어진다면 몇 번이나 승격권에 드는지 셉니다. 예언이 아니라 가정 위의 계산입니다.</li>
         <li><b>팀 비교</b> — 슈팅·패스 같은 기록을 경기당 평균으로 바꿔 팀끼리 나란히 놓습니다.</li>
         <li><b>축구 백과</b> — 오프사이드 같은 기본 규칙부터 통계 용어까지 찾아보는 곳입니다.
           본문에 <span class="term" data-g="잔차">점선이 그어진 단어</span>는 눌러보세요.</li>
@@ -440,6 +453,33 @@
       <p class="hint" style="margin-top:20px">
         어려운 내용은 기본으로 숨겨져 있습니다. 위의 <b>자세히 보기</b>를 누르면
         통계 그래프까지 전부 나옵니다.</p>
+
+      <h3 class="sec">관중석에서 시작한 질문</h3>
+      <p class="hint">후반 20분쯤 되면 관중석에서 이런 말이 나옵니다.
+        <b>"이제 데커스 들어오겠네. 김주공이랑 바뀌겠지."</b> 그리고 대부분 그대로 됩니다.
+        이 감이 기록으로 봐도 맞는지 확인하려고, 올 시즌 대구의 경기를 하나씩 기록하고 있습니다.</p>
+
+      <!-- 목록 내용은 data/series.js 에서 고칩니다 -->
+      <h3 class="sec">연재 글</h3>
+      <p class="hint">블로그 글과 이 사이트는 짝입니다. 글에서는 질문과 해석을,
+        사이트에서는 표와 그래프를 봅니다.</p>
+      <ul class="story series" id="h-series"></ul>
+
+      <h3 class="sec">기록 원칙</h3>
+      <ul class="hlist">
+        <li><b>공식 기록만 씁니다.</b> K리그 공식 경기 기록을 한 경기씩 옮겨 적고(AI 도움),
+          공식 순위표와 맞춰 봅니다. 자동 수집 프로그램(크롤링)은 쓰지 않습니다.</li>
+        <li><b>원본은 공개하지 않습니다.</b> 경기별 원본 기록은 올리지 않고,
+          가공한 표와 그래프만 보여줍니다.</li>
+        <li><b>숫자는 코드가, 해석은 사람이.</b> 계산과 그래프는 공개된 코드로 만들고,
+          해석은 글쓴이가 직접 씁니다.</li>
+        <li><b>한계를 같이 적습니다.</b> 표본이 작거나 다른 요인이 섞여 있으면 밝힙니다.
+          "○○ 선수 덕분" 같은 원인 단정은 하지 않습니다.</li>
+        <li><b>틀린 것도 지우지 않습니다.</b> 틀린 예측과 고친 내용은 아래 '고친 기록'에 남깁니다.</li>
+      </ul>
+
+      <h3 class="sec">고친 기록</h3>
+      <ul class="story clog" id="h-clog"></ul>
     </section>
 
     <!-- 탭 1: 선수 -->
@@ -492,6 +532,34 @@
         <span><i></i>빨간 선 = 추격이 성립하는 한계선</span>
       </div>
       <p class="hint" id="s-note" style="margin-top:12px"></p>
+
+      <!-- 연재 1편 4절. 잔여 대진 데이터(race_h2h_remaining)가 export 되면
+           이 표를 데이터에서 그리도록 바꿉니다. 지금은 손으로 적은 고정 표입니다. -->
+      <h3 class="sec">④ 대구FC 남은 6경기</h3>
+      <p class="hint">9월 20일 기준 일정과 순위입니다. 일정은 연맹 사정으로 바뀔 수 있습니다.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>라운드</th><th>날짜</th><th>상대</th><th>홈/원정</th><th>상대 순위</th></tr></thead>
+        <tbody>
+          <tr><td>29R</td><td>10.17 (토)</td><td>충북청주</td><td>홈</td><td>11위</td></tr>
+          <tr><td>30R</td><td>10.24 (토)</td><td>전남드래곤즈</td><td>원정</td><td>16위</td></tr>
+          <tr class="mine"><td>31R</td><td>10.31 (토)</td><td>수원삼성</td><td>홈</td><td><b>1위</b></td></tr>
+          <tr><td>32R</td><td>11.07 (토)</td><td>성남FC</td><td>원정</td><td>10위</td></tr>
+          <tr><td>33R</td><td>11.22 (일)</td><td>김해FC</td><td>홈</td><td>17위</td></tr>
+          <tr><td>34R</td><td>11.29 (일)</td><td>천안시티</td><td>원정</td><td>14위</td></tr>
+        </tbody></table></div>
+      <p class="hint" style="margin-top:10px">남은 6경기에 승격 플레이오프권(3~6위) 팀은 없습니다.
+        1위 수원삼성을 빼면 모두 10위 이하입니다.</p>
+
+      <div class="caveat">
+        <b>이 숫자로 말할 수 없는 것 (한계)</b>
+        <ul>
+          <li><b>일정 난이도 미보정</b> — 경쟁팀들이 남은 경기에서 누구를 만나는지는 아직 반영하지 않았습니다.</li>
+          <li><b>표본 17개</b> — 팀이 17개뿐이라 회귀선의 오차가 큽니다. 1.5σ 미만으로 벗어난 팀은 해석하지 않습니다.</li>
+          <li><b>대패 왜곡</b> — 한 경기 대패가 득실차를 크게 흔듭니다.</li>
+          <li><b>인과 아님</b> — 평균선보다 위에 있다고 '승부처에 강하다'고 말할 수 없습니다.</li>
+          <li><b>홈/원정 미분리</b>, 그리고 표시된 날짜 기준의 <b>스냅샷</b>입니다.</li>
+        </ul>
+      </div>
     </section>
 
     <!-- 탭: 승격 확률 시뮬레이션 -->
@@ -587,14 +655,16 @@
     </svg>
     <span class="wm"><b>대구FC 데이터 랩</b><small>비공식 팬 사이트</small></span>
   </a>
-  <p>구단과 관련 없는 <b>비공식 팬 분석 사이트</b>입니다.
-     분석에 쓴 데이터의 저작권은 한국프로축구연맹(K리그)에 있습니다.</p>
+  <p>구단과 관련 없는 <b>비공식 팬 분석 사이트</b>입니다.<br>
+     본 분석에 사용된 데이터의 저작권 및 소유권은 한국프로축구연맹(K LEAGUE)에 있습니다.<br>
+     분석 코드: <a href="https://github.com/daegu-football-lab/kfootball-lab" target="_blank" rel="noopener">GitHub</a></p>
 </div></footer>
 
 <!-- 데이터 파일을 먼저 불러옵니다. 이 파일이 window.KFL_DATA 를 만들어 줍니다.
      (json을 fetch하지 않는 이유는 src/export.py 주석 참고) -->
 <script src="data/players.js"></script>
 <script src="data/standings.js"></script>
+<script src="data/series.js"></script>
 
 <script>
 const D = window.KFL_DATA;
@@ -1701,6 +1771,41 @@ function initTips(){
 // (앞에서 호출하면 "Cannot access 'GLOSSARY' before initialization"로 죽고,
 //  그 뒤에 있던 nav 버튼 클릭 바인딩까지 통째로 실행되지 않아 탭이 전부 안 눌립니다.)
 init();
+renderSeries();
+
+// ── 홈: 연재 글 · 고친 기록 ───────────────────────────────────
+// data/series.js 가 없거나 비어 있어도 나머지 화면은 그대로 동작하게 합니다.
+// (함수 선언은 호이스팅되므로 위의 호출보다 뒤에 있어도 됩니다)
+function renderSeries(){
+  const esc = t => String(t == null ? "" : t)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const list = window.KFL_SERIES || [];
+  const log  = window.KFL_CHANGELOG || [];
+  const sEl = document.getElementById("h-series");
+  const cEl = document.getElementById("h-clog");
+
+  if(sEl){
+    sEl.innerHTML = list.map(x => {
+      const pub = x.status === "published" && x.url;
+      const when = pub ? `<span class="pill">${esc(x.date)} 발행</span>`
+                       : `<span class="pill">발행 전${x.date ? " · " + esc(x.date) + " 예정" : ""}</span>`;
+      const read = pub ? `<a class="golink sm" href="${esc(x.url)}" target="_blank" rel="noopener">블로그에서 읽기 →</a>` : "";
+      const site = x.tab ? `<button type="button" class="golink sm" data-go="${esc(x.tab)}">사이트에서 보기</button>` : "";
+      return `<li><span class="yr">${esc(x.no)}</span><span>
+        <b>${esc(x.title)}</b><br><span class="q">${esc(x.question)}</span>
+        <span class="meta">${when}${read}${site}</span></span></li>`;
+    }).join("");
+    sEl.addEventListener("click", e => {
+      const b = e.target.closest("button.golink");
+      if(b) switchTab(b.dataset.go);
+    });
+  }
+  if(cEl){
+    cEl.innerHTML = log.map(x =>
+      `<li><span class="yr">${esc(x.date)}</span><span>
+        <span class="kind${x.kind === "정정" ? " fix" : ""}">${esc(x.kind)}</span>${esc(x.text)}</span></li>`).join("");
+  }
+}
 </script>
 </body>
 </html>
