@@ -14,7 +14,7 @@
     --bar:#0a4d7a; --head:#0a4d7a; --blue:#2ea3e8; --blue-dark:#0a4d7a;
     --teal:#2ea3e8; --teal-ink:#0a6aa8; --blue-soft:#e8f0f9; --tint:#e8f0f9;
     --team:#2ea3e8; --sub:#c9d6e4; --accent:#e4572e;
-    --bg:#ffffff; --band:#f2f6fb; --card:#fff; --text:#1c2733; --muted:#6b7a89; --line:#e2e8ef; --rule:#0a4d7a;
+    --bg:#ffffff; --band:#f2f6fb; --card:#fff; --text:#1c2733; --muted:#57697a; --line:#e2e8ef; --rule:#0a4d7a;
     --good:#1a7f4b; --btn:#1d84c6; --thead:#0a4d7a; --thead-ink:#fff; --zebra:#f6f9fc;
     --shadow:0 1px 2px rgba(16,24,40,.04), 0 8px 24px -12px rgba(16,24,40,.12);
     --shadow-lift:0 12px 28px -16px rgba(46,163,232,.4);
@@ -433,25 +433,10 @@
   <div class="banner" id="banner"></div>
 
   <main>
-    <!-- 탭 홈: 한눈에 (축구 통계가 처음인 방문자용 착지 화면) -->
+    <!-- 탭 홈: 한눈에 (축구 통계가 처음인 방문자용 착지 화면) — 가볍게 유지, 표/그래프는 다른 탭에서 -->
     <section class="panel on" id="pan-h">
       <h2>한눈에 보기<span class="h2sub">지금 대구FC는 어디쯤 있나</span></h2>
       <div class="headline" id="h-headline"></div>
-      <div class="hero" id="h-hero"></div>
-      <p class="gcount" id="h-asof"></p>
-
-      <h3 class="sec">지금 순위표</h3>
-      <p class="hint">이기면 3점, 비기면 1점, 지면 0점을 받습니다. 이 점수의 합이 승점입니다.
-        시즌이 끝났을 때 <b>1~2위는 바로 K리그1로 올라가고(자동 승격)</b>,
-        <b>3~6위는 승격 플레이오프</b>를 치릅니다.</p>
-      <div class="tbl"><table id="h-table"></table></div>
-      <p class="tblhint">옆으로 밀면 더 보입니다 <span class="arrow">→</span></p>
-
-      <h3 class="sec">관중석에서 시작한 질문</h3>
-      <p class="hint">후반 20분쯤 되면 관중석에서 이런 말이 나옵니다.
-        <b>"이제 데커스 들어오겠네. 김주공이랑 바뀌겠지."</b> 그리고 대부분 그대로 됩니다.
-        이 감이 기록으로 봐도 맞는지 확인하려고, 올 시즌 대구의 경기를 하나씩 기록하고 있습니다.</p>
-
       <div class="golinks" id="h-go"></div>
     </section>
 
@@ -466,6 +451,12 @@
     <!-- 탭: 소개 (팀 연표 · 사이트 설명 · 기록 원칙 · 고친 기록) -->
     <section class="panel" id="pan-i">
       <h2>소개<span class="h2sub">대구FC와 이 사이트 이야기</span></h2>
+
+      <h3 class="sec">관중석에서 시작한 질문</h3>
+      <p class="hint">후반 20분쯤 되면 관중석에서 이런 말이 나옵니다.
+        <b>"이제 데커스 들어오겠네. 김주공이랑 바뀌겠지."</b> 그리고 대부분 그대로 됩니다.
+        이 감이 기록으로 봐도 맞는지 확인하려고, 올 시즌 대구의 경기를 하나씩 기록하고 있습니다.</p>
+
       <h3 class="sec">대구FC는 어떤 팀인가요</h3>
       <p class="hint">숫자 이야기 전에, 이 팀이 어디서 왔는지부터.</p>
       <ul class="story">
@@ -520,6 +511,16 @@
       <h2>순위 분석<span class="h2sub">순위와 내용은 얼마나 일치하는가</span></h2>
       <p class="hint">팀마다 소화 경기 수가 달라, 모든 지표를 <b>경기당</b>으로 맞춘 뒤
         '득실차로 예상되는 승점'과 '실제 승점'을 비교합니다.</p>
+
+      <h3 class="sec">지금 순위표</h3>
+      <p class="hint">이기면 3점, 비기면 1점, 지면 0점을 받습니다. 이 점수의 합이 승점입니다.
+        시즌이 끝났을 때 <b>1~2위는 바로 K리그1로 올라가고(자동 승격)</b>,
+        <b>3~6위는 승격 플레이오프</b>를 치릅니다.</p>
+      <div class="hero" id="h-hero"></div>
+      <div class="tbl"><table id="h-table"></table></div>
+      <p class="tblhint">옆으로 밀면 더 보입니다 <span class="arrow">→</span></p>
+      <p class="gcount" id="h-asof"></p>
+
       <div id="s-summary" class="stats four"></div>
 
       <h3 class="sec">① 경기 수를 맞춘 순위표</h3>
