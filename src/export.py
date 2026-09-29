@@ -323,6 +323,8 @@ def export_standings_json(table, reg: dict, race: dict) -> str:
             "team": config.MY_TEAM,
             "season": config.SEASON,
             "generated_at": date.today().isoformat(),
+            "as_of": config.DATA_AS_OF,
+            "as_of_note": config.DATA_AS_OF_NOTE,
             "출처": "한국프로축구연맹(K LEAGUE) 공식 기록",
         },
         "teams": teams,

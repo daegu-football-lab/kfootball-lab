@@ -29,3 +29,8 @@ COLOR_ACCENT = "#e4572e"    # 강조용
 
 for d in (OUTPUT_DIR, CHART_DIR, POST_DIR, SITE_DATA_DIR):
     d.mkdir(parents=True, exist_ok=True)
+
+# 분석 기준일: 공식 순위표와 대조해 숫자가 맞다고 확인한 날짜.
+# 블로그 글 맨 위 "○월 ○일 기준" 줄과 사이트 표시가 같은 값을 쓰도록 여기 한 곳에서 관리한다.
+DATA_AS_OF = "2026-09-29"
+DATA_AS_OF_NOTE = "27라운드 종료"
