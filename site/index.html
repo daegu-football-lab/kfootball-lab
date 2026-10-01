@@ -433,6 +433,7 @@
   .hm-res.w{background:var(--good)}.hm-res.d{background:var(--draw)}.hm-res.l{background:var(--loss)}
   .hm-match{margin:4px 12px 14px;background:var(--band);border:1px solid var(--line);border-radius:14px;padding:12px}
   .hm-mt{display:flex;justify-content:space-between;align-items:center;font-size:.78rem;color:var(--muted)}
+  .hm-pill.wait{background:var(--band);color:var(--muted);border:1px solid var(--line)}
   .hm-pill{font-size:.7rem;padding:2px 8px;border-radius:999px;background:var(--blue-soft);color:var(--blue);font-weight:700}
   .hm-vs{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin-top:10px}
   .hm-side{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:.85rem;font-weight:700}
@@ -2084,9 +2085,15 @@ function buildHomeCards(){
   }
 
   // ② 다음 경기: 일정표에서 대구의 첫 경기
-  const nx = F && F.fixtures ? F.fixtures.find(f => f.home === MY || f.away === MY) : null;
+  // 기록(recent.js)에 들어간 마지막 경기 '다음' 대구 경기를 고릅니다.
+  // 그 경기 날짜가 오늘보다 지났는데 아직 기록이 없으면 '결과 반영 전'으로 표시합니다.
+  // (경기 결과는 사람이 기록을 추가하고 python run.py recent 를 돌려야 바뀌기 때문)
+  const lastDone = (R && R.meta && R.meta.as_of) || "";
+  const today = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);   // 한국 시간 기준 날짜
+  const nx = F && F.fixtures ? F.fixtures.find(f => (f.home === MY || f.away === MY) && f.date > lastDone) : null;
+  const pending = nx && nx.date < today;
   document.getElementById("hm-next").innerHTML = nx ? `
-    <div class="hm-mt"><span>${md(nx.date)} (${wd(nx.date)})${nx.time ? " " + nx.time : ""} · ${nx.round}라운드</span><span class="hm-pill">${nx.home === MY ? "홈" : "원정"}</span></div>
+    <div class="hm-mt"><span>${md(nx.date)} (${wd(nx.date)})${nx.time ? " " + nx.time : ""} · ${nx.round}라운드</span><span>${pending ? `<span class="hm-pill wait">결과 반영 전</span> ` : ""}<span class="hm-pill">${nx.home === MY ? "홈" : "원정"}</span></span></div>
     <div class="hm-vs">
       <div class="hm-side">${bdg(nx.home, "xl")}${esc(nx.home)}<em>${rankOf(nx.home)}위</em></div>
       <div class="hm-mid"><b>VS</b><small>홈 · 원정</small></div>
