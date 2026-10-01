@@ -46,3 +46,4 @@ site/
 - 블로그 발행은 이 프로젝트가 아니라 별도 `blog-automation`(`C:\dev\blog-automation`) 파이프라인을 통해서 함: `python run.py` → `posts/`의 `.md` 완성 → 차트 PNG를 네이버 에디터에 붙여넣기 → `blog-automation`으로 발행.
 - `C:\dev\kfootball-dashboard-demo`는 이 사이트(`site/index.html`)의 UI를 다시 디자인해보는 **별도 Next.js 프로토타입/데모**임. 아직 이 프로젝트 본체에 병합된 건 아님 — 관계와 현재 상태는 `HANDOFF.md` 참고.
 - 세션을 시작할 때 `HANDOFF.md`를 먼저 읽고, 끝날 때 갱신할 것.
+- **사이트(`site/`) 수정은 한 번에 한 대화에서만** (2026-10-01 사용자 결정). 시작 전 `git status`와 `git log origin/main -1`로 미커밋 변경·원격과 갈라짐을 확인하고, 다른 대화가 만든 변경이면 덮어쓰지 말고 사용자에게 먼저 물을 것. GitHub 웹에서 직접 고치지 않는다(로컬과 갈라짐).

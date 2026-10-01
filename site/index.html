@@ -460,12 +460,7 @@
       <h2>연재 글<span class="h2sub">블로그 연재 목록과 발행 상태</span></h2>
       <p class="hint">블로그 글과 이 사이트는 짝입니다. 글에서는 질문과 해석을,
         사이트에서는 표와 그래프를 봅니다.</p>
-      <h3 class="sec">분석 연재</h3>
       <ul class="story series" id="h-series"></ul>
-
-      <h3 class="sec">출근부<span class="h2sub">직관 기록</span></h3>
-      <p class="hint">경기장에 직접 간 날의 기록입니다. 분석 연재와는 따로 모읍니다.</p>
-      <ul class="story series" id="h-chul"></ul>
     </section>
 
     <!-- 탭: 소개 (팀 연표 · 사이트 설명 · 기록 원칙 · 고친 기록) -->
@@ -2095,22 +2090,6 @@ function renderSeries(){
       const b = e.target.closest("button.golink");
       if(b) switchTab(b.dataset.go);
     });
-  }
-
-  // 출근부(직관 기록) 목록: data/series.js 의 KFL_CHULGEUNBU
-  // 발행됐지만 주소를 아직 모르는 글도 있어서, 발행 표시와 링크를 따로 판단합니다.
-  const chul = window.KFL_CHULGEUNBU || [];
-  const cEl = document.getElementById("h-chul");
-  if(cEl){
-    cEl.innerHTML = chul.map(x => {
-      const done = x.status === "published";
-      const when = done ? `<span class="pill">${esc(x.date)} 발행</span>`
-                        : `<span class="pill">발행 전${x.date ? " · " + esc(x.date) + " 예정" : ""}</span>`;
-      const read = done && x.url ? `<a class="golink sm" href="${esc(x.url)}" target="_blank" rel="noopener">블로그에서 읽기 →</a>` : "";
-      return `<li><span class="yr">${esc(x.no)}</span><span>
-        <b>${esc(x.title)}</b>
-        <span class="meta">${when}${read}</span></span></li>`;
-    }).join("");
   }
 
   // 순위 분석 탭 맨 위 '연재 1편과 짝' 상자: 블로그 링크 + 섹션 이동
