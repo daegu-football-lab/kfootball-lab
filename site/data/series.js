@@ -16,17 +16,17 @@ window.KFL_SERIES = [
     title: "관중석의 감, 숫자로 확인해 보기로 했다",
     question: "관중석에서 맞히는 교체 타이밍, 기록으로 봐도 정말 맞을까?",
     date: "2026-09-27",
-    status: "planned",
-    url: "",
+    status: "published",
+    url: "https://blog.naver.com/d_citizen/224424718774",
     tab: ""
   },
   {
     no: "1편",
-    title: "승격 경쟁팀, 숫자로 줄 세워보기",
+    title: "[분석 #1] K리그2 승격 경쟁, 대구FC는 어디쯤 서 있나",
     question: "경기 수가 다른 팀들을 공평하게 비교하면, 대구는 승격 경쟁에서 어디쯤인가?",
     date: "2026-09-27",
-    status: "planned",
-    url: "",
+    status: "published",
+    url: "https://blog.naver.com/d_citizen/224427099232",
     tab: "s"
   },
   {
