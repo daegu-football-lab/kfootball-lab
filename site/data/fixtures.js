@@ -5,176 +5,206 @@ window.KFL_FIXTURES = {
   "source": "K리그 공식 홈페이지 경기 일정 (kleague.com)",
   "checked_at": "2026-09-27",
   "from_round": 28,
-  "note": "일정은 연맹 사정으로 바뀔 수 있습니다."
+  "note": "일정은 연맹 사정으로 바뀔 수 있습니다.",
+  "time_checked_at": "2026-10-01",
+  "time_note": "킥오프 시각(time)은 kleague.com 일정 페이지에서 10월 경기만 옮겨 적음. 11월은 확정 공지 후 추가"
  },
  "fixtures": [
   {
    "round": 28,
    "date": "2026-10-09",
    "home": "수원FC",
-   "away": "화성FC"
+   "away": "화성FC",
+   "time": "14:00"
   },
   {
    "round": 28,
    "date": "2026-10-09",
    "home": "충북청주",
-   "away": "성남FC"
+   "away": "성남FC",
+   "time": "16:30"
   },
   {
    "round": 28,
    "date": "2026-10-09",
    "home": "김포FC",
-   "away": "서울이랜드"
+   "away": "서울이랜드",
+   "time": "16:30"
   },
   {
    "round": 28,
    "date": "2026-10-10",
    "home": "전남드래곤즈",
-   "away": "용인FC"
+   "away": "용인FC",
+   "time": "14:00"
   },
   {
    "round": 28,
    "date": "2026-10-10",
    "home": "파주프런티어",
-   "away": "부산아이파크"
+   "away": "부산아이파크",
+   "time": "14:00"
   },
   {
    "round": 28,
    "date": "2026-10-10",
    "home": "천안시티",
-   "away": "경남FC"
+   "away": "경남FC",
+   "time": "16:30"
   },
   {
    "round": 28,
    "date": "2026-10-10",
    "home": "김해FC",
-   "away": "충남아산"
+   "away": "충남아산",
+   "time": "16:30"
   },
   {
    "round": 28,
    "date": "2026-10-11",
    "home": "수원삼성",
-   "away": "안산그리너스"
+   "away": "안산그리너스",
+   "time": "14:00"
   },
   {
    "round": 29,
    "date": "2026-10-17",
    "home": "대구FC",
-   "away": "충북청주"
+   "away": "충북청주",
+   "time": "14:00"
   },
   {
    "round": 29,
    "date": "2026-10-17",
    "home": "성남FC",
-   "away": "수원FC"
+   "away": "수원FC",
+   "time": "14:00"
   },
   {
    "round": 29,
    "date": "2026-10-17",
    "home": "용인FC",
-   "away": "안산그리너스"
+   "away": "안산그리너스",
+   "time": "16:30"
   },
   {
    "round": 29,
    "date": "2026-10-17",
    "home": "김포FC",
-   "away": "파주프런티어"
+   "away": "파주프런티어",
+   "time": "16:30"
   },
   {
    "round": 29,
    "date": "2026-10-17",
    "home": "경남FC",
-   "away": "충남아산"
+   "away": "충남아산",
+   "time": "16:30"
   },
   {
    "round": 29,
    "date": "2026-10-18",
    "home": "수원삼성",
-   "away": "화성FC"
+   "away": "화성FC",
+   "time": "14:00"
   },
   {
    "round": 29,
    "date": "2026-10-18",
    "home": "서울이랜드",
-   "away": "김해FC"
+   "away": "김해FC",
+   "time": "14:00"
   },
   {
    "round": 29,
    "date": "2026-10-18",
    "home": "부산아이파크",
-   "away": "전남드래곤즈"
+   "away": "전남드래곤즈",
+   "time": "16:30"
   },
   {
    "round": 30,
    "date": "2026-10-24",
    "home": "전남드래곤즈",
-   "away": "대구FC"
+   "away": "대구FC",
+   "time": "14:00"
   },
   {
    "round": 30,
    "date": "2026-10-24",
    "home": "김포FC",
-   "away": "김해FC"
+   "away": "김해FC",
+   "time": "16:30"
   },
   {
    "round": 30,
    "date": "2026-10-25",
    "home": "성남FC",
-   "away": "수원삼성"
+   "away": "수원삼성",
+   "time": "14:00"
   },
   {
    "round": 30,
    "date": "2026-10-25",
    "home": "수원FC",
-   "away": "충남아산"
+   "away": "충남아산",
+   "time": "14:00"
   },
   {
    "round": 30,
    "date": "2026-10-25",
    "home": "부산아이파크",
-   "away": "경남FC"
+   "away": "경남FC",
+   "time": "14:00"
   },
   {
    "round": 30,
    "date": "2026-10-25",
    "home": "천안시티",
-   "away": "안산그리너스"
+   "away": "안산그리너스",
+   "time": "16:30"
   },
   {
    "round": 30,
    "date": "2026-10-25",
    "home": "충북청주",
-   "away": "용인FC"
+   "away": "용인FC",
+   "time": "16:30"
   },
   {
    "round": 30,
    "date": "2026-10-25",
    "home": "파주프런티어",
-   "away": "화성FC"
+   "away": "화성FC",
+   "time": "16:30"
   },
   {
    "round": 31,
    "date": "2026-10-31",
    "home": "경남FC",
-   "away": "화성FC"
+   "away": "화성FC",
+   "time": "14:00"
   },
   {
    "round": 31,
    "date": "2026-10-31",
    "home": "용인FC",
-   "away": "서울이랜드"
+   "away": "서울이랜드",
+   "time": "14:00"
   },
   {
    "round": 31,
    "date": "2026-10-31",
    "home": "충남아산",
-   "away": "김포FC"
+   "away": "김포FC",
+   "time": "16:30"
   },
   {
    "round": 31,
    "date": "2026-10-31",
    "home": "대구FC",
-   "away": "수원삼성"
+   "away": "수원삼성",
+   "time": "16:30"
   },
   {
    "round": 31,
