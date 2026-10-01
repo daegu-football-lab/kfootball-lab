@@ -350,3 +350,57 @@ def export_standings_json(table, reg: dict, race: dict) -> str:
         encoding="utf-8")
     print(f"  사이트 데이터 저장: site/data/{path.name}")
     return str(path)
+
+
+def export_recent_js(n: int = 5) -> "str | None":
+    """대구 최근 n경기 결과만 site/data/recent.js 로 내보냅니다 (홈 화면 '최근 5경기' 줄).
+
+    원시 기록(daegu2026/matches.csv)은 공개하지 않고,
+    날짜·라운드·상대·홈/원정·스코어·승무패만 뽑아 냅니다.
+    (경기 결과는 공식 순위표에도 나오는 공개 사실이라 원칙에 어긋나지 않는다고 판단)
+    """
+    import csv
+
+    src = config.ROOT / "data" / "raw" / "daegu2026" / "matches.csv"
+    if not src.exists():
+        print(f"  최근 경기: {src.name} 가 없어 건너뜁니다")
+        return None
+
+    team = config.MY_TEAM
+    rows = []
+    # utf-8-sig: 엑셀이 붙이는 BOM(파일 맨 앞 보이지 않는 문자)을 떼어 냅니다.
+    with open(src, encoding="utf-8-sig", newline="") as f:
+        for r in csv.DictReader(f):
+            if r["home_score"] == "" or r["away_score"] == "":
+                continue  # 아직 안 치른 경기
+            home = r["home_team"] == team
+            gf = int(r["home_score"] if home else r["away_score"])
+            ga = int(r["away_score"] if home else r["home_score"])
+            rows.append({
+                "date": r["date"],
+                "round": int(r["round"]),
+                "opponent": r["away_team"] if home else r["home_team"],
+                "venue": "홈" if home else "원정",
+                "gf": gf,
+                "ga": ga,
+                "result": "승" if gf > ga else ("무" if gf == ga else "패"),
+            })
+
+    rows.sort(key=lambda x: x["date"])
+    recent = rows[-n:]  # 오래된 경기 → 최근 경기 순서
+    payload = {
+        "meta": {
+            "team": team,
+            "as_of": recent[-1]["date"] if recent else None,
+            "source": "한국프로축구연맹(K LEAGUE) 공식 경기 기록",
+        },
+        "matches": recent,
+    }
+    path = config.SITE_DATA_DIR / "recent.js"
+    path.write_text(
+        "// 대구FC 최근 경기 결과 (python run.py recent 로 다시 만듭니다. 손으로 고치지 마세요)\n"
+        "window.KFL_RECENT = " + json.dumps(payload, ensure_ascii=False) + ";\n",
+        encoding="utf-8",
+    )
+    print(f"  최근 {len(recent)}경기 -> {path}")
+    return str(path)

@@ -58,6 +58,7 @@ def main(target_player: str = "세징야"):
 
     print("\n[4/5] 사이트 데이터 내보내는 중...")
     export.export_site_json(data)
+    export.export_recent_js()
 
     print("\n[5/5] 블로그 글 초안 만드는 중...")
     export.export_post_draft(result, chart_paths)
@@ -78,6 +79,7 @@ def main_standings():
     print(f"K리그2 {config.SEASON} 순위표 분석 (연재 1편)")
     print("=" * 50)
     standings.run()
+    export.export_recent_js()
 
 
 if __name__ == "__main__":
@@ -88,5 +90,8 @@ if __name__ == "__main__":
     # (나중에 명령이 늘어나면 argparse 로 바꾸는 것이 실무 관행입니다.)
     if arg == "standings":
         main_standings()
+    elif arg == "recent":
+        # 홈 화면 '최근 5경기'만 다시 만듭니다 (경기 기록을 추가한 뒤 실행)
+        export.export_recent_js()
     else:
         main(arg)
