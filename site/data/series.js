@@ -33,9 +33,9 @@ window.KFL_SERIES = [
     no: "2편",
     title: "[분석 #2] 상위 6팀, 남은 경기에서 누구를 만나나",
     question: "상위 6팀은 남은 경기에서 누구를 만나는가? 맞대결·홈 경기 수·상대 평균 순위로 본 잔여 일정",
-    date: "2026-10-03",
-    status: "planned",
-    url: "",
+    date: "2026-10-04",
+    status: "published",
+    url: "https://blog.naver.com/d_citizen/224431395907",
     tab: ""
   },
   {

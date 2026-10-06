@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 42 46">
+  <!-- 사이트 머리글의 자체 마크(육각 패치 + 상승 막대)와 같은 그림. 구단 엠블럼 아님 -->
+  <path d="M21 1.5 39 11.7v22.6L21 44.5 3 34.3V11.7z" fill="#0a4d7a" stroke="#2ea3e8" stroke-width="2"/>
+  <rect x="11.5" y="24" width="4.6" height="9" rx="1" fill="#fff"/>
+  <rect x="18.7" y="17.5" width="4.6" height="15.5" rx="1" fill="#fff"/>
+  <rect x="25.9" y="11" width="4.6" height="22" rx="1" fill="#8fd0f5"/>
+</svg>

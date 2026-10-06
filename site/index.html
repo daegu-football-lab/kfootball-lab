@@ -11,6 +11,7 @@
 <meta property="og:description" content="K리그2 공식 기록으로 대구FC를 읽는 비공식 팬 분석 사이트. 순위 분석, 승격 확률, 축구 백과.">
 <meta property="og:url" content="https://daegu-football-lab.github.io/kfootball-lab/site/">
 <meta property="og:locale" content="ko_KR">
+<link rel="icon" href="favicon.svg" type="image/svg+xml"> <!-- 탭 아이콘: 머리글 자체 마크와 같은 그림 -->
 <!-- 차트 라이브러리를 프로젝트 안에 같이 넣어뒀습니다(vendoring).
      인터넷이 없어도 열리고, 나중에 CDN 주소가 바뀌어도 사이트가 깨지지 않습니다. -->
 <script src="vendor/chart.umd.js"></script>
@@ -2093,7 +2094,7 @@ function buildHomeCards(){
   const left = (S.race && S.race.잔여경기 != null) ? S.race.잔여경기 : null;
   document.getElementById("hm-say").innerHTML =
     `${st.length}팀 중 <b>${meS.총점순위}위</b>, ${zone}입니다.` +
-    (meS.총점순위 > 2 && second ? ` 자동 승격 경계인 2위 ${esc(second.team)}와 <b>승점 ${second.승점 - meS.승점}점</b> 차이.` : "") +
+    (meS.총점순위 > 2 && second ? ` 자동 승격권인 2위 ${esc(second.team)}와 <b>승점 ${second.승점 - meS.승점}점</b> 차이.` : "") +
     (left != null ? ` 남은 경기는 ${left}경기입니다.` : "");
 
   // 최근 5경기 (오래된 → 최근)
