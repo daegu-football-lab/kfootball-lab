@@ -2,6 +2,18 @@
 
 Claude Code ↔ Gemini CLI 간에 작업을 이어가기 위한 상태 기록. 세션 시작할 때 읽고, 끝날 때 갱신할 것.
 
+## 2026-10-06 세션 ② — 사이트 작은 개선 (커밋 완료, push는 사용자)
+- 커밋: 2편 발행 반영(series.js, 10/4·주소), `site/favicon.svg` 추가, 루트 `index.html`에 og/description 태그, 홈 ① 문구 '자동 승격권인 2위'(10/1 할 일 메모 처리)
+- 점유율 섹션(위 세션 ①)은 미커밋 그대로 둠 — 이번 커밋은 HEAD 위에 위 수정만 골라 스테이징
+- 남은 후보: og:image(링크 미리보기 그림) 없음
+
+## 2026-10-06 세션 — [분석 #3] 점유율 글 + 팀 비교 탭 섹션
+- 번호 변경(사용자 결정): 점유율 = [분석 #3](10/11), 관중 = #4(10/15), 수원삼성 = #5. `site/data/series.js` 반영
+- 새 스크립트 `card_possession.py`: daegu2026 원시 기록 → 카드 2장(`output/charts/card_poss_*.png`) + `site/data/possession.js`(집계값만) + 본문 숫자 출력. 감독 경계 2026-04-20
+  - 경기 수가 26이 아니면 대조를 건너뛰고 "본문 숫자 갱신 필요"를 출력 → 28R 반영 후 EXPECTED·초안 숫자 갱신
+- `site/index.html`: 팀 비교 탭 아래 "대구FC 점유율과 성적"(pz- 접두어, `buildPossession()`), 전체/김병수/최성용 전환, 5경기 미만 '표본 적음'. 라이트·다크·390px 확인
+- 미커밋: card_possession.py, site/index.html, site/data/possession.js, site/data/series.js (card_03_attendance.py는 이전부터 미추적)
+
 ## 할 일 메모 (10/1 사용자)
 - 문구 수정: "자동 승격 경계인 2위" → **"자동 승격권인 2위"** (홈 ① 카드 hm-say). 다음 사이트 작업(10/4 사실 정리) 때 반영
 

@@ -443,6 +443,22 @@
   .hm-seg{display:flex;gap:4px;background:var(--band);border:1px solid var(--line);border-radius:12px;padding:3px;margin:6px 16px 8px}
   .hm-seg button{flex:1;border:0;background:none;color:var(--muted);font:inherit;font-size:.8rem;padding:7px 4px;border-radius:9px;cursor:pointer}
   .hm-seg button.on{background:var(--seg);color:var(--on-blue);font-weight:700}
+  /* 팀 비교 탭 아래: 대구FC 점유율과 성적 (pz- 접두어, possession.js) */
+  .pz-seg{display:inline-flex;gap:4px;background:var(--band);border:1px solid var(--line);border-radius:12px;padding:3px;margin:4px 0 10px}
+  .pz-seg button{border:0;background:none;color:var(--muted);font:inherit;font-size:.85rem;padding:7px 14px;border-radius:9px;cursor:pointer}
+  .pz-seg button.on{background:var(--seg);color:var(--on-blue);font-weight:700}
+  .pz-sum{font-size:.9rem;margin:0 0 6px}
+  .pz-block{border:1px solid var(--line);border-radius:6px;padding:12px 14px;margin-top:12px;background:var(--card)}
+  .pz-block h4{margin:0 0 2px;font-size:1rem}
+  .pz-block p{margin:0 0 8px;font-size:.8rem;color:var(--muted)}
+  .pz-row{display:grid;grid-template-columns:76px 1fr 150px;align-items:center;gap:10px;padding:5px 0;font-size:.85rem}
+  .pz-track{position:relative;height:24px;background:var(--band);border-radius:5px}
+  .pz-fill{height:100%;border-radius:5px;background:var(--draw)}
+  .pz-fill.hi{background:var(--seg)}
+  .pz-ref{position:absolute;top:-3px;bottom:-3px;border-left:2px dashed var(--muted)}
+  .pz-num b{font-size:.95rem}.pz-num small{display:block;color:var(--muted);font-size:.74rem}
+  .pz-few{display:inline-block;margin-left:4px;padding:0 5px;border-radius:4px;font-size:.68rem;color:var(--loss);border:1px solid var(--loss)}
+  @media (max-width:560px){.pz-row{grid-template-columns:62px 1fr 104px;gap:6px;font-size:.78rem}}
   .hm-rows{list-style:none;margin:0;padding:0 8px 10px}
   .hm-rows li{display:grid;grid-template-columns:28px 34px 1fr auto;align-items:center;gap:8px;padding:9px 8px;border-radius:12px}
   .hm-rows li+li{border-top:1px solid var(--line)}
@@ -827,6 +843,34 @@
           <li><b>인과 아님 · 스냅샷</b>표시된 날짜까지의 누적 기록입니다.</li>
         </ul>
       </div>
+
+      <div class="detail" id="pz">
+        <h3 class="sec">대구FC 점유율과 성적</h3>
+        <p class="hint">공을 오래 가진 경기에서 대구는 더 많이 이겼을까? 감독별로 나눠 볼 수 있습니다.
+          관련 글: [분석 #3] 점유율이 높으면 대구는 이길까</p>
+        <div class="pz-seg" id="pz-seg"></div>
+        <p class="pz-sum" id="pz-sum"></p>
+        <div class="pz-block">
+          <h4>점유율 구간별 경기당 승점</h4>
+          <p>경기 전체 점유율로 나눴습니다. 점선 = 이 묶음의 평균 경기당 승점</p>
+          <div id="pz-bins"></div>
+        </div>
+        <div class="pz-block">
+          <h4>스코어 상황별 평균 점유율</h4>
+          <p>15분 구간마다, 구간이 시작될 때 앞서는지·동점인지·뒤지는지로 나눴습니다. 점선 = 50%</p>
+          <div id="pz-states"></div>
+        </div>
+        <div class="caveat">
+          <b>이 숫자로 말할 수 없는 것 (한계)</b>
+          <ul class="defs">
+            <li><b>표본이 작음</b>경기 수가 5경기 미만인 칸에는 '표본 적음'을 붙였습니다. 한두 경기로 크게 바뀝니다.</li>
+            <li><b>감독 외 변화</b>감독 교체(4월 20일) 전후로 선수 구성·상대 일정도 함께 달라졌습니다.</li>
+            <li><b>구간 근사</b>구간 중간에 골이 나도 구간 점유율은 하나뿐이라, 시작 시점 스코어로 나눈 근사값입니다.</li>
+            <li><b>인과 아님</b>점유율이 결과를 만든 것인지, 스코어가 점유율을 바꾼 것인지 이 숫자만으로는 가를 수 없습니다.</li>
+          </ul>
+        </div>
+        <p class="hint" id="pz-asof" style="margin-top:10px"></p>
+      </div>
     </section>
 
     <!-- 탭 3: On/Off -->
@@ -881,6 +925,7 @@
 <script src="data/fixtures.js"></script>
 <script src="data/forecast_log.js"></script>
 <script src="data/recent.js"></script>
+<script src="data/possession.js"></script>
 
 <script>
 const D = window.KFL_DATA;
@@ -978,6 +1023,7 @@ function init(){
   buildHome();
   buildHomeCards();
   buildOddsTab();
+  buildPossession();
   // initMode();  // 쉽게/자세히 토글은 없앴습니다 (2026-09-28). 함수는 되돌릴 때를 위해 남겨 둠
   linkTerms();     // 본문 용어에 점선 긋기
   initTips();      // 점선 단어 눌렀을 때 뜨는 말풍선
@@ -1110,6 +1156,46 @@ const RAW_COLS = D && D.teams && D.teams.length
 const isPerGame = c => c.startsWith("경기당");
 const TEAM_COLS = [...RAW_COLS.filter(isPerGame), ...RAW_COLS.filter(c => !isPerGame(c))];
 const colLabel = c => isPerGame(c) ? c.replace(/_/g," ") : c.replace(/_/g," ") + " (누적)";
+
+// 팀 비교 탭 아래 '대구FC 점유율과 성적' (data/possession.js = card_possession.py 가 만든 집계값)
+function buildPossession(){
+  const box = document.getElementById("pz");
+  const P = window.KFL_POSSESSION;
+  if (!box) return;
+  if (!P) { box.style.display = "none"; return; }
+  const keys = Object.keys(P.groups);           // ["전체", "김병수", "최성용"]
+  const few = n => n < P.meta.small_n ? '<span class="pz-few">표본 적음</span>' : "";
+
+  // 막대 한 줄: 라벨 | 막대(+기준 점선) | 숫자
+  const row = (label, value, max, ref, hi, numHtml) => {
+    const w = value == null ? 0 : Math.min(100, value / max * 100);
+    return `<div class="pz-row"><span>${label}</span>
+      <div class="pz-track"><div class="pz-fill${hi ? " hi" : ""}" style="width:${w}%"></div>
+        <i class="pz-ref" style="left:${ref / max * 100}%"></i></div>
+      <span class="pz-num">${numHtml}</span></div>`;
+  };
+
+  function render(key){
+    const g = P.groups[key];
+    document.getElementById("pz-sum").innerHTML =
+      `<b>${key}</b> ${g.games}경기 · 경기당 승점 <b>${g.ppg.toFixed(2)}</b> · 평균 점유율 <b>${g.poss.toFixed(1)}%</b>${few(g.games)}`;
+    document.getElementById("pz-bins").innerHTML = g.bins.map((b, i) =>
+      row(b.label, b.ppg, 3, g.ppg, i === g.bins.length - 1,
+        b.n ? `<b>${b.ppg.toFixed(2)}</b>${few(b.n)}<small>${b.n}경기 · ${b.w}승 ${b.d}무 ${b.l}패</small>`
+            : `<small>경기 없음</small>`)).join("");
+    document.getElementById("pz-states").innerHTML = g.states.map((s, i) =>
+      row(s.label, s.poss, 75, 50, i === g.states.length - 1,
+        s.intervals ? `<b>${s.poss.toFixed(1)}%</b><small>${s.intervals}개 구간</small>` : `<small>구간 없음</small>`)).join("");
+    seg.querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.k === key));
+  }
+
+  const seg = document.getElementById("pz-seg");
+  seg.innerHTML = keys.map(k => `<button type="button" data-k="${k}">${k}${k === "전체" ? "" : " 감독"}</button>`).join("");
+  seg.addEventListener("click", e => { const b = e.target.closest("button"); if (b) render(b.dataset.k); });
+  document.getElementById("pz-asof").textContent =
+    `${P.meta.round}라운드 종료 기준 (대구 ${P.meta.games}경기) · ${P.meta.source} · 본 분석에 사용된 데이터의 저작권 및 소유권은 한국프로축구연맹(K LEAGUE)에 있습니다.`;
+  render("전체");
+}
 
 function buildTeamTab(){
   const s = document.getElementById("tmetric");
