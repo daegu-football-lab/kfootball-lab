@@ -240,6 +240,10 @@
        font-size:.85rem;margin-top:10px}
   .gwhere{margin-top:10px;padding-top:9px;border-top:1px dashed var(--line);
           font-size:.76rem;color:var(--muted)}
+  /* 백과 항목 그림 (선택 필드 img) */
+  .gimg{margin:12px 0 0}
+  .gimg img{display:block;width:100%;max-width:520px;height:auto;
+            border:1px solid var(--line);border-radius:8px}
   .gempty{color:var(--muted);font-size:.9rem;padding:20px 0;text-align:center}
 
   /* 팀 배지 — 엠블럼 대신 팀 컬러 원형 배지 (저작권 문제 없음, 순수 CSS) */
@@ -1694,6 +1698,16 @@ const GLOSSARY = [
     where: "팀 비교 탭"
   },
   {
+    cat: "데이터", t: "패스 방향 (전방·횡·백)", en: "Forward / Lateral / Backward Pass",
+    easy: "공을 찬 선수가 상대 골대 쪽을 보고 있다고 생각하면, 앞쪽으로 보낸 패스가 전방 패스, 옆으로 보낸 패스가 횡패스, 뒤로 보낸 패스가 백패스입니다. 거리는 보지 않고 방향(각도)만 봅니다.",
+    def: "K리그 데이터포털 부가기록(공급: Bepro11) 기준으로, 정면에서 좌우 60° 안(모두 120°)이면 전방 패스, 그 양옆 60°씩이 횡패스, 나머지 뒤쪽 120°가 백패스입니다.",
+    img: { src: "img/pass_direction.png", alt: "공을 찬 선수를 중심으로 정면 120°는 전방 패스, 양옆 60°씩은 횡패스, 뒤쪽 120°는 백패스로 나눈 그림" },
+    why: "팀이 공을 앞으로 보내려 했는지, 옆으로 돌리며 틈을 찾았는지 대략 가늠할 수 있습니다.",
+    ex: "3월 22일 부산전 대구의 성공 패스 중 횡패스 47%, 전방 패스 31% (시즌 평균 41%, 35%)",
+    care: "거리 조건이 없어 자기 진영에서 짧게 앞으로 준 패스도 전방 패스입니다. 전방 패스 비중이 높다고 위협적인 공격을 했다는 뜻은 아닙니다.",
+    where: "[분석 #3] 점유율 글"
+  },
+  {
     cat: "축구", t: "압박 (프레싱)", en: "Pressing",
     easy: "공을 가진 상대를 여러 명이 빨리 달라붙어 괴롭히는 수비 방식입니다. 높은 위치에서 뺏으면 골대에 가까워집니다.",
     def: "상대가 공을 편하게 다루지 못하도록 압박해 소유권을 뺏으려는 수비 행동입니다.",
@@ -1818,6 +1832,7 @@ function buildGlossary(){
         <div class="gbody">
           <div class="geasy"><span class="glab">쉽게 말하면</span><span>${esc(g.easy)}</span></div>
           <p class="gdef">${esc(g.def)}</p>
+          ${g.img ? `<figure class="gimg"><img src="${esc(g.img.src)}" alt="${esc(g.img.alt)}" loading="lazy"></figure>` : ""}
           <div class="grow"><span class="glab">왜 쓰나</span><span>${esc(g.why)}</span></div>
           <div class="gex">예) ${esc(g.ex)}</div>
           <div class="grow"><span class="glab">주의</span><span>${esc(g.care)}</span></div>
@@ -2305,6 +2320,7 @@ const TERM_KEYS = {
   "승격과 강등":            ["자동 승격"],
   "압박 (프레싱)":          ["압박"],
   "점유율":                 ["점유율"],
+  "패스 방향 (전방·횡·백)": ["전방 패스", "횡패스", "백패스"],
   "오프사이드":             ["오프사이드"],
   "승점이 같을 때 순위":    ["다득점"]
 };
