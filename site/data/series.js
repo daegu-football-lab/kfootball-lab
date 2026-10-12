@@ -42,9 +42,9 @@ window.KFL_SERIES = [
     no: "3편",
     title: "[분석 #3] 점유율이 높으면 대구는 이길까",
     question: "공을 오래 가진 경기에서 대구는 더 많이 이겼을까? 감독별·스코어 상황별로 나눠 본 점유율",
-    date: "2026-10-11",
-    status: "planned",
-    url: "",
+    date: "2026-10-12",
+    status: "published",
+    url: "https://blog.naver.com/d_citizen/224439409834",
     tab: "t"
   },
   {
