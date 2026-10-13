@@ -6,8 +6,8 @@ window.KFL_FIXTURES = {
   "checked_at": "2026-09-27",
   "from_round": 28,
   "note": "일정은 연맹 사정으로 바뀔 수 있습니다.",
-  "time_checked_at": "2026-10-01",
-  "time_note": "킥오프 시각(time)은 kleague.com 일정 페이지에서 10월 경기만 옮겨 적음. 11월은 확정 공지 후 추가"
+  "time_checked_at": "2026-10-12",
+  "time_note": "킥오프 시각(time)은 kleague.com 일정 페이지에서 10~11월 경기를 옮겨 적음. R34(11/29)는 미정(00:00)이라 비워 둠"
  },
  "fixtures": [
   {
@@ -210,121 +210,141 @@ window.KFL_FIXTURES = {
    "round": 31,
    "date": "2026-11-01",
    "home": "수원FC",
-   "away": "안산그리너스"
+   "away": "안산그리너스",
+   "time": "14:00"
   },
   {
    "round": 31,
    "date": "2026-11-01",
    "home": "전남드래곤즈",
-   "away": "성남FC"
+   "away": "성남FC",
+   "time": "14:00"
   },
   {
    "round": 31,
    "date": "2026-11-01",
    "home": "충북청주",
-   "away": "파주프런티어"
+   "away": "파주프런티어",
+   "time": "16:30"
   },
   {
    "round": 31,
    "date": "2026-11-01",
    "home": "김해FC",
-   "away": "천안시티"
+   "away": "천안시티",
+   "time": "16:30"
   },
   {
    "round": 32,
    "date": "2026-11-07",
    "home": "성남FC",
-   "away": "대구FC"
+   "away": "대구FC",
+   "time": "14:00"
   },
   {
    "round": 32,
    "date": "2026-11-07",
    "home": "수원FC",
-   "away": "경남FC"
+   "away": "경남FC",
+   "time": "14:00"
   },
   {
    "round": 32,
    "date": "2026-11-07",
    "home": "김포FC",
-   "away": "안산그리너스"
+   "away": "안산그리너스",
+   "time": "16:30"
   },
   {
    "round": 32,
    "date": "2026-11-07",
    "home": "김해FC",
-   "away": "화성FC"
+   "away": "화성FC",
+   "time": "16:30"
   },
   {
    "round": 32,
    "date": "2026-11-07",
    "home": "서울이랜드",
-   "away": "전남드래곤즈"
+   "away": "전남드래곤즈",
+   "time": "16:30"
   },
   {
    "round": 32,
    "date": "2026-11-08",
    "home": "수원삼성",
-   "away": "용인FC"
+   "away": "용인FC",
+   "time": "14:00"
   },
   {
    "round": 32,
    "date": "2026-11-08",
    "home": "천안시티",
-   "away": "부산아이파크"
+   "away": "부산아이파크",
+   "time": "14:00"
   },
   {
    "round": 32,
    "date": "2026-11-08",
    "home": "파주프런티어",
-   "away": "충남아산"
+   "away": "충남아산",
+   "time": "16:30"
   },
   {
    "round": 33,
    "date": "2026-11-21",
    "home": "수원삼성",
-   "away": "경남FC"
+   "away": "경남FC",
+   "time": "14:00"
   },
   {
    "round": 33,
    "date": "2026-11-21",
    "home": "부산아이파크",
-   "away": "충북청주"
+   "away": "충북청주",
+   "time": "14:00"
   },
   {
    "round": 33,
    "date": "2026-11-21",
    "home": "김포FC",
-   "away": "수원FC"
+   "away": "수원FC",
+   "time": "16:30"
   },
   {
    "round": 33,
    "date": "2026-11-21",
    "home": "성남FC",
-   "away": "용인FC"
+   "away": "용인FC",
+   "time": "16:30"
   },
   {
    "round": 33,
    "date": "2026-11-22",
    "home": "대구FC",
-   "away": "김해FC"
+   "away": "김해FC",
+   "time": "14:00"
   },
   {
    "round": 33,
    "date": "2026-11-22",
    "home": "전남드래곤즈",
-   "away": "안산그리너스"
+   "away": "안산그리너스",
+   "time": "14:00"
   },
   {
    "round": 33,
    "date": "2026-11-22",
    "home": "파주프런티어",
-   "away": "천안시티"
+   "away": "천안시티",
+   "time": "16:30"
   },
   {
    "round": 33,
    "date": "2026-11-22",
    "home": "서울이랜드",
-   "away": "충남아산"
+   "away": "충남아산",
+   "time": "16:30"
   },
   {
    "round": 34,
