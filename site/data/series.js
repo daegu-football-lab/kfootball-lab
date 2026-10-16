@@ -33,7 +33,7 @@ window.KFL_SERIES = [
     no: "2편",
     title: "[분석 #2] 상위 6팀, 남은 경기에서 누구를 만나나",
     question: "상위 6팀은 남은 경기에서 누구를 만나는가? 맞대결·홈 경기 수·상대 평균 순위로 본 잔여 일정",
-    date: "2026-10-04",
+    date: "2026-10-06",
     status: "published",
     url: "https://blog.naver.com/d_citizen/224431395907",
     tab: ""
@@ -52,8 +52,8 @@ window.KFL_SERIES = [
     title: "[분석 #4] 대구FC 홈 관중, 성적 따라 움직이나",
     question: "성적이 좋을 때 다음 홈경기 관중이 늘어날까?",
     date: "2026-10-15",
-    status: "planned",
-    url: "",
+    status: "published",
+    url: "https://blog.naver.com/d_citizen/224440405399",
     tab: ""
   },
   {
