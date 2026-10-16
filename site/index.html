@@ -664,7 +664,7 @@
           <li>글 1·2장 경기 수 맞추기 → <button type="button" class="lk" data-jump="s-sec1">① 경기 수를 맞춘 순위표</button></li>
           <li>글 3장 득실차와 승점 → <button type="button" class="lk" data-jump="s-sec2">② 득실차 대비 승점</button></li>
           <li>글 4장 2위 추격 계산 → <button type="button" class="lk" data-jump="s-sec3">③ 대구FC가 2위를 따라잡으려면</button></li>
-          <li>글 4장 남은 일정 → <button type="button" class="lk" data-jump="s-sec4">④ 대구FC 남은 6경기</button></li>
+          <li>글 4장 남은 일정 → <button type="button" class="lk" data-jump="s-sec4">④ 대구FC 남은 경기</button></li>
           <li>글 5장 한계 → <button type="button" class="lk" data-jump="s-caveat">이 숫자로 말할 수 없는 것</button></li>
         </ol>
         <div class="meta" id="s-pair-link"></div>
@@ -743,24 +743,14 @@
       <div class="tbl"><table id="space"></table></div>
       <p class="tblhint">옆으로 밀면 더 보입니다 <span class="arrow">→</span></p>
 
-      <!-- 연재 1편 4절. 잔여 대진 데이터(race_h2h_remaining)가 export 되면
-           이 표를 데이터에서 그리도록 바꿉니다. 지금은 손으로 적은 고정 표입니다. -->
-      <h3 class="sec" id="s-sec4">④ 대구FC 남은 6경기</h3>
-      <!-- 이 표는 손으로 적은 고정 표라 기준일도 여기 고정으로 적습니다(DATA_AS_OF와 자동 연동 안 함).
-           표의 순위를 고칠 때 이 줄의 날짜도 같이 고치세요. -->
-      <p class="hint">2026년 9월 29일 기준 (27라운드 종료) 일정과 순위입니다. 일정은 연맹 사정으로 바뀔 수 있습니다.</p>
+      <!-- 연재 1편 4절. 일정(fixtures.js)과 순위(standings.js)로 자동으로 그립니다(renderRemaining).
+           순위표 기준일(as_of) 이후 경기만 '남은 경기'로 셉니다. 손으로 고칠 필요 없습니다. -->
+      <h3 class="sec" id="s-sec4">④ 대구FC 남은 <span id="s4-n">-</span>경기</h3>
+      <p class="hint" id="s4-asof">일정과 순위를 불러오는 중입니다.</p>
       <div class="tbl"><table>
-        <thead><tr><th>라운드</th><th>날짜</th><th>상대</th><th>홈/원정</th><th>상대 순위</th></tr></thead>
-        <tbody>
-          <tr><td>29R</td><td>10.17 (토)</td><td>충북청주</td><td>홈</td><td>11위</td></tr>
-          <tr><td>30R</td><td>10.24 (토)</td><td>전남드래곤즈</td><td>원정</td><td>16위</td></tr>
-          <tr class="mine"><td>31R</td><td>10.31 (토)</td><td>수원삼성</td><td>홈</td><td><b>1위</b></td></tr>
-          <tr><td>32R</td><td>11.07 (토)</td><td>성남FC</td><td>원정</td><td>10위</td></tr>
-          <tr><td>33R</td><td>11.22 (일)</td><td>김해FC</td><td>홈</td><td>17위</td></tr>
-          <tr><td>34R</td><td>11.29 (일)</td><td>천안시티</td><td>원정</td><td>14위</td></tr>
-        </tbody></table></div>
-      <p class="hint" style="margin-top:10px">남은 6경기에 승격 플레이오프권(3~6위) 팀은 없습니다.
-        1위 수원삼성을 빼면 모두 10위 이하입니다.</p>
+        <thead><tr><th>R</th><th>날짜</th><th>상대</th><th>장소</th><th>상대 순위</th></tr></thead>
+        <tbody id="s4-body"></tbody></table></div>
+      <p class="hint" style="margin-top:10px" id="s4-sum"></p>
 
       <div class="caveat" id="s-caveat">
         <b>이 숫자로 말할 수 없는 것 (한계)</b>
@@ -780,7 +770,6 @@
       <p class="hint">남은 경기를 컴퓨터로 <b>10,000번 치러보고</b>, 각 팀이 몇 번이나
         1위 / 2위 이내 / 6위 이내로 끝났는지 센 것입니다.
         예언이 아니라 <b>가정 위의 계산</b>입니다. 아래 주의사항을 꼭 같이 읽어주세요.</p>
-      <div class="warn" style="margin:0 0 14px">⚠️ 11월 일정은 공식 대조 전입니다. 바뀌면 확률도 다시 계산합니다.</div>
 
       <div class="row">
         <label>팀</label>
@@ -808,7 +797,7 @@
       <div class="caveat">
         <b>이 숫자를 믿기 전에 (한계)</b>
         <ul>
-          <li id="wmode"><b>남은 경기는 실제 일정표대로</b> 치릅니다(K리그 공식 일정. 10월 경기는 10월 1일 확인, 11월은 확인 전).
+          <li id="wmode"><b>남은 경기는 실제 일정표대로</b> 치릅니다(K리그 공식 일정. 10~11월 경기는 10월 12일 공식 페이지와 대조).
             일정이 바뀌면 결과도 달라집니다.</li>
           <li>팀 전력을 <b>지금까지의 경기당 득실차 하나</b>로만 잡았습니다.
             부상·이적·최근 상승세는 전혀 반영되지 않습니다.
@@ -1352,6 +1341,7 @@ function buildStandingsTab(){
 
   renderGamesPlayed(S);
   renderPace(S);
+  renderRemaining();
 }
 
 // ① 보충: 왜 경기 수가 섞여 있는가 (연재 1편 1장)
@@ -1898,6 +1888,43 @@ function rpois(l){
   return k - 1;
 }
 
+// 순위표 기준일(as_of) '이후' 날짜의 경기만 남은 경기로 봅니다.
+// 시뮬레이션과 ④ 표가 이 함수 하나를 같이 씁니다. 규칙이 한 곳에만 있어야
+// 둘이 서로 다른 '남은 경기'를 세는 일이 생기지 않습니다.
+// 덕분에 이미 치른 라운드를 fixtures.js 에서 지우지 않아도 됩니다.
+function upcomingFixtures(){
+  const F = window.KFL_FIXTURES, S = window.KFL_STANDINGS;
+  if(!F || !F.fixtures) return [];
+  const asOf = (S && S.meta && S.meta.as_of) || "";
+  return F.fixtures.filter(f => f.date > asOf);
+}
+
+// 순위 분석 ④ 대구 남은 경기 표. 해석은 넣지 않고 경기 수(사실)만 요약합니다.
+function renderRemaining(){
+  const S = window.KFL_STANDINGS, body = document.getElementById("s4-body");
+  if(!S || !body) return;
+  const MY = S.meta.team;
+  const rank = new Map(S.teams.map(t => [t.team, t.총점순위]));
+  const games = upcomingFixtures().filter(f => f.home === MY || f.away === MY);
+  const W = "일월화수목금토", tier = [0, 0, 0];   // 1~2위 / 3~6위 / 7위 이하
+  body.innerHTML = games.map(f => {
+    const [y, m, d] = f.date.split("-").map(Number);
+    const home = f.home === MY, opp = home ? f.away : f.home, r = rank.get(opp);
+    if(r != null) tier[r <= 2 ? 0 : r <= 6 ? 1 : 2]++;
+    const top = r != null && r <= 6;   // 승격권 상대는 강조
+    return `<tr${top ? ' class="mine"' : ""}><td>${f.round}R</td>` +
+      `<td>${m}.${String(d).padStart(2, "0")} (${W[new Date(y, m - 1, d).getDay()]})${f.time ? `<br><small>${f.time}</small>` : ""}</td>` +
+      `<td>${esc(opp)}</td><td>${home ? "홈" : "원정"}</td>` +
+      `<td>${r == null ? "-" : top ? `<b>${r}위</b>` : r + "위"}</td></tr>`;
+  }).join("");
+  document.getElementById("s4-n").textContent = games.length;
+  document.getElementById("s4-asof").textContent =
+    `${asOfLabel(S.meta)} 순위와 K리그 공식 일정표입니다. 일정은 연맹 사정으로 바뀔 수 있습니다.`;
+  document.getElementById("s4-sum").textContent = games.length
+    ? `남은 상대(지금 순위 기준): 1~2위 ${tier[0]}경기 · 3~6위 ${tier[1]}경기 · 7위 이하 ${tier[2]}경기`
+    : "남은 경기가 없습니다.";
+}
+
 // 실제 일정표를 [홈 번호, 원정 번호] 목록으로 바꿉니다. 한 번만 만들면 됩니다.
 // 팀 이름이 순위표와 하나라도 안 맞으면 null → 무작위 방식으로 돌아갑니다.
 function fixturePairs(base){
@@ -1905,7 +1932,7 @@ function fixturePairs(base){
   if(!F || !F.fixtures || !F.fixtures.length) return null;
   const idx = new Map(base.map((b, i) => [b.team, i]));
   const pairs = [];
-  for(const f of F.fixtures){
+  for(const f of upcomingFixtures()){
     if(!idx.has(f.home) || !idx.has(f.away)){
       console.warn("[KFL] 일정의 팀 이름이 순위표와 다릅니다:", f.home, f.away);
       return null;
