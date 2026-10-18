@@ -1,14 +1,18 @@
 """직전 홈경기 결과 vs 다음 홈경기 관중 변화 (2026 K리그2).
 
-입력(원시, gitignore): data/raw/attendance2026/_page_rows_20260927.txt  (kleague.com 관중현황 1회 조회)
+입력(원시, gitignore): data/raw/attendance2026/_page_rows_<날짜>.txt  (kleague.com 관중현황 1회 조회)
                       data/raw/daegu2026/matches.csv                    (대구: 킥오프·날씨 포함)
-출력:
+사용법:
+  python attendance_prev.py                  # 기본: 20260927 스냅샷 → 기존 파일 이름 그대로 (분석 #4 재현용)
+  python attendance_prev.py 20261018         # 새 스냅샷 → 이름에 날짜가 붙은 별도 파일 (기존 산출물을 덮어쓰지 않음)
+출력(기본 스냅샷일 때):
   data/raw/attendance2026/top6_home.csv   원시 행 (공개 금지)
-  output/attendance/daegu_home_prev.csv   대구 홈 13경기 표 (경기별 → 공개 전 검토)
+  output/attendance/daegu_home_prev.csv   대구 홈 경기 표 (경기별 → 공개 전 검토)
   output/attendance/prev_summary.csv      집계값만 (공개 가능)
+다른 날짜를 주면 같은 파일 이름 뒤에 _<날짜>가 붙습니다 (예: prev_summary_20261018.csv).
 해석은 쓰지 않는다. 숫자만 만든다.
 """
-import csv, datetime as dt, statistics as st
+import csv, datetime as dt, statistics as st, sys
 from pathlib import Path
 
 ROOT = Path(__file__).parent
@@ -17,10 +21,13 @@ OUT = ROOT / "output/attendance"
 TEAMS = ["수원", "수원FC", "서울E", "대구", "화성", "부산"]
 WD = "월화수목금토일"
 
+# 분석 #4(발행)의 근거가 된 스냅샷. 인자 없이 실행하면 이 날짜로 돌아 예전 결과를 그대로 만듭니다.
+DEFAULT_STAMP = "20260927"
 
-def load_page_rows():
+
+def load_page_rows(stamp=DEFAULT_STAMP):
     rows = []
-    for line in open(RAW / "_page_rows_20260927.txt", encoding="utf-8"):
+    for line in open(RAW / f"_page_rows_{stamp}.txt", encoding="utf-8"):
         if line.startswith("#") or not line.strip():
             continue
         d, h, a, s, att, af, _w, venue = line.strip().split(",")
@@ -60,11 +67,14 @@ def summarize(label, games):
             for k, v in groups.items()]
 
 
-def main():
+def main(stamp=DEFAULT_STAMP):
+    # 기본 스냅샷은 예전 파일 이름 그대로, 새 스냅샷은 _날짜를 붙여 기존 산출물을 보호합니다.
+    sfx = "" if stamp == DEFAULT_STAMP else f"_{stamp}"
+    snap_date = dt.date(int(stamp[:4]), int(stamp[4:6]), int(stamp[6:]))
     OUT.mkdir(parents=True, exist_ok=True)
-    rows = load_page_rows()
+    rows = load_page_rows(stamp)
 
-    with open(RAW / "top6_home.csv", "w", newline="", encoding="utf-8-sig") as f:
+    with open(RAW / f"top6_home{sfx}.csv", "w", newline="", encoding="utf-8-sig") as f:
         w = csv.writer(f)
         w.writerow(["date", "round", "home", "away", "home_score", "away_score", "attendance",
                     "kickoff", "weekday", "weather", "game_id", "away_fans_col", "venue"])
@@ -75,7 +85,9 @@ def main():
     # 대구: 기존 matches.csv 기준 (킥오프·날씨 포함). 관중현황 페이지 값과 교차검증.
     dg = []
     for x in csv.DictReader(open(ROOT / "data/raw/daegu2026/matches.csv", encoding="utf-8-sig")):
-        if "대구" in x["home_team"]:
+        # 스냅샷 날짜 이후 경기는 제외: 관중현황 페이지(스냅샷)와 같은 기간으로 맞춰야
+        # 예전 스냅샷을 다시 돌려도 그때 결과가 그대로 나옵니다.
+        if "대구" in x["home_team"] and x["date"] <= snap_date.isoformat():
             dg.append(dict(date=dt.date.fromisoformat(x["date"]), round=x["round"], away=x["away_team"],
                            hs=int(x["home_score"]), as_=int(x["away_score"]), att=int(x["attendance"]),
                            kickoff=x["kickoff"], weekday=x["weekday"], weather=x["weather"]))
@@ -87,7 +99,7 @@ def main():
     dgp = with_prev(dg)
     cols = ["date", "round", "weekday", "kickoff", "weather", "away", "hs", "as_", "res", "att",
             "prev_res", "prev_gf", "delta", "gap_days"]
-    with open(OUT / "daegu_home_prev.csv", "w", newline="", encoding="utf-8-sig") as f:
+    with open(OUT / f"daegu_home_prev{sfx}.csv", "w", newline="", encoding="utf-8-sig") as f:
         w = csv.DictWriter(f, fieldnames=cols, extrasaction="ignore")
         w.writeheader(); w.writerows(dgp)
 
@@ -106,11 +118,11 @@ def main():
         hp += with_prev([r for r in home_side if r["home"] == t])
     summary += summarize("6팀 합산(원정석 제외, 추정)", hp)
 
-    with open(OUT / "prev_summary.csv", "w", newline="", encoding="utf-8-sig") as f:
+    with open(OUT / f"prev_summary{sfx}.csv", "w", newline="", encoding="utf-8-sig") as f:
         w = csv.writer(f); w.writerow(["team", "group", "n", "mean_delta", "median_delta"]); w.writerows(summary)
     for s in summary:
         print(s)
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1] if len(sys.argv) > 1 else DEFAULT_STAMP)

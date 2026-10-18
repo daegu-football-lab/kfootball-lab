@@ -797,7 +797,7 @@
       <div class="caveat">
         <b>이 숫자를 믿기 전에 (한계)</b>
         <ul>
-          <li id="wmode"><b>남은 경기는 실제 일정표대로</b> 치릅니다(K리그 공식 일정. 10~11월 경기는 10월 12일 공식 페이지와 대조).
+          <li id="wmode"><b>남은 경기는 실제 일정표대로</b> 치릅니다(K리그 공식 일정. <span id="wchk">10~11월 경기는 공식 페이지와 대조</span>).
             일정이 바뀌면 결과도 달라집니다.</li>
           <li>팀 전력을 <b>지금까지의 경기당 득실차 하나</b>로만 잡았습니다.
             부상·이적·최근 상승세는 전혀 반영되지 않습니다.
@@ -2051,6 +2051,14 @@ function buildOddsTab(){
     document.getElementById("wdotcap").innerHTML =
       `지금 기록이 이어진다면, 남은 시즌을 100번 치를 때 ${me.team}가 ` +
       `<b>2위 안(자동 승격)에 드는 건 약 ${n2 === 0 && me.p2 > 0 ? "1번 미만" : n2 + "번"}</b>입니다.`;
+
+    // 일정 대조 날짜는 fixtures.js 의 meta 에서 읽습니다. 날짜를 HTML 에 직접 쓰지 않으므로
+    // 일정을 공식 페이지와 다시 맞춘 뒤 fixtures.js 의 time_checked_at 만 고치면 됩니다.
+    const fm = window.KFL_FIXTURES && window.KFL_FIXTURES.meta, chk = fm && (fm.time_checked_at || fm.checked_at);
+    if(chk && document.getElementById("wchk")){
+      const [, cm, cd] = chk.split("-").map(Number);
+      document.getElementById("wchk").textContent = `10~11월 경기는 ${cm}월 ${cd}일 공식 페이지와 대조`;
+    }
 
     if(SIM_MODE !== "fixtures"){
       document.getElementById("wmode").innerHTML =
