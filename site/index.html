@@ -350,7 +350,9 @@
   @media (prefers-color-scheme: dark){
     .caveat{background:#2a2113;border-color:#5c4a24;color:#f0d9a8}
   }
-  .pcell{display:inline-block;min-width:52px}
+  /* 확률 칸 색 농도: --a(0~45%)는 JS(heat)가 확률에 비례해 넣습니다. 숫자는 그대로 둡니다. */
+  .pcell{display:inline-block;min-width:52px;padding:3px 6px;border-radius:4px;
+         background:color-mix(in srgb,var(--teal) var(--a,0%),transparent)}
 
   /* ── 용어 툴팁 ─────────────────────────────────────────────
      본문의 어려운 단어에 점선을 긋고, 누르면 '쉽게 말하면'만 띄웁니다. */
@@ -783,7 +785,7 @@
       <p class="gcount" id="wnote"></p>
 
       <h3 class="sec">전체 팀 확률</h3>
-      <p class="hint">자동 승격(2위 이내) 확률이 높은 순입니다.</p>
+      <p class="hint">자동 승격(2위 이내) 확률이 높은 순입니다. 칸의 색이 진할수록 그 확률이 높습니다.</p>
       <div class="tbl"><table id="wtable"></table></div>
       <p class="tblhint">옆으로 밀면 더 보입니다 <span class="arrow">→</span></p>
 
@@ -2033,6 +2035,8 @@ function buildOddsTab(){
   }
 
   const pct = v => v >= 99.5 ? "99.9%" : (v < 0.05 && v > 0 ? "0.1% 미만" : v.toFixed(1) + "%");
+  // 확률(0~100)에 비례한 색 농도. 글자가 읽히도록 최대 45%까지만 칠합니다(선형, 과장 없음).
+  const heat = v => `--a:${Math.round(Math.max(0, Math.min(100, v)) * 0.45)}%`;
 
   function draw(){
     const me = ODDS.find(o => o.team === selEl.value) || ODDS[0];
@@ -2077,9 +2081,9 @@ function buildOddsTab(){
       <tbody>${rows.map(o => `
         <tr class="${o.team === S.meta.team ? "mine" : ""}">
           <td>${teamBadge(o.team)}</td><td>${o.pts0}</td><td>${o.left}</td>
-          <td><span class="pcell">${pct(o.p1)}</span></td>
-          <td><span class="pcell">${pct(o.p2)}</span></td>
-          <td><span class="pcell">${pct(o.p6)}</span></td>
+          <td><span class="pcell" style="${heat(o.p1)}">${pct(o.p1)}</span></td>
+          <td><span class="pcell" style="${heat(o.p2)}">${pct(o.p2)}</span></td>
+          <td><span class="pcell" style="${heat(o.p6)}">${pct(o.p6)}</span></td>
           <td>${o.avg.toFixed(1)}</td></tr>`).join("")}</tbody>`;
     syncTableHints();
   }
