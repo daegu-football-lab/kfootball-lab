@@ -303,6 +303,9 @@ def export_standings_json(table, reg: dict, race: dict) -> str:
         teams.append({
             "team": r["team"],
             "경기수": int(base["matches"]),
+            "승": int(base["wins"]),
+            "무": int(base["draws"]),
+            "패": int(base["losses"]),
             "승점": int(base["points"]),
             "PPG": round(float(base["경기당승점"]), 3),
             "득실차": int(base["득실차"]),

@@ -2226,7 +2226,8 @@ function buildHomeCards(){
     `${bdg(MY, "lg")}<div><small>우리 팀 · ${esc(asOfLabel(S.meta))}</small><b>${esc(MY)}</b></div>`;
   document.getElementById("hm-strip").innerHTML =
     `<div class="rk"><b>${meS.총점순위}</b><span>위</span></div>` +
-    (meR ? `<div><b>${meR.승}</b><span>승</span></div><div><b>${meR.무}</b><span>무</span></div><div><b>${meR.패}</b><span>패</span></div>`
+    (meS.승 != null ? `<div><b>${meS.승}</b><span>승</span></div><div><b>${meS.무}</b><span>무</span></div><div><b>${meS.패}</b><span>패</span></div>`
+    : meR ? `<div><b>${meR.승}</b><span>승</span></div><div><b>${meR.무}</b><span>무</span></div><div><b>${meR.패}</b><span>패</span></div>`
          : `<div><b>${meS.경기수}</b><span>경기</span></div><div></div><div></div>`) +
     `<div><b>${meS.승점}</b><span>점</span></div>`;
   const zone = meS.총점순위 <= 2 ? "자동 승격권(1~2위)" : (meS.총점순위 <= 6 ? "승격 플레이오프권(3~6위)" : "승격 플레이오프권 밖");
