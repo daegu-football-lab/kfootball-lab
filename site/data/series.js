@@ -58,11 +58,11 @@ window.KFL_SERIES = [
   },
   {
     no: "5편",
-    title: "[분석 #5] 대구FC–수원삼성, 상위권 상대로는 어땠나",
+    title: "[분석 #5] 상위권만 만나면 작아진 대구FC, 1위 수원삼성을 만난다",
     question: "대구는 상위권 팀을 만났을 때와 나머지 팀을 만났을 때 기록이 어떻게 다른가?",
-    date: "",
-    status: "planned",
-    url: "",
+    date: "2026-10-30",
+    status: "published",
+    url: "https://blog.naver.com/d_citizen/224458298858",
     tab: ""
   },
   {

@@ -46,20 +46,22 @@ plt.rcParams["font.family"] = FONT
 plt.rcParams["axes.unicode_minus"] = False  # 마이너스 기호 깨짐 방지
 
 
-def new_card(series, no, topic, title, how_to_read):
+def new_card(series, no, topic, title, how_to_read, sub_size=21):
     """머리글(시리즈 라벨 → 제목 → 읽는 법)까지 그린 빈 카드를 돌려줍니다.
     series/no/topic 예: ("K리그2 승격 경쟁", "③", "수원삼성전 예고")
     title은 사실만(해석 금지)."""
     fig = plt.figure(figsize=(16, 9), dpi=100, facecolor=SURFACE)
     fig.text(0.06, 0.90, f"{series} {no} · {topic}", fontsize=20, color=FOCUS, weight="bold")
     fig.text(0.06, 0.815, title, fontsize=40, color=TEXT_1, weight="bold")
-    fig.text(0.06, 0.755, how_to_read, fontsize=21, color=TEXT_2)
+    fig.text(0.06, 0.755, how_to_read, fontsize=sub_size, color=TEXT_2)
     return fig
 
 
-def add_footer(fig, as_of_text):
+def add_footer(fig, as_of_text, size=16):
+    # size: 블로그 본문 폭(약 700px)에서 읽히게 하려면 22 이상 권장. 기본 16은 기존 카드 유지용
     """바닥글: 왼쪽 기준일 + 출처, 오른쪽 사이트 이름 + 주소."""
-    fig.text(0.06, 0.07, as_of_text, fontsize=16, color=TEXT_3)
-    fig.text(0.06, 0.035, COPYRIGHT, fontsize=16, color=TEXT_3)
-    fig.text(0.94, 0.07, SITE_NAME, fontsize=18, color=TEXT_2, ha="right", weight="bold")
-    fig.text(0.94, 0.035, SITE_URL, fontsize=16, color=TEXT_3, ha="right")
+    top = 0.035 + size * 0.0022  # 글자가 커지면 두 줄 간격도 벌림 (기본 16 → 0.07 그대로, 21 → 0.081)
+    fig.text(0.06, top, as_of_text, fontsize=size, color=TEXT_2)
+    fig.text(0.06, 0.035, COPYRIGHT, fontsize=size, color=TEXT_2)
+    fig.text(0.94, top, SITE_NAME, fontsize=size + 2, color=TEXT_2, ha="right", weight="bold")
+    fig.text(0.94, 0.035, SITE_URL, fontsize=size, color=TEXT_2, ha="right")

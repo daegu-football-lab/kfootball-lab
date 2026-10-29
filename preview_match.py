@@ -94,29 +94,30 @@ def draw_card(split, top_names, as_of_text):
         (f"전체", split["all"], False),
     ]
     fig = cs.new_card(
-        "K리그2 승격 경쟁", "③", f"{OPPONENT}전 예고",
+        "[분석", "#5]", f"{OPPONENT}전 예고",
         f"대구 경기당 승점: 상위 5팀 상대 {split['top']['ppg']:.2f} · 나머지 {split['rest']['ppg']:.2f}",
-        "기준일 순위표 상위 5팀(대구 제외)과 치른 경기와 나머지 경기를 나눠 경기당 승점을 냈다 · 막대가 길수록 승점이 많다",
+        "상위 5팀(대구 제외)과 나머지 팀으로 나눈 경기당 승점 · 막대가 길수록 승점이 많다",
+        sub_size=26,   # 블로그 본문 폭에서 읽히는 크기
     )
-    ax = fig.add_axes([0.22, 0.25, 0.60, 0.42], facecolor=cs.SURFACE)
+    ax = fig.add_axes([0.26, 0.27, 0.60, 0.40], facecolor=cs.SURFACE)
     n = len(rows)
     for i, (label, s, focus) in enumerate(rows):
         y = n - 1 - i
         ax.barh(y, 3, height=0.5, color=cs.TRACK, zorder=1)          # 최대 3점 트랙
         ax.barh(y, s["ppg"], height=0.5, color=cs.FOCUS if focus else cs.MUTED, zorder=2)
         weight = "bold" if focus else "normal"
-        ax.text(-0.08, y + 0.08, label, ha="right", va="center", fontsize=20, color=cs.TEXT_1, weight=weight)
-        ax.text(-0.08, y - 0.22, f"{s['n']}경기 · {s['w']}승 {s['d']}무 {s['l']}패",
-                ha="right", va="center", fontsize=14, color=cs.TEXT_2)
-        ax.text(s["ppg"] + 0.05, y, f"{s['ppg']:.2f}", va="center", fontsize=20, color=cs.TEXT_1, weight=weight)
+        ax.text(-0.08, y + 0.12, label, ha="right", va="center", fontsize=28, color=cs.TEXT_1, weight=weight)
+        ax.text(-0.08, y - 0.26, f"{s['n']}경기 · {s['w']}승 {s['d']}무 {s['l']}패",
+                ha="right", va="center", fontsize=21, color=cs.TEXT_2)
+        ax.text(s["ppg"] + 0.05, y, f"{s['ppg']:.2f}", va="center", fontsize=30, color=cs.TEXT_1, weight=weight)
     ax.set_xlim(0, 3); ax.set_ylim(-0.6, n - 0.4)
     ax.set_xticks([0, 1, 2, 3]); ax.set_xticklabels(["0", "1 (매 경기 무)", "2", "3 (매 경기 승)"],
-                                                   fontsize=13, color=cs.TEXT_3)
+                                                   fontsize=20, color=cs.TEXT_2)
     ax.tick_params(axis="x", length=0, pad=8); ax.set_yticks([])
     for sp in ax.spines.values():
         sp.set_visible(False)
-    fig.text(0.22, 0.175, "상위 5팀: " + ", ".join(top_names), fontsize=14, color=cs.TEXT_2)
-    cs.add_footer(fig, as_of_text + " · 상위권 구분은 기준일 순위 기준(경기 당시 순위 아님)")
+    fig.text(0.26, 0.165, "상위 5팀: " + ", ".join(top_names), fontsize=21, color=cs.TEXT_2)
+    cs.add_footer(fig, as_of_text, size=21)   # 상위권 구분 설명은 본문 한계 장에 있음
     out = CHART_DIR / "card_03_split.png"
     fig.savefig(out, facecolor=cs.SURFACE)
     return out
