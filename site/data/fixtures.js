@@ -3,11 +3,11 @@
 window.KFL_FIXTURES = {
  "meta": {
   "source": "K리그 공식 홈페이지 경기 일정 (kleague.com)",
-  "checked_at": "2026-10-25",
+  "checked_at": "2026-11-20",
   "from_round": 28,
   "note": "일정은 연맹 사정으로 바뀔 수 있습니다.",
-  "time_checked_at": "2026-10-25",
-  "time_note": "킥오프 시각(time)은 kleague.com 일정 페이지에서 10~11월 경기를 옮겨 적음. R34(11/29)는 미정(00:00)이라 비워 둠"
+  "time_checked_at": "2026-11-20",
+  "time_note": "킥오프 시각(time)은 kleague.com 일정 페이지에서 옮겨 적음. R34는 대구 경기(11/29 14:00)만 확인해 넣음"
  },
  "fixtures": [
   {
@@ -362,7 +362,8 @@ window.KFL_FIXTURES = {
    "round": 34,
    "date": "2026-11-29",
    "home": "천안시티",
-   "away": "대구FC"
+   "away": "대구FC",
+   "time": "14:00"
   },
   {
    "round": 34,
