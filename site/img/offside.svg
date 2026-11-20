@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 590" font-family="Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif">
+  <!-- 오프사이드 개념도. 경기 데이터 없음, 직접 그린 다이어그램 (kfootball-lab) -->
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1f2933"/>
+    </marker>
+    <g id="pitch">
+      <rect x="20" y="40" width="480" height="190" rx="4" fill="#cfe8c9"/>
+      <g fill="none" stroke="#fff" stroke-width="2">
+        <rect x="20" y="40" width="480" height="190"/>
+        <path d="M20,95 A40,40 0 0 1 20,175"/>
+        <rect x="420" y="80" width="80" height="110"/>
+        <rect x="474" y="112" width="26" height="46"/>
+      </g>
+      <rect x="500" y="117" width="8" height="36" fill="#fff" stroke="#8a9a8a"/>
+      <text x="26" y="224" font-size="11" fill="#4b5b4b">하프라인</text>
+      <text x="438" y="224" font-size="11" fill="#4b5b4b">상대 골대 →</text>
+      <!-- 수비 팀 (같은 위치 2장 공통) -->
+      <g fill="#e8743b" stroke="#fff" stroke-width="2">
+        <circle cx="360" cy="95" r="10"/>
+        <circle cx="330" cy="185" r="10"/>
+        <circle cx="486" cy="135" r="10"/>
+      </g>
+      <text x="481" y="139" font-size="10" font-weight="700" fill="#fff">GK</text>
+      <!-- 오프사이드 라인: 뒤에서 두 번째 수비수(x=360) -->
+      <line x1="360" y1="44" x2="360" y2="226" stroke="#1f2933" stroke-width="2" stroke-dasharray="6 5"/>
+      <!-- 패스하는 선수 -->
+      <circle cx="170" cy="150" r="10" fill="#2f6fd1" stroke="#fff" stroke-width="2"/>
+      <text x="150" y="176" font-size="12" fill="#1f2933">패스</text>
+    </g>
+  </defs>
+
+  <rect width="520" height="590" fill="#ffffff"/>
+
+  <!-- ① 반칙 -->
+  <text x="20" y="26" font-size="16" font-weight="800" fill="#c2410c">① 오프사이드 (반칙)</text>
+  <use href="#pitch"/>
+  <line x1="181" y1="146" x2="398" y2="124" stroke="#1f2933" stroke-width="2" marker-end="url(#ah)"/>
+  <circle cx="410" cy="122" r="10" fill="#2f6fd1" stroke="#c2410c" stroke-width="3"/>
+  <text x="382" y="152" font-size="12" font-weight="700" fill="#c2410c">받는 선수</text>
+  <text x="200" y="68" font-size="12" fill="#1f2933">차는 순간, 이미 선보다 골대 쪽</text>
+
+  <!-- ② 정상 -->
+  <g transform="translate(0,275)">
+    <text x="20" y="26" font-size="16" font-weight="800" fill="#15803d">② 반칙 아님 (뛰어들어가며 받기)</text>
+    <use href="#pitch"/>
+    <circle cx="335" cy="125" r="10" fill="#2f6fd1" stroke="#15803d" stroke-width="3"/>
+    <path d="M347,125 L398,125" fill="none" stroke="#2f6fd1" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#ah)"/>
+    <circle cx="410" cy="125" r="10" fill="none" stroke="#2f6fd1" stroke-width="2" stroke-dasharray="3 3"/>
+    <line x1="181" y1="148" x2="397" y2="128" stroke="#1f2933" stroke-width="2" marker-end="url(#ah)"/>
+    <text x="222" y="170" font-size="12" font-weight="700" fill="#15803d">차는 순간엔 선 뒤</text>
+    <text x="372" y="108" font-size="11" fill="#1f2933">그다음 달려가 받음</text>
+  </g>
+
+  <!-- 범례 -->
+  <g font-size="12" fill="#1f2933" transform="translate(0,548)">
+    <circle cx="30" cy="0" r="7" fill="#2f6fd1"/><text x="42" y="4">공격 팀</text>
+    <circle cx="112" cy="0" r="7" fill="#e8743b"/><text x="124" y="4">수비 팀</text>
+    <line x1="190" y1="0" x2="220" y2="0" stroke="#1f2933" stroke-width="2" stroke-dasharray="6 5"/>
+    <text x="226" y="4">오프사이드 라인 = 뒤에서 두 번째 수비수</text>
+    <text x="20" y="30" font-size="11" fill="#5b6470">기준은 '패스를 차는 순간'의 위치. 보통 GK가 마지막이라 두 번째는 최종 수비수.</text>
+  </g>
+</svg>

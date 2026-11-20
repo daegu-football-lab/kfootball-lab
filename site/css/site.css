@@ -1,0 +1,471 @@
+/* 대구 풋볼 랩 사이트 스타일 (11/21 index.html 에서 분리). 색 변수는 맨 위 :root 에 있습니다. */
+  :root{
+    /* 대구FC 공식 HEX가 공개돼 있지 않아, 구단이 스스로 말하는 "하늘색(스카이블루)" 톤으로 골랐습니다.
+       (--teal 계열 이름은 남아 있지만 값은 전부 스카이블루입니다: 내비 밑줄·버튼·상단선 등 '포인트' 자리) */
+    --bar:#0a4d7a; --head:#0a4d7a; --blue:#2ea3e8; --blue-dark:#0a4d7a;
+    --teal:#2ea3e8; --teal-ink:#0a6aa8; --blue-soft:#e8f0f9; --tint:#e8f0f9;
+    --team:#2ea3e8; --sub:#c9d6e4; --accent:#e4572e;
+    --bg:#ffffff; --band:#f2f6fb; --card:#fff; --text:#1c2733; --muted:#57697a; --line:#e2e8ef; --rule:#0a4d7a;
+    --good:#1a7f4b; --btn:#1d84c6; --thead:#0a4d7a; --thead-ink:#fff; --zebra:#f6f9fc;
+    --shadow:0 1px 2px rgba(16,24,40,.04), 0 8px 24px -12px rgba(16,24,40,.12);
+    --shadow-lift:0 12px 28px -16px rgba(46,163,232,.4);
+    --ease:cubic-bezier(.22,1,.36,1);
+    --on-blue:#fff; --seg:#1d84c6; --loss:#c8463a; --draw:#8a96a3;
+  }
+  /* 인터넷 없이도 열려야 해서(README 참고) 외부 폰트/CDN 없이 시스템 폰트로만 톤을 다듬었습니다 */
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bar:#0f2a44; --head:#a9dcf7; --blue:#6cc4f0; --blue-dark:#2ea3e8;
+      --teal:#6cc4f0; --teal-ink:#6cc4f0; --blue-soft:#16283d; --tint:#16283d;
+      --team:#6cc4f0; --sub:#33475c; --accent:#ff8360;
+      --bg:#0b131c; --band:#12253a; --card:#1a2a3c; --text:#e7edf5; --muted:#9db0c5; --line:#2f4661; --rule:#3d6d94;
+      --good:#3ecf83; --btn:#1f7fb8; --thead:#1f4c73; --thead-ink:#eaf4fb; --zebra:#1a2939;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.5);
+      --shadow-lift:0 12px 28px -16px rgba(108,196,240,.45);
+      --on-blue:#0b1b2a; --seg:#6cc4f0; --loss:#ff7a6b; --draw:#7d8b99;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:"Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;
+       line-height:1.6}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+  /* ── 상단 유틸리티 바 (딥 퍼플) ────────────────────────────── */
+  .topbar{background:var(--bar);color:rgba(255,255,255,.88);font-size:.74rem;font-weight:700;
+          letter-spacing:.02em}
+  .topbar .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;
+                min-height:36px}
+  .topbar span+span{opacity:.7;font-weight:600}
+  .topbar #sub{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  /* ── 메인 헤더: 흰 바탕 + 로고 + 텍스트 내비 ─────────────────── */
+  header.site{background:var(--bg);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+  header.site .wrap{display:flex;align-items:center;justify-content:space-between;gap:24px;
+                    min-height:80px}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--head);flex:none}
+  .brand svg{width:42px;height:46px;flex:none}
+  .brand .wm{display:flex;flex-direction:column;line-height:1.05}
+  .brand .wm b{font-size:1.32rem;font-weight:900;letter-spacing:-.02em}
+  .brand .wm small{font-size:.62rem;font-weight:800;letter-spacing:.1em;color:var(--teal-ink);
+                   margin-top:4px}
+  nav{display:flex;gap:0;margin:0;flex-wrap:nowrap;justify-content:flex-end}
+  nav button{position:relative;border:none;background:transparent;color:var(--text);
+             padding:30px 13px;cursor:pointer;white-space:nowrap;
+             font-size:.83rem;font-weight:700;letter-spacing:.06em;font-family:inherit;
+             transition:color .18s var(--ease)}
+  nav button::after{content:"";position:absolute;left:13px;right:13px;bottom:-1px;height:3px;
+                    background:var(--teal);transform:scaleX(0);transition:transform .22s var(--ease)}
+  nav button:hover:not(.on){color:var(--head)}
+  nav button:hover::after{transform:scaleX(.5)}
+  nav button.on{color:var(--head)}
+  nav button.on::after{transform:scaleX(1)}
+
+  /* ── 페이지 타이틀 밴드 (연한 회색 + 틸 서브타이틀 + 토글) ───── */
+  .pageband{background:var(--band);border-bottom:1px solid var(--line)}
+  .pageband .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px;
+                  padding-top:30px;padding-bottom:30px}
+  .pageband h1{margin:0;font-size:clamp(1.35rem,3.4vw,1.9rem);font-weight:800;letter-spacing:-.02em;
+               color:var(--head);line-height:1.25}
+  .pageband p{margin:6px 0 0;color:var(--teal-ink);font-weight:700;font-style:italic;font-size:.92rem}
+  .banner{border-left:3px solid var(--accent);background:var(--band);
+          padding:10px 14px;margin:24px 0 0;
+          font-size:.8rem;line-height:1.7;color:var(--muted)}
+  .banner b{color:var(--text)}
+  main{padding:8px 0 64px}
+  .panel{display:none;background:transparent;padding:24px 0 0}
+  .panel.on{display:block;animation:fadeIn .25s var(--ease)}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  h2{font-size:1.5rem;margin:0 0 6px;font-weight:700;letter-spacing:-.02em;color:var(--head)}
+  /* 탭 제목: 위에 짧은 막대 + 아래 부제. "제목 — 설명"을 두 줄로 나눠 제목처럼 보이게 합니다. */
+  .panel>h2{font-size:1.7rem;font-weight:800;margin-bottom:10px;line-height:1.25}
+  .panel>h2::before{content:"";display:block;width:36px;height:4px;border-radius:2px;
+                    background:var(--teal);margin-bottom:12px}
+  .h2sub{display:block;margin-top:6px;font-size:.98rem;font-weight:600;letter-spacing:0;
+         color:var(--teal-ink)}
+  /* "굵은 제목 + 설명" 목록: 제목을 한 줄로 올리고 설명을 아래에 둡니다. */
+  ul.defs{list-style:none;padding-left:0;margin:12px 0 0;display:grid;gap:10px}
+  ul.defs li{border-left:3px solid var(--teal);background:var(--band);border-radius:0 6px 6px 0;
+             padding:10px 14px;font-size:.88rem;line-height:1.7;word-break:keep-all}
+  ul.defs li>b:first-child{display:block;font-size:.98rem;color:var(--head);margin-bottom:2px}
+  .hint{color:var(--muted);font-size:.85rem;margin:0 0 18px;line-height:1.6}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+  .card{position:relative;border:1px solid var(--line);border-radius:6px;padding:14px;
+        cursor:pointer;background:var(--card);transition:.18s var(--ease)}
+  .card:hover{border-color:var(--teal);box-shadow:var(--shadow)}
+  .card.sel{border-color:var(--blue);background:var(--blue-soft);box-shadow:var(--shadow-lift)}
+  .card.sel::after{content:"✓";position:absolute;top:8px;right:10px;
+                   color:var(--blue);font-weight:900;font-size:.85rem}
+  .card .nm{font-weight:800;font-size:1rem}
+  .card .po{color:var(--muted);font-size:.78rem;margin-top:2px}
+  .card .mt{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);
+            font-size:.78rem;color:var(--muted)}
+  .detail{margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:12px 0}
+  .stat{background:var(--card);border-top:3px solid var(--teal);box-shadow:var(--shadow);
+        border:1px solid var(--line);border-radius:6px;padding:14px 10px;text-align:center}
+  .stat b{display:block;font-size:1.4rem;color:var(--head);font-weight:800}
+  .stat span{font-size:.72rem;color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:.86rem;margin-top:10px}
+  th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:right}
+  th:first-child,td:first-child{text-align:left}
+  thead th{color:var(--muted);font-weight:700;font-size:.74rem;
+           text-transform:uppercase;letter-spacing:.04em}
+  tbody tr{transition:background .15s}
+  tbody tr:hover{background:var(--blue-soft)}
+  tr.mine,.tbl tbody tr.mine{background:var(--blue-soft);font-weight:800}
+  tr.mine td:first-child{color:var(--head);box-shadow:inset 3px 0 0 var(--team)}
+  .up{color:var(--good);font-weight:700}.up::before{content:"▲ ";font-size:.7em}
+  .down{color:var(--accent);font-weight:700}.down::before{content:"▼ ";font-size:.7em}
+  select{padding:10px 14px;border:1px solid var(--line);border-radius:6px;
+         font-family:inherit;font-size:.9rem;background:var(--card);color:var(--text);
+         cursor:pointer}
+  select:focus{outline:2px solid var(--teal);outline-offset:1px}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+  .row label{font-weight:700;font-size:.85rem;color:var(--muted)}
+  .chartbox{position:relative;height:320px;margin-top:16px;background:#fff;
+            border-radius:6px;padding:12px;box-shadow:inset 0 0 0 1px var(--line)}
+  .warn{background:linear-gradient(155deg,#fff4e5,#fff9f0);border:1px solid #ffdca8;
+        border-radius:6px;padding:12px 14px;font-size:.83rem;margin-top:12px;color:#7a4b12}
+  .empty{color:var(--muted);font-size:.9rem;padding:32px 0;text-align:center}
+
+  /* ── 순위 분석 탭 전용 레이아웃 ─────────────────────────────
+     섹션이 3개(차트/순위표/시나리오)라 h3 기본 스타일만으로는
+     어디서 끊기는지 눈에 안 들어옵니다. 왼쪽 세로선으로 구분합니다. */
+  h3.sec{font-size:1.2rem;font-weight:700;letter-spacing:-.01em;color:var(--head);
+         margin:44px 0 6px;padding-top:22px;border-top:1px solid var(--rule)}
+  h3.sec:first-of-type{margin-top:28px}
+
+  /* 표를 카드 안에 넣어 둥근 테두리를 줍니다. 가로 스크롤도 여기서 처리합니다. */
+  .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:6px;margin-top:10px}
+  .tbl table{margin:0}
+  .tbl th,.tbl td{padding:9px 12px;white-space:nowrap}
+  .tbl thead th{background:var(--thead);color:var(--thead-ink);
+                text-transform:none;letter-spacing:0;font-size:.76rem;
+                border-bottom:1px solid var(--line)}
+  .tbl thead th small{display:block;font-weight:600;font-size:.92em;
+                      color:var(--thead-ink);opacity:.75;margin-top:1px}
+  .tbl tbody tr:nth-child(even):not(.mine):not(.dead){background:var(--zebra)}
+  .tbl tbody tr:last-child td{border-bottom:none}
+
+  /* 가로 스크롤 힌트: 표가 실제로 화면보다 넓을 때만(JS가 판단) 나타납니다.
+     좁은 화면에서 컬럼이 잘려 있어도 아무 표시가 없으면 "잘린 표"로
+     오해하기 쉬워서, 옆으로 밀 수 있다는 것을 화살표로 알려줍니다. */
+  .tblhint{display:none;align-items:center;gap:4px;margin:6px 2px 0;
+           font-size:.74rem;color:var(--muted)}
+  .tblhint.show{display:flex}
+  .tblhint .arrow{display:inline-block;animation:tblhint-nudge 1.3s ease-in-out infinite}
+  @keyframes tblhint-nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+
+  /* 시나리오 표: 산술적으로 불가능한 줄은 회색으로 눌러 둡니다.
+     O와 X가 같은 색이면 어디까지가 현실적인 범위인지 한눈에 안 보입니다. */
+  tr.dead td{color:var(--muted);background:var(--bg)}
+  tr.dead:hover td{background:var(--bg)}
+  tr.edge td{border-bottom:2px solid var(--accent)}
+  .ox{display:inline-block;min-width:62px;padding:2px 8px;border-radius:999px;
+      font-size:.74rem;font-weight:800;text-align:center}
+  .ox.yes{background:rgba(26,127,75,.14);color:var(--good)}
+  .ox.no{background:var(--line);color:var(--muted)}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;
+          margin-top:10px;font-size:.78rem;color:var(--muted)}
+  .legend i{display:inline-block;width:20px;height:3px;border-radius:2px;
+            background:var(--accent);vertical-align:middle;margin-right:5px}
+
+  /* 팀 이름 열은 왼쪽 정렬. 기본 규칙(첫 칸만 왼쪽) 때문에
+     순위 번호 다음의 팀 이름이 오른쪽에 붙어 읽기 나빴습니다. */
+  #stable td:nth-child(2),#stable th:nth-child(2),
+  #ttable td:nth-child(2),#ttable th:nth-child(2),
+  #h-table td:nth-child(2),#h-table th:nth-child(2){text-align:left}
+  /* 시나리오 표는 5열 전부 짧은 숫자라 가운데 정렬이 가장 정돈돼 보입니다. */
+  #srace th,#srace td{text-align:center}
+  /* 모든 표: 숫자는 가운데. 팀 이름(배지) 칸만 왼쪽이라 눈이 한 줄로 따라갑니다. */
+  .tbl th,.tbl td{text-align:center}
+  .tbl td:has(> .tname){text-align:left}
+  #stable th:nth-child(2),#ttable th:nth-child(2),#h-table th:nth-child(2),#wtable th:first-child{text-align:left}
+  #srace td:has(> .tname){text-align:center}
+  #srace th .tname{justify-content:center}
+  #srace td small{display:block;color:var(--muted);font-size:.78em}
+  /* 휴대폰: 4열이 한 화면에 들어오도록 머리글은 배지만, 여백은 좁게 */
+  @media(max-width:700px){
+    #srace th,#srace td{padding:8px 5px;white-space:normal}
+    #srace th .tname>span:last-child{display:none}
+  }
+
+  /* 요약 카드는 4개 고정. auto-fit 이면 폭에 따라 3+1 로 깨집니다. */
+  .stats.four{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:700px){.stats.four{grid-template-columns:repeat(2,1fr)}}
+  .stats.four .stat span{display:block;margin-top:3px;line-height:1.35}
+  /* ── 용어 탭 ───────────────────────────────────────────────
+     모르는 용어 때문에 페이지를 떠나는 방문자를 붙잡기 위한 탭입니다. */
+  .gsearch{width:100%;padding:12px 16px;border:1px solid var(--line);border-radius:6px;
+           font-family:inherit;font-size:.95rem;background:var(--card);color:var(--text);
+           margin-bottom:6px}
+  .gsearch:focus{outline:2px solid var(--teal);outline-offset:1px}
+  .gcount{font-size:.78rem;color:var(--muted);margin:0 0 16px}
+  .gitem{border:1px solid var(--line);border-radius:6px;margin-bottom:12px;
+         background:var(--card);transition:.18s var(--ease);overflow:hidden}
+  .gitem:hover{border-color:var(--blue);box-shadow:var(--shadow)}
+  .ghead{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
+         padding:16px 18px;background:none;border:none;cursor:pointer;text-align:left;
+         font:inherit;color:inherit}
+  .gtitle{font-size:1.02rem;font-weight:800;letter-spacing:-.01em}
+  .gtitle small{font-weight:600;color:var(--muted);font-size:.76rem;margin-left:6px}
+  .gchev{flex:none;color:var(--muted);font-size:.8rem;transition:transform .18s var(--ease)}
+  .gitem.open .gchev{transform:rotate(90deg);color:var(--blue)}
+  .gbody{display:none;padding:0 18px 18px}
+  .gitem.open .gbody{display:block}
+  .geasy{background:var(--blue-soft);border-left:3px solid var(--good);border-radius:0 8px 8px 0;
+         padding:8px 10px;display:flex;gap:8px;font-size:.88rem;line-height:1.65;margin-bottom:2px}
+  .gdef{margin:12px 0 0;font-size:.92rem}
+  .grow{display:flex;gap:8px;margin-top:10px;font-size:.85rem;line-height:1.65}
+  .glab{flex:0 0 68px;color:var(--muted);font-weight:700;font-size:.76rem;padding-top:2px}
+  .gex{background:var(--blue-soft);border-radius:8px;padding:8px 10px;
+       font-size:.85rem;margin-top:10px}
+  .gwhere{margin-top:10px;padding-top:9px;border-top:1px dashed var(--line);
+          font-size:.76rem;color:var(--muted)}
+  /* 백과 항목 그림 (선택 필드 img) */
+  .gimg{margin:12px 0 0}
+  .gimg img{display:block;width:100%;max-width:520px;height:auto;
+            border:1px solid var(--line);border-radius:8px}
+  .gempty{color:var(--muted);font-size:.9rem;padding:20px 0;text-align:center}
+
+  /* 팀 배지 — 엠블럼 대신 팀 컬러 원형 배지 (저작권 문제 없음, 순수 CSS) */
+  .tbadge{display:inline-flex;align-items:center;justify-content:center;
+          width:28px;height:28px;border-radius:50%;flex:none;
+          font-size:.7rem;font-weight:800;letter-spacing:-.06em;color:#fff;line-height:1;
+          box-shadow:0 0 0 2px var(--card),0 0 0 3px var(--line)}
+  .tname{display:inline-flex;align-items:center;gap:10px;font-weight:700;white-space:nowrap}
+  td,th{vertical-align:middle}
+
+  /* ── 한눈에(홈) 탭 ─────────────────────────────────────────
+     처음 들어온 방문자가 3초 안에 "지금 대구FC가 어디쯤인지"만
+     알고 갈 수 있도록, 그래프 없이 큰 숫자만 놓는 화면입니다. */
+  .hero{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:6px 0 8px}
+  @media(max-width:700px){.hero{grid-template-columns:repeat(2,1fr)}}
+  .hbox{border:1px solid var(--line);border-radius:6px;padding:18px 12px;text-align:center;
+        background:var(--card);border-top:3px solid var(--teal);box-shadow:var(--shadow)}
+  .hbox{text-align:left;padding:16px 16px 18px}
+  .headline,.hbox,.hint,.pageband{word-break:keep-all;overflow-wrap:break-word}
+  .hbox em{display:block;font-style:normal;font-size:.8rem;font-weight:800;color:var(--teal-ink);
+           letter-spacing:.02em}
+  .hbox b{display:block;font-size:2.3rem;font-weight:800;color:var(--head);line-height:1.15;margin-top:4px}
+  .hbox span{display:block;font-size:.8rem;color:var(--muted);margin-top:8px;line-height:1.55}
+  .headline{margin:8px 0 16px;padding:18px 20px;border-left:4px solid var(--teal);
+            background:var(--band);border-radius:0 6px 6px 0}
+  .headline b{display:block;font-size:1.3rem;font-weight:800;color:var(--head);line-height:1.45}
+  .headline span{display:block;margin-top:6px;font-size:.92rem;color:var(--text);line-height:1.7}
+  @media(max-width:700px){.headline b{font-size:1.12rem}.hbox b{font-size:1.9rem}}
+  ul.hlist{margin:10px 0 0;padding-left:20px;font-size:.9rem;line-height:1.85}
+  .golinks{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+  .golink{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);
+          background:var(--card);border-radius:100px;padding:10px 18px;font:inherit;
+          font-size:.86rem;font-weight:700;color:var(--head);cursor:pointer;
+          transition:.18s var(--ease)}
+  .golink:hover{background:var(--tint);border-color:var(--teal)}
+
+  /* ── 그래프 읽는 법 ────────────────────────────────────────
+     차트 위에 접어둡니다. 아는 사람은 펼치지 않고 지나갑니다. */
+  .howto{border:1px solid var(--line);border-radius:6px;background:var(--bg);margin-top:12px}
+  .howto summary{cursor:pointer;padding:11px 14px;font-weight:700;font-size:.86rem;
+                 list-style:none;color:var(--blue)}
+  .howto summary::-webkit-details-marker{display:none}
+  .howto[open] summary{border-bottom:1px solid var(--line)}
+  .howto ol{margin:10px 0;padding:0 16px 6px 34px;font-size:.85rem;line-height:1.8}
+
+  /* ── 쉽게 / 자세히 토글 ────────────────────────────────────
+     '쉽게'에서는 통계 용어가 들어간 블록(.adv)을 통째로 숨깁니다. */
+  .modebar{display:flex;justify-content:flex-end;flex:none}
+  .modeswitch{display:inline-flex;background:var(--card);border:1px solid var(--line);
+              border-radius:100px;padding:3px;box-shadow:var(--shadow)}
+  .modeswitch button{border:none;background:transparent;color:var(--muted);font:inherit;
+                     font-size:.78rem;font-weight:700;padding:7px 15px;border-radius:100px;
+                     cursor:pointer;transition:.18s var(--ease)}
+  .modeswitch button.on{background:var(--btn);color:#fff}
+  body.easy .adv{display:none !important}
+  body.easy .stats.four{grid-template-columns:repeat(2,1fr)}
+
+  /* ── 구단 소개(연표) ───────────────────────────────────────*/
+  .story{list-style:none;margin:10px 0 0;padding:0}
+  .story li{display:flex;gap:14px;padding:9px 0;border-bottom:1px dashed var(--line);
+            font-size:.9rem;line-height:1.65}
+  .story li:last-child{border-bottom:none}
+  .story .yr{flex:0 0 68px;font-weight:800;color:var(--blue)}
+  /* 연재 글 · 고친 기록 (홈) */
+  .series .q{color:var(--muted);font-size:.86rem}
+  .series .meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px}
+  .pill{font-size:.72rem;padding:2px 9px;border-radius:999px;background:var(--band);
+        color:var(--muted);border:1px solid var(--line)}
+  .golink.sm{padding:3px 10px;font-size:.78rem}
+  .kind{font-weight:700;margin-right:6px;color:var(--teal)}
+  .kind.fix{color:var(--accent)}
+  footer.site p a{color:#8fd0f5}
+  .caveat li b{display:inline;margin:0}  /* 목록 안 굵은 글씨는 줄바꿈하지 않음 */
+  /* 연재 1편 짝 안내 (순위 분석 탭 맨 위): 글의 장 ↔ 이 탭의 섹션 */
+  .pair{margin:10px 0 18px;padding:14px 16px;border:1px solid var(--line);border-left:4px solid var(--teal);
+        border-radius:0 6px 6px 0;background:var(--band)}
+  .pair p{margin:0 0 8px;font-size:.9rem;line-height:1.6}
+  .pair ol{margin:0;padding-left:20px;font-size:.86rem;line-height:1.85}
+  .pair button.lk{border:none;background:none;padding:0;color:var(--teal-ink);font:inherit;
+        text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+  .pair .meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+  .srcline{font-size:.74rem;color:var(--muted);margin-top:10px}
+
+  /* ── 승격 확률 ─────────────────────────────────────────────*/
+  .odds{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0 4px}
+  @media(max-width:700px){.odds{grid-template-columns:1fr}}
+  .obox{border:1px solid var(--line);border-radius:6px;padding:18px 14px;text-align:center;
+        background:var(--card);border-top:3px solid var(--teal);box-shadow:var(--shadow)}
+  .obox b{display:block;font-size:2.1rem;font-weight:800;color:var(--head);line-height:1.15}
+  .obox span{display:block;font-size:.8rem;color:var(--muted);margin-top:5px}
+  .obar{height:7px;border-radius:4px;background:var(--line);margin-top:10px;overflow:hidden}
+  .obar i{display:block;height:100%;background:var(--teal)}
+  /* 100칸 점 그림: '8%'보다 '100번 중 8번'이 더 잘 읽힌다는 이유로 둡니다 */
+  .dots{display:grid;grid-template-columns:repeat(20,1fr);gap:4px;max-width:420px;margin:18px auto 6px}
+  .dots i{aspect-ratio:1;border-radius:50%;background:var(--line)}
+  .dots i.on{background:var(--teal)}
+  .dotcap{text-align:center;font-size:.9rem;color:var(--muted);margin-bottom:8px}
+  .dotcap b{color:var(--head)}
+  .caveat{background:linear-gradient(155deg,#fff4e5,#fff9f0);border:1px solid #ffdca8;
+          border-radius:6px;padding:14px 16px;font-size:.83rem;line-height:1.75;
+          margin-top:18px;color:#7a4b12}
+  .caveat b{display:block;margin-bottom:6px}
+  .caveat ul{margin:0;padding-left:18px}
+  @media (prefers-color-scheme: dark){
+    .caveat{background:#2a2113;border-color:#5c4a24;color:#f0d9a8}
+  }
+  /* 확률 칸 색 농도: --a(0~45%)는 JS(heat)가 확률에 비례해 넣습니다. 숫자는 그대로 둡니다. */
+  .pcell{display:inline-block;min-width:52px;padding:3px 6px;border-radius:4px;
+         background:color-mix(in srgb,var(--teal) var(--a,0%),transparent)}
+
+  /* ── 용어 툴팁 ─────────────────────────────────────────────
+     본문의 어려운 단어에 점선을 긋고, 누르면 '쉽게 말하면'만 띄웁니다. */
+  .term{border-bottom:1px dashed var(--blue);cursor:help}
+  .tip{position:absolute;z-index:60;max-width:330px;background:var(--card);color:var(--text);
+       border:1px solid var(--line);border-radius:6px;box-shadow:var(--shadow);
+       padding:13px 15px;font-size:.83rem;line-height:1.65;display:none}
+  .tip.show{display:block}
+  .tip b{display:block;margin-bottom:5px;color:var(--blue);font-size:.9rem}
+  .tipgo{margin-top:9px;padding-top:7px;border-top:1px dashed var(--line);
+         font-size:.75rem;color:var(--muted)}
+
+  /* ── 백과 카테고리 칩 ──────────────────────────────────────*/
+  .gcats{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 10px}
+  .gcat{border:1px solid var(--line);background:var(--card);color:var(--muted);
+        border-radius:100px;padding:8px 15px;font:inherit;font-size:.8rem;font-weight:700;
+        cursor:pointer;transition:.18s var(--ease)}
+  .gcat:hover:not(.on){color:var(--head);background:var(--tint)}
+  .gcat.on{background:var(--btn);
+           border-color:transparent;color:#fff}
+  .gtag{display:inline-block;font-size:.66rem;font-weight:800;padding:2px 8px;border-radius:999px;
+        background:var(--blue-soft);color:var(--blue);margin-left:6px;vertical-align:2px}
+
+  /* ── 푸터 ─────────────────────────────────────────────────*/
+  footer.site{background:var(--bar);color:rgba(255,255,255,.78);font-size:.8rem;line-height:1.8}
+  footer.site .wrap{display:flex;justify-content:space-between;align-items:center;gap:24px;
+                    padding-top:32px;padding-bottom:32px}
+  footer.site .brand{color:#fff}
+  footer.site .brand .wm small{color:#8fd0f5}
+  footer.site p{margin:0;max-width:520px}
+  footer.site b{color:#fff}
+
+  /* ── 모바일 (≤760px): 밀도 우선. 로고 행 + 가로 스크롤 탭 한 줄 ── */
+  @media(max-width:760px){
+    .wrap{padding:0 14px}
+    .topbar .wrap{min-height:32px}
+    .topbar span:first-child{display:none}
+    header.site{position:static}
+    header.site .wrap{flex-direction:column;align-items:stretch;gap:0;min-height:0;padding:0}
+    .brand{padding:12px 14px 8px}
+    .brand svg{width:34px;height:37px}
+    .brand .wm b{font-size:1.15rem}
+    nav{justify-content:flex-start;overflow-x:auto;scrollbar-width:none;
+        padding:0 6px;border-top:1px solid var(--line);
+        -webkit-overflow-scrolling:touch}
+    nav::-webkit-scrollbar{display:none}
+    nav button{padding:13px 11px;font-size:.82rem;letter-spacing:.02em}
+    nav button::after{left:11px;right:11px}
+    .pageband .wrap{flex-direction:column;align-items:flex-start;gap:14px;padding-top:20px;padding-bottom:20px}
+    .pageband p{font-size:.84rem}
+    h2{font-size:1.3rem}
+    .panel>h2{font-size:1.4rem}
+    .h2sub{font-size:.9rem}
+    h3.sec{font-size:1.08rem;margin-top:34px;padding-top:18px}
+    footer.site .wrap{flex-direction:column;align-items:flex-start;gap:14px}
+  }
+
+  /* ── 홈(한눈에) 카드 화면 · 2026-10-01 ───────────────────────── */
+  .hm-card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);margin:12px 0;overflow:hidden}
+  .hm-card.accent{border-top:3px solid var(--blue)}
+  .hm-ch{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:14px 16px 6px}
+  .hm-ch h3{margin:0;font-size:1rem;color:var(--text)}
+  /* '→' 이동 버튼: 다른 탭으로 넘어가는 입구라 눈에 띄게 (알약 모양 + 파란 글자) */
+  .hm-more{border:1px solid var(--blue);background:var(--blue-soft);color:var(--blue);font:inherit;
+           font-size:.78rem;font-weight:700;cursor:pointer;padding:5px 12px;border-radius:999px;white-space:nowrap;
+           transition:background .15s var(--ease),color .15s var(--ease)}
+  .hm-more:hover,.hm-more:focus-visible{background:var(--seg);color:var(--on-blue)}
+  .hm-sub{display:flex;align-items:center;gap:8px;padding:12px 16px 2px;font-size:.78rem;color:var(--muted)}
+  .hm-asof{margin-left:auto;font-size:.72rem}
+  .tbadge.lg{width:46px;height:46px;font-size:.85rem}
+  .tbadge.xl{width:54px;height:54px;font-size:.95rem}
+  .hm-me{display:flex;align-items:center;gap:12px;padding:16px 16px 10px}
+  .hm-me small{color:var(--muted);font-size:.74rem}.hm-me b{display:block;font-size:1.15rem}
+  .hm-strip{display:grid;grid-template-columns:repeat(5,1fr);margin:0 12px 12px;background:var(--band);border:1px solid var(--line);border-radius:14px}
+  .hm-strip div{text-align:center;padding:10px 0}
+  .hm-strip div+div{border-left:1px solid var(--line)}
+  .hm-strip b{font-size:1.15rem}.hm-strip span{font-size:.72rem;color:var(--muted);margin-left:1px}
+  .hm-strip .rk b{color:var(--blue)}
+  .hm-say{margin:0 16px 14px;font-size:.88rem;line-height:1.6;color:var(--muted)}
+  .hm-say b{color:var(--text)}
+  .hm-form{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:0 12px 14px}
+  .hm-form div{background:var(--band);border:1px solid var(--line);border-radius:12px;text-align:center;padding:8px 2px;font-size:.7rem;color:var(--muted)}
+  .hm-form b{display:block;color:var(--text);font-size:.78rem;margin:2px 0}
+  .hm-res{display:inline-block;min-width:22px;padding:2px 6px;border-radius:999px;color:#fff;font-weight:800;font-size:.7rem}
+  .hm-res.w{background:var(--good)}.hm-res.d{background:var(--draw)}.hm-res.l{background:var(--loss)}
+  .hm-match{margin:4px 12px 14px;background:var(--band);border:1px solid var(--line);border-radius:14px;padding:12px}
+  .hm-mt{display:flex;justify-content:space-between;align-items:center;font-size:.78rem;color:var(--muted)}
+  .hm-pill.wait{background:var(--band);color:var(--muted);border:1px solid var(--line)}
+  .hm-pill{font-size:.7rem;padding:2px 8px;border-radius:999px;background:var(--blue-soft);color:var(--blue);font-weight:700}
+  .hm-vs{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin-top:10px}
+  .hm-side{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:.85rem;font-weight:700}
+  .hm-side em{font-style:normal;font-size:.72rem;color:var(--muted);font-weight:400}
+  .hm-mid{text-align:center}.hm-mid b{font-size:1.4rem;letter-spacing:.04em}.hm-mid small{display:block;font-size:.72rem;color:var(--muted)}
+  .hm-seg{display:flex;gap:4px;background:var(--band);border:1px solid var(--line);border-radius:12px;padding:3px;margin:6px 16px 8px}
+  .hm-seg button{flex:1;border:0;background:none;color:var(--muted);font:inherit;font-size:.8rem;padding:7px 4px;border-radius:9px;cursor:pointer}
+  .hm-seg button.on{background:var(--seg);color:var(--on-blue);font-weight:700}
+  /* 팀 비교 탭 아래: 대구FC 점유율과 성적 (pz- 접두어, possession.js) */
+  .pz-seg{display:inline-flex;gap:4px;background:var(--band);border:1px solid var(--line);border-radius:12px;padding:3px;margin:4px 0 10px}
+  .pz-seg button{border:0;background:none;color:var(--muted);font:inherit;font-size:.85rem;padding:7px 14px;border-radius:9px;cursor:pointer}
+  .pz-seg button.on{background:var(--seg);color:var(--on-blue);font-weight:700}
+  .pz-sum{font-size:.9rem;margin:0 0 6px}
+  .pz-block{border:1px solid var(--line);border-radius:6px;padding:12px 14px;margin-top:12px;background:var(--card)}
+  .pz-block h4{margin:0 0 2px;font-size:1rem}
+  .pz-block p{margin:0 0 8px;font-size:.8rem;color:var(--muted)}
+  .pz-row{display:grid;grid-template-columns:76px 1fr 150px;align-items:center;gap:10px;padding:5px 0;font-size:.85rem}
+  .pz-track{position:relative;height:24px;background:var(--band);border-radius:5px}
+  .pz-fill{height:100%;border-radius:5px;background:var(--draw)}
+  .pz-fill.hi{background:var(--seg)}
+  .pz-ref{position:absolute;top:-3px;bottom:-3px;border-left:2px dashed var(--muted)}
+  .pz-num b{font-size:.95rem}.pz-num small{display:block;color:var(--muted);font-size:.74rem}
+  .pz-few{display:inline-block;margin-left:4px;padding:0 5px;border-radius:4px;font-size:.68rem;color:var(--loss);border:1px solid var(--loss)}
+  @media (max-width:560px){.pz-row{grid-template-columns:62px 1fr 104px;gap:6px;font-size:.78rem}}
+  .hm-rows{list-style:none;margin:0;padding:0 8px 10px}
+  .hm-rows li{display:grid;grid-template-columns:28px 34px 1fr auto;align-items:center;gap:8px;padding:9px 8px;border-radius:12px}
+  .hm-rows li+li{border-top:1px solid var(--line)}
+  .hm-rows li.mine{background:var(--blue-soft);border-top-color:transparent}
+  .hm-rows li.mine+li{border-top-color:transparent}
+  .hm-rows .n{font-weight:800;text-align:center}
+  .hm-rows .n.auto{box-shadow:inset 3px 0 0 var(--blue)}.hm-rows .n.po{box-shadow:inset 3px 0 0 var(--sub)}
+  .hm-rows .nm b{display:block;font-size:.9rem}.hm-rows .nm small{font-size:.72rem;color:var(--muted)}
+  .hm-rows .v{font-weight:800}.hm-rows .v span{font-size:.72rem;color:var(--muted);font-weight:400;margin-left:2px}
+  .hm-rows li.gap{display:block;text-align:center;color:var(--muted);padding:0;border-top:0}
+  .hm-rows li.gap+li{border-top:0}
+  .hm-legend{display:flex;flex-wrap:wrap;gap:12px;padding:0 16px 14px;font-size:.72rem;color:var(--muted)}
+  .hm-legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:middle}
+  .hm-note{padding:0 16px 14px;margin:0;font-size:.75rem;color:var(--muted);line-height:1.55}
+  .hm-post{display:block;padding:12px 16px;text-decoration:none;color:inherit}
+  .hm-post+.hm-post{border-top:1px solid var(--line)}
+  a.hm-post:hover b{color:var(--blue)}
+  .hm-post small{color:var(--blue);font-weight:700;font-size:.72rem}
+  .hm-post b{display:block;font-size:.9rem;margin:3px 0}
+  .hm-post span{font-size:.78rem;color:var(--muted)}
+  @media (min-width:900px){ #pan-h .hm-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;align-items:start} }

@@ -40,6 +40,12 @@ foreach ($f in $Files) {
     }
 }
 
+# 1-1) 숫자·파일 점검 (check_site.py). [오류]가 하나라도 있으면 멈춤, [경고]는 보여 주기만
+python check_site.py
+if ($LASTEXITCODE -ne 0) {
+    Stop-Publish "check_site.py 에서 오류가 나왔습니다. 위 [오류] 줄을 먼저 고치세요."
+}
+
 # 2) 이미 커밋 대상에 담긴 다른 파일이 있으면 멈춤 (다른 작업이 섞이는 것 방지)
 $already = @(git diff --cached --name-only)
 if ($already.Count -gt 0) {

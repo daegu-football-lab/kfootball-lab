@@ -18,6 +18,11 @@ from . import analyze, config
 
 def export_site_json(data: dict) -> str:
     """웹사이트용 JSON 한 개로 묶어서 저장"""
+    # 실제 경기 기록(data/raw/daegu2026)이 있으면 그쪽이 사이트 데이터를 만듭니다.
+    # 이 함수는 샘플 CSV 기반이라, 그대로 두면 'python run.py' 한 번에 실제 기록이 샘플로 덮입니다.
+    from src import players_real
+    if players_real.available():
+        return players_real.export()
     per90 = analyze.player_per90(data)
     team_table = analyze.team_season_table(data)
     matches = data["matches"]

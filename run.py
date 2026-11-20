@@ -4,7 +4,9 @@
 사용법
   python run.py                 # 세징야 기준으로 전체 실행
   python run.py 한국영           # 다른 선수로 실행
-  python run.py standings       # 순위표 분석만 실행 (연재 1편용)
+  python run.py standings       # 순위표 분석만 실행 (연재 1편용) + 미리보기 그림
+  python run.py players         # 선수·On/Off·팀 비교 데이터(실제 기록)만 다시 만들기
+  python run.py og              # 링크 미리보기 그림(site/img/og_card.png)만 다시 만들기
 
 하는 일
   데이터 읽기 -> 분석 -> 차트 PNG -> 사이트 JSON -> 블로그 글 초안
@@ -80,6 +82,9 @@ def main_standings():
     print("=" * 50)
     standings.run()
     export.export_recent_js()
+    # 링크 미리보기 그림(og:image)도 같은 숫자로 다시 만듭니다
+    from src import og_card
+    og_card.make_og_card()
 
 
 if __name__ == "__main__":
@@ -90,8 +95,19 @@ if __name__ == "__main__":
     # (나중에 명령이 늘어나면 argparse 로 바꾸는 것이 실무 관행입니다.)
     if arg == "standings":
         main_standings()
+    elif arg == "og":
+        # 링크 미리보기 그림만 다시 만듭니다 (standings.js·fixtures.js 기준)
+        from src import og_card
+        og_card.make_og_card()
     elif arg == "recent":
-        # 홈 화면 '최근 5경기'만 다시 만듭니다 (경기 기록을 추가한 뒤 실행)
+        # 홈 화면 '최근 5경기' + 선수 기록을 다시 만듭니다 (경기 기록을 추가한 뒤 실행)
         export.export_recent_js()
+        from src import players_real
+        if players_real.available():
+            players_real.export()
+    elif arg == "players":
+        # 선수·On/Off·팀 비교 데이터(site/data/players.js)만 다시 만듭니다
+        from src import players_real
+        players_real.export()
     else:
         main(arg)
